@@ -26,8 +26,11 @@ export function Landing() {
       }
 
       const title = inner.current!.querySelector<HTMLElement>('.hero__title');
+      // aria: 'none' — the <h1> carries its own aria-label (below). Letting
+      // SplitText derive one would announce "PushpamRaj", since the two line
+      // spans concatenate without whitespace.
       const split = title
-        ? new SplitText(title, { type: 'chars', charsClass: 'hero__char' })
+        ? new SplitText(title, { type: 'chars', charsClass: 'hero__char', aria: 'none' })
         : null;
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
@@ -99,9 +102,13 @@ export function Landing() {
 
           {/* Each line is its own masked block: the char reveal slides up from
               behind it, and nowrap stops the name breaking mid-word. */}
-          <h1 className="display hero__title" data-parallax="0.2">
-            <span className="hero__title-line">{profile.firstName}</span>
-            <span className="hero__title-line">{profile.lastName}</span>
+          <h1 className="display hero__title" data-parallax="0.2" aria-label={profile.name}>
+            <span className="hero__title-line" aria-hidden="true">
+              {profile.firstName}
+            </span>
+            <span className="hero__title-line" aria-hidden="true">
+              {profile.lastName}
+            </span>
           </h1>
 
           <div className="hero__role" data-hero-fade data-parallax="0.3">

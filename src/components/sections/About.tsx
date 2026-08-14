@@ -18,8 +18,17 @@ export function About() {
 
       // Copy reveals line by line as the pinned portrait holds beside it.
       const paragraphs = gsap.utils.toArray<HTMLElement>('.about__para');
+      // aria: 'none' — SplitText otherwise stamps an aria-label onto the element
+      // it splits, and aria-label is prohibited on a bare <p>. The paragraph text
+      // stays in the DOM either way, so screen readers still read it normally.
       const splits = paragraphs.map(
-        (p) => new SplitText(p, { type: 'lines', linesClass: 'about__line', mask: 'lines' }),
+        (p) =>
+          new SplitText(p, {
+            type: 'lines',
+            linesClass: 'about__line',
+            mask: 'lines',
+            aria: 'none',
+          }),
       );
 
       splits.forEach((split, i) => {

@@ -28,6 +28,10 @@
   gap: var(--s-5);
 }
 
+.contact__headline span {
+  display: block;
+}
+
 /* Sized so "SOMETHING" — the widest line — stays inside the left column. */
 .contact__headline {
   font-size: clamp(2.25rem, 5.4vw, 4.75rem);

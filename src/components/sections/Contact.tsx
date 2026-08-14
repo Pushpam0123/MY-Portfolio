@@ -34,7 +34,13 @@ export function Contact() {
       const mail = root.current?.querySelector<HTMLElement>('.contact__mail-text');
       if (!mail) return;
 
-      const split = new SplitText(mail, { type: 'chars', charsClass: 'contact__mail-char' });
+      // The wrapping <a> already carries the accessible name, and aria-label is
+      // prohibited on a plain <span> — so keep SplitText out of the ARIA layer.
+      const split = new SplitText(mail, {
+        type: 'chars',
+        charsClass: 'contact__mail-char',
+        aria: 'none',
+      });
       gsap.from(split.chars, {
         yPercent: 108,
         opacity: 0,
@@ -103,10 +109,10 @@ export function Contact() {
       <div className="shell contact__inner">
         <div className="contact__lead">
           <span className="eyebrow">Contact</span>
-          <h2 className="contact__headline display">
-            Let&apos;s build
-            <br />
-            something
+          {/* aria-label supplies the spacing the two visual lines lack. */}
+          <h2 className="contact__headline display" aria-label="Let's build something">
+            <span aria-hidden="true">Let&apos;s build</span>
+            <span aria-hidden="true">something</span>
           </h2>
           <p className="lede contact__blurb">
             I&apos;m {profile.availabilityLabel.toLowerCase()} — AI/ML engineering, automation, or
@@ -119,7 +125,9 @@ export function Contact() {
             data-cursor="link"
             aria-label={`Email ${profile.email}`}
           >
-            <span className="contact__mail-text">{profile.email}</span>
+            <span className="contact__mail-text" aria-hidden="true">
+              {profile.email}
+            </span>
           </a>
 
           <div className="contact__actions">

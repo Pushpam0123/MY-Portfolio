@@ -31,6 +31,7 @@ export function SectionHeading({ index, eyebrow, title, align = 'left', children
         type: 'lines',
         linesClass: 'sec-head__line',
         mask: 'lines',
+        aria: 'none', // the heading text remains in the DOM and reads normally
       });
 
       gsap.from(split.lines, {

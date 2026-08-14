@@ -254,6 +254,11 @@
     justify-content: center;
   }
 
+  /* Centred and wrapping, the leading rule detaches from the text — drop it. */
+  .hero__eyebrow::before {
+    display: none;
+  }
+
   .hero__scroll {
     display: none;
   }
