@@ -1,0 +1,10 @@
+{
+  "name": "Pushpam Raj — AI / ML Engineer",
+  "short_name": "Pushpam Raj",
+  "description": "Portfolio of Pushpam Raj, AI/ML engineer building AI-native tooling and automation systems.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08070C",
+  "theme_color": "#08070C",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

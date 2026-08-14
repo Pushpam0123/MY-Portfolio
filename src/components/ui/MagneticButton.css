@@ -1,0 +1,85 @@
+.mbtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  padding: 0.95rem 1.9rem;
+  border-radius: var(--r-pill);
+  font-size: var(--t-small);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    box-shadow var(--d-mid) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.mbtn__label {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  pointer-events: none;
+}
+
+/* Fill that wipes up from the bottom on hover. */
+.mbtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform var(--d-mid) var(--e-out);
+}
+
+.mbtn--solid {
+  background: var(--g-accent);
+  color: #fff;
+  box-shadow: 0 8px 30px rgba(124, 77, 255, 0.3);
+}
+
+.mbtn--solid::after {
+  background: #fff;
+}
+
+.mbtn--solid:hover {
+  color: var(--c-base);
+  box-shadow: 0 14px 44px rgba(124, 77, 255, 0.45);
+}
+
+.mbtn--ghost {
+  border: 1px solid var(--c-line);
+  color: var(--c-text-soft);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.mbtn--ghost::after {
+  background: var(--c-text);
+}
+
+.mbtn--ghost:hover {
+  color: var(--c-base);
+  border-color: transparent;
+}
+
+.mbtn:hover::after {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mbtn::after {
+    display: none;
+  }
+
+  .mbtn--solid:hover,
+  .mbtn--ghost:hover {
+    color: inherit;
+    filter: brightness(1.18);
+  }
+}

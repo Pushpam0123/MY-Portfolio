@@ -1,0 +1,115 @@
+.footer {
+  position: relative;
+  padding-block: var(--s-8) var(--s-6);
+  border-top: 1px solid var(--c-line-soft);
+  background: var(--c-base-deep);
+}
+
+.footer__inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-6);
+  padding-bottom: var(--s-7);
+}
+
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.footer__col--end {
+  align-items: flex-end;
+}
+
+.footer__value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-body);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text);
+}
+
+.footer__pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-live);
+  animation: footer-pulse 2.4s var(--e-in-out) infinite;
+}
+
+@keyframes footer-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.45);
+  }
+  60% {
+    opacity: 0.7;
+    box-shadow: 0 0 0 7px rgba(74, 222, 128, 0);
+  }
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  font-size: var(--t-body);
+  color: var(--c-muted);
+}
+
+.footer__links a {
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.footer__links a:hover {
+  color: var(--c-violet-bright);
+}
+
+.footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--t-body);
+  color: var(--c-muted);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.footer__top:hover {
+  color: var(--c-text);
+}
+
+.footer__top span {
+  transition: transform var(--d-fast) var(--e-out);
+}
+
+.footer__top:hover span {
+  transform: translateY(-3px);
+}
+
+.footer__base {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--c-line-soft);
+  font-size: var(--t-small);
+  color: var(--c-faint);
+}
+
+@media (max-width: 767px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer__col--end {
+    grid-column: 1 / -1;
+    align-items: flex-start;
+  }
+
+  .footer__base {
+    flex-direction: column;
+  }
+}
