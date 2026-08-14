@@ -8,7 +8,7 @@
  *
  * Idempotent — safe to re-run. `npm run assets` (also wired as `prebuild`).
  */
-import { mkdir, copyFile, readdir, access, rm, writeFile } from 'node:fs/promises';
+import { mkdir, copyFile, readdir, access, rm, writeFile, readFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -328,6 +328,98 @@ async function buildOgImage() {
   console.log('  built  og.png');
 }
 
+/**
+ * Sphere textures for the Tech Stack physics scene.
+ *
+ * Three.js maps a SphereGeometry equirectangularly, so a 2:1 texture wraps once
+ * around the ball. The logo is drawn three times along the equator, 120° apart,
+ * which means a mark is facing the camera from almost any orientation — with a
+ * single centred logo the spheres read as blank most of the time. Poles stay
+ * empty on purpose: that is where equirectangular distortion is worst.
+ */
+async function buildTechTextures() {
+  const { techBalls } = await loadTechBalls();
+  const si = await import('simple-icons');
+
+  const W = 1024;
+  const H = 512;
+  const LOGO = 168; // drawn size in px
+  const positions = [W / 6, W / 2, (5 * W) / 6];
+
+  for (const ball of techBalls) {
+    let marks = '';
+
+    if (ball.icon) {
+      const key = `si${ball.icon.charAt(0).toUpperCase()}${ball.icon.slice(1)}`;
+      const icon = si[key] ?? si.default?.[key];
+      if (!icon) throw new Error(`simple-icons has no "${ball.icon}" (looked for ${key})`);
+
+      const color = `#${ball.hex ?? icon.hex}`;
+      const s = LOGO / 24; // simple-icons paths use a 24x24 viewBox
+
+      marks = positions
+        .map(
+          (cx) =>
+            `<g transform="translate(${cx - LOGO / 2} ${H / 2 - LOGO / 2}) scale(${s})">` +
+            `<path d="${icon.path}" fill="${color}"/></g>`,
+        )
+        .join('');
+    } else {
+      // Wordmark fallback for brands simple-icons does not carry.
+      //
+      // Size to fit its third of the texture: at a fixed size a long word like
+      // "Tableau" runs past the panel and collides with the next repeat, which
+      // shows up on the sphere as garbled text ("ableauTa").
+      const color = `#${ball.hex ?? '333333'}`;
+      const panel = W / positions.length;
+      const maxTextWidth = panel * 0.78;
+      const avgGlyphRatio = 0.58; // bold Helvetica, roughly
+      const fontSize = Math.min(
+        104,
+        Math.round(maxTextWidth / (avgGlyphRatio * ball.label.length)),
+      );
+
+      marks = positions
+        .map(
+          (cx) =>
+            `<text x="${cx}" y="${H / 2}" font-family="Helvetica, Arial, sans-serif" ` +
+            `font-size="${fontSize}" font-weight="700" fill="${color}" text-anchor="middle" ` +
+            `dominant-baseline="central" letter-spacing="-1">${ball.label}</text>`,
+        )
+        .join('');
+    }
+
+    const svg = Buffer.from(
+      `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+         <rect width="${W}" height="${H}" fill="#ffffff"/>
+         ${marks}
+       </svg>`,
+    );
+
+    await emit(sharp(svg), `tech-${ball.id}`, [W], [FORMATS[1]]);
+  }
+}
+
+/**
+ * Reads the ball list out of the TypeScript data file.
+ *
+ * The array is plain data, so stripping the types with a regex is enough and
+ * avoids adding a TS loader to the asset pipeline. Keeping one source of truth
+ * matters more here than the parsing being elegant.
+ */
+async function loadTechBalls() {
+  const source = await readFile(path.join(root, 'src/data/skills.ts'), 'utf8');
+  const match = source.match(/export const techBalls: TechBall\[\] = (\[[\s\S]*?\n\]);/);
+  if (!match) throw new Error('Could not find techBalls in src/data/skills.ts');
+
+  const literal = match[1]
+    .replace(/\/\/.*$/gm, '') // strip line comments
+    .replace(/,(\s*[\]}])/g, '$1'); // strip trailing commas
+
+  const techBalls = new Function(`return ${literal}`)();
+  return { techBalls };
+}
+
 async function copyResume() {
   await mkdir(path.join(PUBLIC, 'resume'), { recursive: true });
   await copyFile(
@@ -346,6 +438,7 @@ async function main() {
   await buildHero();
   await buildDesk();
   await buildExpressions();
+  await buildTechTextures();
   await buildNoise();
   await buildOgImage();
   await copyResume();

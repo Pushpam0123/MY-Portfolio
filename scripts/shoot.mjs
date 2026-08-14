@@ -101,9 +101,20 @@ const main = async () => {
       continue;
     }
 
-    // Let smoothing catch up and any scroll-triggered animation play out.
-    // Staggered per-line reveals near the fold need more than a beat.
-    await new Promise((r) => setTimeout(r, 2800));
+    // Wait for the scroll to actually land before timing anything. Sections
+    // that mount a canvas on entry can reflow mid-scroll, and a fixed delay
+    // silently captures the wrong part of the page when that happens.
+    await page
+      .waitForFunction(
+        (target) => Math.abs(window.scrollY - target) < 4,
+        { timeout: 8000, polling: 100 },
+        Math.max(0, found - 8),
+      )
+      .catch(() => errors.push(`scroll to #${id} did not settle`));
+
+    // Then let smooth-scrolling ease out and scroll-triggered animation play.
+    // Staggered per-line reveals and lazily-loaded scenes need more than a beat.
+    await new Promise((r) => setTimeout(r, 3200));
     await page.screenshot({ path: path.join(outDir, `${id}.png`) });
     console.log(`  shot        : ${id}.png (y≈${found})`);
   }

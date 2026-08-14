@@ -3,10 +3,113 @@
   overflow: hidden;
 }
 
-.stack__rails {
+/* ---- Heading ---- */
+
+/*
+ * The title sits behind the spheres, centred, and they drift across it. That
+ * overlap is the whole composition — so the heading is absolutely positioned
+ * inside the stage rather than stacked above it.
+ */
+.stack__heading {
+  position: absolute;
+  top: clamp(3.5rem, 12vh, 8rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  pointer-events: none;
+}
+
+.stack__index {
+  color: var(--c-violet-bright);
+}
+
+.stack__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-stretch: 108%;
+  font-size: clamp(2.25rem, 7.5vw, 6.5rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-align: center;
+  /* Dimmed so the spheres in front stay the focus. */
+  color: rgba(244, 242, 255, 0.62);
+  white-space: nowrap;
+}
+
+/* ---- Physics stage ---- */
+.stack__stage {
+  position: relative;
+  z-index: 1;
+  height: clamp(520px, 82vh, 860px);
+  width: 100%;
+}
+
+/*
+ * No `touch-action: none` here. The canvas fills most of the viewport on a
+ * phone, and disabling touch panning over it would trap the reader inside the
+ * section with no way to scroll past. Pointer tracking works regardless; the
+ * only thing given up is drag-to-fling on touch, which is a fair trade for the
+ * page remaining scrollable.
+ */
+.stack__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.stack__hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-6);
+  transform: translateX(-50%);
+  z-index: 2;
+  white-space: nowrap;
+  color: var(--c-faint);
+  pointer-events: none;
+}
+
+/* ---- Capabilities line under the scene ---- */
+.stack__footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: center;
+  padding-top: var(--s-4);
+}
+
+.stack__footer-title {
+  color: var(--c-violet-bright);
+}
+
+.stack__capabilities {
+  max-width: 70ch;
+  font-size: var(--t-body);
+  line-height: 1.9;
+  color: var(--c-muted);
+  text-wrap: balance;
+}
+
+.stack__sep {
+  margin-inline: 0.6em;
+  color: var(--c-line);
+}
+
+/* ---- Static fallback ---- */
+.stack__static {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: var(--s-6);
+  padding-top: clamp(7rem, 20vh, 12rem);
 }
 
 .stack__group {
@@ -16,27 +119,16 @@
 }
 
 .stack__group-title {
-  padding-inline: var(--gutter);
   color: var(--c-faint);
 }
 
-.stack__rail {
-  position: relative;
-  overflow: hidden;
-  padding-block: var(--s-1);
-  /* Fade the rails into the page edges so they read as continuous. */
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-.stack__track {
+.stack__chips {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--s-3);
-  width: max-content;
-  will-change: transform;
 }
 
 .stack__chip {
-  flex-shrink: 0;
   padding: 0.6rem 1.25rem;
   border-radius: var(--r-pill);
   border: 1px solid var(--c-line-soft);
@@ -54,20 +146,15 @@
   color: var(--c-text);
 }
 
-/* Without animation the rails must not overflow — wrap them into a static grid. */
-@media (prefers-reduced-motion: reduce) {
-  .stack__rail {
-    mask-image: none;
-    padding-inline: var(--gutter);
+@media (max-width: 767px) {
+  .stack__stage {
+    /* Shorter than desktop so the cluster is not stranded in empty space. */
+    height: clamp(380px, 54vh, 520px);
   }
 
-  .stack__track {
-    flex-wrap: wrap;
-    width: 100%;
-  }
-
-  /* The duplicate copy exists only to make the loop seamless. */
-  .stack__track .stack__chip[aria-hidden='true'] {
-    display: none;
+  .stack__title {
+    /* Two lines are fine on a phone; one line would be unreadably small. */
+    white-space: normal;
+    max-width: 12ch;
   }
 }

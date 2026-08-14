@@ -51,6 +51,50 @@ export const skillGroups: SkillGroup[] = [
   },
 ];
 
+/**
+ * The physics spheres in the Tech Stack section.
+ *
+ * Every entry is a technology that actually appears on the résumé — the point
+ * of the section is to be scannable and true, not to pad the list.
+ *
+ * `icon` is a simple-icons slug. Two entries have no icon: Amazon Web Services
+ * and Tableau were removed from simple-icons over trademark policy, so they
+ * render as wordmarks via `label` instead.
+ */
+export interface TechBall {
+  /** Stable id — also the generated texture filename. */
+  id: string;
+  name: string;
+  /** simple-icons slug, when one exists. */
+  icon?: string;
+  /** Wordmark text used when there is no icon. */
+  label?: string;
+  /** Override the brand colour (hex without '#'). */
+  hex?: string;
+  /** Relative sphere size; a little variety reads better than a uniform grid. */
+  scale: number;
+}
+
+export const techBalls: TechBall[] = [
+  { id: 'python', name: 'Python', icon: 'python', scale: 1.15 },
+  { id: 'javascript', name: 'JavaScript', icon: 'javascript', scale: 1.1 },
+  { id: 'java', name: 'Java', icon: 'openjdk', hex: 'E76F00', scale: 1 },
+  { id: 'react', name: 'React.js', icon: 'react', scale: 1.15 },
+  { id: 'node', name: 'Node.js', icon: 'nodedotjs', scale: 1.05 },
+  { id: 'express', name: 'Express.js', icon: 'express', hex: '444444', scale: 0.9 },
+  { id: 'mongodb', name: 'MongoDB', icon: 'mongodb', scale: 1.05 },
+  { id: 'postgresql', name: 'PostgreSQL', icon: 'postgresql', scale: 1 },
+  { id: 'pandas', name: 'Pandas', icon: 'pandas', scale: 0.95 },
+  { id: 'numpy', name: 'NumPy', icon: 'numpy', scale: 0.95 },
+  { id: 'scikitlearn', name: 'scikit-learn', icon: 'scikitlearn', scale: 1.05 },
+  { id: 'jupyter', name: 'Jupyter Notebook', icon: 'jupyter', scale: 0.9 },
+  { id: 'git', name: 'Git', icon: 'git', scale: 0.85 },
+  { id: 'github', name: 'GitHub', icon: 'github', hex: '181717', scale: 0.9 },
+  { id: 'aws', name: 'AWS', label: 'aws', hex: 'FF9900', scale: 1.1 },
+  { id: 'gcp', name: 'Google Cloud', icon: 'googlecloud', scale: 1 },
+  { id: 'tableau', name: 'Tableau', label: 'Tableau', hex: 'E97627', scale: 0.95 },
+];
+
 export interface Service {
   id: string;
   index: string;

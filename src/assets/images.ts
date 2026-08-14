@@ -58,6 +58,14 @@ export function imageUrl(name: ImageName, width: number, ext: 'png' | 'webp' | '
   return url(name, width, ext);
 }
 
+/**
+ * Equirectangular sphere texture for a tech-stack ball. Generated at a single
+ * width by scripts/prepare-assets.mjs, so there is no srcset to pick from.
+ */
+export function techTextureUrl(id: string): string {
+  return url(`tech-${id}`, 1024, 'webp');
+}
+
 export const heroAvatar = image('avatar-hero');
 export const deskAvatar = image('avatar-desk');
 // Note: avatar-hero-chrome is intentionally not exposed via image() — it exists
