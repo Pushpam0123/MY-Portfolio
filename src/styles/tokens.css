@@ -1,0 +1,96 @@
+/*
+ * Design tokens.
+ *
+ * The palette is sampled from the avatar renders themselves — the violet rim
+ * light in the source images is the accent — so the portraits sit natively on
+ * the page instead of looking pasted onto it.
+ */
+
+:root {
+  /* ---- Surface ---- */
+  --c-base: #08070c;
+  --c-base-deep: #050409;
+  --c-surface: #101018;
+  --c-surface-2: #16151f;
+  --c-line: #221f30;
+  --c-line-soft: #1a1826;
+
+  /* ---- Accent ---- */
+  --c-violet: #7c4dff;
+  --c-violet-bright: #a855f7;
+  --c-violet-dim: #5b34c4;
+  --c-lilac: #c4b5fd;
+  --c-glow: rgba(124, 77, 255, 0.4);
+
+  /* ---- Text ---- */
+  --c-text: #f4f2ff;
+  --c-text-soft: #c9c5da;
+  --c-muted: #9a96ad;
+  --c-faint: #6b6880;
+
+  /* ---- Status ---- */
+  --c-live: #4ade80;
+  --c-error: #f87171;
+
+  /* ---- Gradients ---- */
+  --g-accent: linear-gradient(135deg, var(--c-violet) 0%, var(--c-violet-bright) 100%);
+  --g-text: linear-gradient(180deg, var(--c-text) 30%, rgba(244, 242, 255, 0.62) 100%);
+
+  /* ---- Type ---- */
+  --f-display: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
+  --f-body: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --f-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Fluid scale — clamp(min, preferred, max), 390px → 1600px viewports. */
+  --t-hero: clamp(3.25rem, 12.5vw, 12rem);
+  --t-h2: clamp(2.25rem, 6vw, 5rem);
+  --t-h3: clamp(1.5rem, 3vw, 2.5rem);
+  --t-h4: clamp(1.125rem, 1.7vw, 1.5rem);
+  --t-body-lg: clamp(1.0625rem, 1.5vw, 1.375rem);
+  --t-body: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  --t-small: 0.875rem;
+  --t-label: 0.75rem;
+
+  /* ---- Space ---- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+  --s-10: 8rem;
+  --section-y: clamp(5rem, 12vh, 9rem);
+  --gutter: clamp(1.25rem, 5vw, 5.5rem);
+  --maxw: 1440px;
+
+  /* ---- Radius ---- */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---- Motion ---- */
+  --e-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --d-fast: 0.22s;
+  --d-mid: 0.45s;
+  --d-slow: 0.85s;
+
+  /* ---- Elevation ---- */
+  --sh-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 44px rgba(0, 0, 0, 0.5);
+  --sh-lift: 0 30px 70px rgba(0, 0, 0, 0.62);
+  --sh-glow: 0 0 90px rgba(124, 77, 255, 0.28);
+
+  /* ---- Layers ---- */
+  --z-noise: 60;
+  --z-nav: 70;
+  --z-cursor: 90;
+  --z-loader: 100;
+
+  color-scheme: dark;
+}

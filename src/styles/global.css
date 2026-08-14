@@ -1,0 +1,109 @@
+/* Self-hosted variable fonts — no third-party requests, no layout shift. */
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+@import './tokens.css';
+@import './reset.css';
+@import './typography.css';
+
+body {
+  font-family: var(--f-body);
+  font-size: var(--t-body);
+  font-optical-sizing: auto;
+  color: var(--c-text);
+  background: var(--c-base);
+  overflow-x: hidden;
+}
+
+/*
+ * ScrollSmoother requires this exact wrapper/content pairing: the wrapper is
+ * fixed to the viewport and the content is transformed inside it.
+ */
+#smooth-wrapper {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+#smooth-content {
+  will-change: transform;
+}
+
+/* Fallback when smoothing is off (reduced motion / touch) — restore normal flow. */
+body[data-smooth='off'] #smooth-wrapper {
+  position: static;
+  overflow: visible;
+}
+
+body[data-smooth='off'] #smooth-content {
+  will-change: auto;
+}
+
+/* Lock scrolling while the preloader is up. */
+body[data-loading='true'] {
+  overflow: hidden;
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Radial violet bloom used behind the avatar and section headers. */
+.bloom {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c-glow) 0%, transparent 68%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hairline {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--c-line), transparent);
+}
+
+/* Skip link — first tab stop on the page. */
+.skip-link {
+  position: absolute;
+  top: var(--s-4);
+  left: var(--s-4);
+  z-index: calc(var(--z-loader) + 1);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  font-size: var(--t-small);
+  transform: translateY(-160%);
+  transition: transform var(--d-fast) var(--e-out);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+::selection {
+  background: var(--c-violet);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
