@@ -21,4 +21,14 @@ gsap.defaults({ ease: 'power3.out', duration: 0.9 });
 /** Matches the --e-out token, for animations that should feel like the CSS. */
 export const EASE_OUT = 'expo.out';
 
+/**
+ * Dev-only handle for debugging from the console — e.g. settling every
+ * in-flight animation with `__gsap.globalTimeline.progress(1)`. Also the only
+ * way to inspect timeline state in a headless browser, where requestAnimationFrame
+ * never fires and the ticker is therefore frozen. Stripped from production builds.
+ */
+if (import.meta.env.DEV) {
+  (window as unknown as { __gsap?: typeof gsap }).__gsap = gsap;
+}
+
 export { gsap, ScrollTrigger, ScrollSmoother, SplitText, Observer, useGSAP };

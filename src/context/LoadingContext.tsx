@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components --
+   The provider and its hook belong together; splitting them across files to
+   satisfy fast refresh would be worse for readability than the lost HMR. */
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 interface LoadingState {

@@ -1,0 +1,294 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-block: calc(var(--s-10) + 2rem) var(--s-8);
+}
+
+/* ---- Backdrop ---- */
+.hero__bloom {
+  position: absolute;
+  top: 44%;
+  right: 12%;
+  width: min(58vw, 780px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  background: radial-gradient(circle, rgba(124, 77, 255, 0.3) 0%, transparent 66%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Faint vertical rules — structure without decoration. */
+.hero__grid-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent calc(12.5% - 1px),
+    rgba(255, 255, 255, 0.022) calc(12.5% - 1px),
+    rgba(255, 255, 255, 0.022) 12.5%
+  );
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+}
+
+/* ---- Layout ---- */
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: var(--s-7);
+}
+
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-5);
+}
+
+.hero__title {
+  font-size: var(--t-hero);
+}
+
+/* One mask per line, so the per-character reveal slides up from behind it. */
+.hero__title-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  white-space: nowrap;
+}
+
+.hero__char {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ---- Role rotator ---- */
+.hero__role {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.hero__role-key {
+  color: var(--c-faint);
+}
+
+/*
+ * The mask height is set in the *value's* font size, not the parent's, and left
+ * roomy enough to clear descenders — a tight box clips the "y" in "Systems".
+ */
+.hero__role-window {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  min-width: 16ch;
+  font-size: var(--t-h4);
+  height: 1.9em;
+}
+
+.hero__role-value {
+  display: block;
+  font-weight: 500;
+  line-height: 1.9;
+  color: var(--c-lilac);
+  white-space: nowrap;
+}
+
+.hero__tagline {
+  max-width: 44ch;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+
+.hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0.45rem 1rem 0.45rem 0.75rem;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-pill);
+  font-size: var(--t-small);
+  color: var(--c-muted);
+}
+
+.hero__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c-live);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.16);
+  animation: hero-blink 2.6s var(--e-in-out) infinite;
+}
+
+@keyframes hero-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.45;
+  }
+}
+
+/* ---- Visual ---- */
+.hero__visual {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+  /* The "lifted sheet" shadow — this is what makes the portrait read as a
+     separate plane floating above the page rather than printed onto it. */
+  filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.55));
+}
+
+.hero__visual-glow {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 77, 255, 0.34) 0%, transparent 68%);
+  filter: blur(34px);
+  pointer-events: none;
+}
+
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.hero__avatar-img {
+  position: relative;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.hero__hint {
+  position: absolute;
+  left: 50%;
+  bottom: -0.5rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--c-faint);
+  opacity: 0.75;
+}
+
+/* ---- Scroll cue ---- */
+.hero__scroll {
+  position: absolute;
+  right: var(--gutter);
+  bottom: var(--s-6);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.hero__scroll .mono-label {
+  writing-mode: vertical-rl;
+}
+
+.hero__scroll-line {
+  position: relative;
+  width: 1px;
+  height: 68px;
+  background: var(--c-line);
+  overflow: hidden;
+}
+
+.hero__scroll-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--c-violet-bright);
+  animation: hero-scroll 2.1s var(--e-in-out) infinite;
+}
+
+@keyframes hero-scroll {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1023px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  /* Portrait first on narrow screens — it is the strongest hook. */
+  .hero__visual {
+    order: -1;
+    max-width: min(78vw, 420px);
+  }
+
+  .hero__copy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero__tagline {
+    margin-inline: auto;
+  }
+
+  .hero__actions {
+    justify-content: center;
+  }
+
+  .hero__scroll {
+    display: none;
+  }
+
+  .hero__grid-lines {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding-block: calc(var(--s-9) + 1.5rem) var(--s-7);
+  }
+
+  .hero__role {
+    flex-direction: column;
+    gap: var(--s-1);
+  }
+
+  .hero__role-window {
+    min-width: 0;
+  }
+
+  .hero__hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__status-dot,
+  .hero__scroll-line::after {
+    animation: none;
+  }
+
+  .hero__hint {
+    display: none;
+  }
+}

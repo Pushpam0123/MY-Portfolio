@@ -42,7 +42,9 @@
   --f-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Fluid scale — clamp(min, preferred, max), 390px → 1600px viewports. */
-  --t-hero: clamp(3.25rem, 12.5vw, 12rem);
+  /* Sized so the longest name line ("PUSHPAM") still fits the hero's left
+     column at every breakpoint without wrapping. */
+  --t-hero: clamp(3rem, 8.2vw, 8.5rem);
   --t-h2: clamp(2.25rem, 6vw, 5rem);
   --t-h3: clamp(1.5rem, 3vw, 2.5rem);
   --t-h4: clamp(1.125rem, 1.7vw, 1.5rem);
