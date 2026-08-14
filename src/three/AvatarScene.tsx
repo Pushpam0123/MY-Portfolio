@@ -2,8 +2,7 @@ import { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { AvatarPlane } from './AvatarPlane';
 import { ParticleField } from './ParticleField';
-import { Picture } from '@/components/ui/Picture';
-import { heroAvatar } from '@/assets/images';
+import { StaticAvatar } from '@/components/ui/StaticAvatar';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 
 /** Cheap capability probe — some browsers/GPUs simply have no WebGL context. */
@@ -19,19 +18,6 @@ function hasWebGL() {
   }
 }
 
-/** Plain <img> used whenever the scene cannot or should not run. */
-function StaticAvatar() {
-  return (
-    <Picture
-      image={heroAvatar}
-      alt="3D illustrated portrait of Pushpam Raj"
-      sizes="(max-width: 767px) 78vw, (max-width: 1279px) 42vw, 38vw"
-      priority
-      className="hero__avatar-img"
-    />
-  );
-}
-
 /**
  * The hero's WebGL layer.
  *
@@ -39,7 +25,7 @@ function StaticAvatar() {
  * reduced-motion preference, or a runtime context loss — because a hero that
  * renders nothing is far worse than one that renders a still image.
  */
-export function AvatarScene() {
+export default function AvatarScene() {
   const reduced = useReducedMotion();
   const [supported] = useState(hasWebGL);
   const [crashed, setCrashed] = useState(false);

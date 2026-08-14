@@ -112,20 +112,19 @@ const manifest = {};
 /**
  * Encode one prepared sharp pipeline to every format × width.
  *
- * Requested widths above the source's native width are dropped and replaced by
- * the native width — upscaling a render gains nothing but bytes, and emitting
- * two identical files under different names makes `srcset` lie to the browser.
+ * Requested widths are clamped to the source's native width — upscaling a render
+ * gains nothing but bytes, and emitting two identical files under different
+ * names makes `srcset` lie to the browser. Clamping (rather than appending the
+ * native width) means an explicit single-width request stays a single width.
  */
-async function emit(pipeline, name, requested = WIDTHS) {
+async function emit(pipeline, name, requested = WIDTHS, formats = FORMATS) {
   const buffer = await pipeline.png().toBuffer();
   const native = (await sharp(buffer).metadata()).width;
 
-  const widths = [...new Set([...requested.filter((w) => w < native), native])].sort(
-    (a, b) => a - b,
-  );
+  const widths = [...new Set(requested.map((w) => Math.min(w, native)))].sort((a, b) => a - b);
 
   for (const width of widths) {
-    for (const [ext, apply] of FORMATS) {
+    for (const [ext, apply] of formats) {
       await apply(sharp(buffer).resize({ width, withoutEnlargement: true })).toFile(
         path.join(OUT, `${name}-${width}.${ext}`),
       );
@@ -133,7 +132,7 @@ async function emit(pipeline, name, requested = WIDTHS) {
   }
 
   manifest[name] = widths;
-  console.log(`  built  ${name} → ${widths.join(', ')} (${widths.length * FORMATS.length} files)`);
+  console.log(`  built  ${name} → ${widths.join(', ')} (${widths.length * formats.length} files)`);
 }
 
 /** Emit the manifest as TypeScript so the widths are compile-time checked. */
@@ -214,7 +213,14 @@ async function buildHero() {
     .ensureAlpha()
     .composite([{ input: radialMask(side, side), blend: 'dest-in' }]);
 
-  await emit(chrome, 'avatar-hero-chrome');
+  /*
+   * The chrome grade is consumed only as a WebGL texture at a single size, so
+   * emitting the full width/format matrix would ship ~700 kB of assets that
+   * nothing ever requests — `import.meta.glob` references them all, so unused
+   * variants still land in dist. One WebP is enough: every browser that can run
+   * WebGL can decode WebP.
+   */
+  await emit(chrome, 'avatar-hero-chrome', [1024], [FORMATS[1]]);
 }
 
 /** The seated desk scene used by the About section. */
@@ -258,7 +264,8 @@ async function buildExpressions() {
         { input: radialMask(side, boxHeight, { inner: 0.5, outer: 0.94 }), blend: 'dest-in' },
       ]);
 
-    await emit(pipeline, `avatar-face-${i + 1}`, [180, 260]);
+    // The third entry clamps to the crop's native width, whatever that is.
+    await emit(pipeline, `avatar-face-${i + 1}`, [180, 260, 640]);
   }
 }
 

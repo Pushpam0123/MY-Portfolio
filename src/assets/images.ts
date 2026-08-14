@@ -59,6 +59,8 @@ export function imageUrl(name: ImageName, width: number, ext: 'png' | 'webp' | '
 }
 
 export const heroAvatar = image('avatar-hero');
-export const heroAvatarChrome = image('avatar-hero-chrome');
 export const deskAvatar = image('avatar-desk');
+// Note: avatar-hero-chrome is intentionally not exposed via image() — it exists
+// as a single WebGL texture only, so it has no AVIF/PNG variants to build a
+// srcset from. Reach it through imageUrl('avatar-hero-chrome', 1024, 'webp').
 export const faceAvatars = [image('avatar-face-1'), image('avatar-face-2'), image('avatar-face-3')];

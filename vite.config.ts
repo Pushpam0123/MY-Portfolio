@@ -13,16 +13,14 @@ export default defineConfig({
   build: {
     target: 'es2022',
     cssTarget: 'chrome100',
-    rollupOptions: {
-      output: {
-        // Three.js is by far the heaviest dependency; splitting it keeps the
-        // initial chunk small enough that the loader can finish quickly.
-        manualChunks: {
-          three: ['three', '@react-three/fiber', '@react-three/drei'],
-          gsap: ['gsap'],
-        },
-      },
-    },
-    chunkSizeWarningLimit: 900,
+    /*
+     * Deliberately no manualChunks. Forcing three/@react-three into a named
+     * chunk drags their shared dependencies — React itself — in with them, so
+     * the entry chunk ends up importing that chunk statically and Vite emits a
+     * modulepreload for it. That silently undoes the lazy boundary around
+     * AvatarScene. Letting Rollup split on the dynamic import instead keeps
+     * React in the entry and Three.js strictly on demand.
+     */
+    chunkSizeWarningLimit: 1200,
   },
 });

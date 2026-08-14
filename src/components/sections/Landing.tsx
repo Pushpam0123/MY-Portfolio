@@ -1,12 +1,20 @@
-import { useRef, useState } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import { gsap, ScrollSmoother, SplitText, useGSAP } from '@/lib/gsap';
 import { profile } from '@/data/profile';
 import { useLoading } from '@/context/LoadingContext';
 import { useParallaxLayers } from '@/hooks/useParallaxLayers';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import { MagneticButton } from '@/components/ui/MagneticButton';
-import { AvatarScene } from '@/three/AvatarScene';
+import { StaticAvatar } from '@/components/ui/StaticAvatar';
 import './Landing.css';
+
+/*
+ * Three.js is ~1 MB minified — by far the heaviest thing on the page, and the
+ * hero must not wait on it. Loading the scene lazily keeps it out of the initial
+ * bundle: the static portrait paints immediately and the WebGL version swaps in
+ * once it arrives. Visitors on reduced motion or without WebGL never fetch it.
+ */
+const AvatarScene = lazy(() => import('@/three/AvatarScene'));
 
 export function Landing() {
   const scope = useParallaxLayers<HTMLElement>();
@@ -66,13 +74,15 @@ export function Landing() {
       if (!el) return;
 
       const tl = gsap.timeline({ repeat: -1 });
-      tl.to({}, { duration: 2.4 }) // hold on the current role
-        .to(el, { yPercent: -110, opacity: 0, duration: 0.42, ease: 'power3.in' })
+      // Long hold, quick swap — the label should read as settled text most of
+      // the time rather than something perpetually in motion.
+      tl.to({}, { duration: 3.2 })
+        .to(el, { yPercent: -110, opacity: 0, duration: 0.34, ease: 'power3.in' })
         .call(() => setRoleIndex((i) => (i + 1) % profile.roles.length))
         .fromTo(
           el,
           { yPercent: 110, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 0.55, ease: 'expo.out' },
+          { yPercent: 0, opacity: 1, duration: 0.45, ease: 'expo.out' },
         );
 
       return () => tl.kill();
@@ -149,7 +159,13 @@ export function Landing() {
         {/* Fastest layer — the portrait lifts off the page as you scroll. */}
         <div className="hero__visual" data-parallax="0.24" data-cursor="drag">
           <div className="hero__visual-glow" aria-hidden="true" />
-          <AvatarScene />
+          {reduced ? (
+            <StaticAvatar />
+          ) : (
+            <Suspense fallback={<StaticAvatar />}>
+              <AvatarScene />
+            </Suspense>
+          )}
           <p className="hero__hint mono-label" aria-hidden="true">
             Move your cursor across the portrait
           </p>
