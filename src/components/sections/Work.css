@@ -1,0 +1,248 @@
+.work {
+  position: relative;
+}
+
+.work__panels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-9);
+}
+
+.work__panel {
+  position: relative;
+  padding-block: var(--s-7);
+}
+
+.work__panel-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+
+/* Alternate the media side so the two panels do not read as a list. */
+.work__panel:nth-child(even) .work__media {
+  order: 2;
+}
+
+/* ---- Media plate ---- */
+.work__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1px solid var(--c-line-soft);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(124, 77, 255, 0.16), transparent 60%),
+    linear-gradient(165deg, var(--c-surface) 0%, var(--c-base-deep) 100%);
+}
+
+.work__media-inner {
+  position: absolute;
+  inset: -8%;
+  display: grid;
+  place-items: center;
+  padding: var(--s-7);
+}
+
+.work__media-index {
+  font-family: var(--f-display);
+  font-size: clamp(6rem, 16vw, 12rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(196, 181, 253, 0.28);
+}
+
+.work__media-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 62%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--panel-accent, var(--c-violet)) 0%, transparent 68%);
+  opacity: 0.3;
+  filter: blur(46px);
+}
+
+.work__media-stack {
+  position: absolute;
+  left: var(--s-6);
+  bottom: var(--s-7);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  max-width: 78%;
+}
+
+.work__media-stack li {
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line);
+  background: rgba(8, 7, 12, 0.55);
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--c-faint);
+}
+
+/* ---- Copy ---- */
+.work__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.work__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.work__index {
+  color: var(--c-violet-bright);
+}
+
+.work__title {
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  font-weight: 750;
+  font-stretch: 106%;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--c-text);
+  max-width: 18ch;
+}
+
+.work__summary {
+  font-size: var(--t-body);
+  color: var(--c-text-soft);
+}
+
+.work__points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  font-size: var(--t-body);
+  color: var(--c-muted);
+}
+
+.work__points li {
+  position: relative;
+  padding-left: var(--s-5);
+  text-wrap: pretty;
+}
+
+.work__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 10px;
+  height: 1px;
+  background: var(--panel-accent, var(--c-violet));
+}
+
+/* ---- Metrics ---- */
+.work__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-7);
+  margin-top: var(--s-2);
+  padding: var(--s-5) 0;
+  border-block: 1px solid var(--c-line-soft);
+}
+
+.work__metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.work__metric-value {
+  font-family: var(--f-display);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 780;
+  font-stretch: 110%;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text);
+}
+
+.work__metric-label {
+  font-size: 0.66rem;
+}
+
+/* ---- Chips + link ---- */
+.work__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.work__chip {
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line);
+  font-size: var(--t-small);
+  color: var(--c-text-soft);
+}
+
+.work__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  align-self: flex-start;
+  margin-top: var(--s-2);
+  padding-bottom: 2px;
+  font-size: var(--t-body);
+  color: var(--c-lilac);
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    gap var(--d-fast) var(--e-out);
+}
+
+.work__link:hover {
+  border-bottom-color: var(--c-lilac);
+  gap: var(--s-4);
+}
+
+/* The stack is duplicated on the media plate at wide sizes; hide one. */
+@media (max-width: 1023px) {
+  .work__panel-inner {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  .work__panel:nth-child(even) .work__media {
+    order: 0;
+  }
+
+  .work__media {
+    aspect-ratio: 16 / 10;
+    max-height: 320px;
+  }
+
+  .work__media-stack {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .work__metrics {
+    gap: var(--s-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* At desktop the plate carries the stack, so the inline chips are redundant. */
+  .work__chips {
+    display: none;
+  }
+}

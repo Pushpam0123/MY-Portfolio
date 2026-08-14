@@ -31,9 +31,15 @@
   max-width: 24ch;
 }
 
-/* SplitText writes this class onto each generated line. */
+/*
+ * SplitText writes this class onto each generated line, and `mask: 'lines'`
+ * wraps each one in an overflow-hidden box sized to the line. That box crops
+ * descenders ("p", "g", "y"), so pad the line to give them room — the wrapper
+ * is height:auto and grows with it.
+ */
 .sec-head__line {
   display: block;
+  padding-bottom: 0.14em;
   will-change: transform;
 }
 

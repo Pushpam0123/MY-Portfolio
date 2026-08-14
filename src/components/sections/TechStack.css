@@ -1,0 +1,73 @@
+.stack {
+  position: relative;
+  overflow: hidden;
+}
+
+.stack__rails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.stack__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.stack__group-title {
+  padding-inline: var(--gutter);
+  color: var(--c-faint);
+}
+
+.stack__rail {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--s-1);
+  /* Fade the rails into the page edges so they read as continuous. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.stack__track {
+  display: flex;
+  gap: var(--s-3);
+  width: max-content;
+  will-change: transform;
+}
+
+.stack__chip {
+  flex-shrink: 0;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line-soft);
+  background: linear-gradient(160deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.4) 100%);
+  font-size: var(--t-small);
+  white-space: nowrap;
+  color: var(--c-text-soft);
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.stack__chip:hover {
+  border-color: rgba(124, 77, 255, 0.5);
+  color: var(--c-text);
+}
+
+/* Without animation the rails must not overflow — wrap them into a static grid. */
+@media (prefers-reduced-motion: reduce) {
+  .stack__rail {
+    mask-image: none;
+    padding-inline: var(--gutter);
+  }
+
+  .stack__track {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* The duplicate copy exists only to make the loop seamless. */
+  .stack__track .stack__chip[aria-hidden='true'] {
+    display: none;
+  }
+}

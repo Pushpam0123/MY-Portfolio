@@ -1,0 +1,153 @@
+.about {
+  position: relative;
+  overflow: hidden;
+}
+
+.about__bloom {
+  top: 10%;
+  left: -12%;
+  width: min(50vw, 620px);
+  aspect-ratio: 1;
+  opacity: 0.55;
+}
+
+.about__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+
+/* ---- Portrait ---- */
+.about__visual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.about__portrait {
+  position: relative;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--c-surface) 0%, var(--c-base) 100%);
+  border: 1px solid var(--c-line-soft);
+  box-shadow: var(--sh-card);
+}
+
+.about__portrait img {
+  width: 100%;
+  height: auto;
+}
+
+/* Violet wash so the desk render sits in the page palette. */
+.about__portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(124, 77, 255, 0.12) 100%);
+  pointer-events: none;
+}
+
+.about__caption {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.about__caption::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-live);
+  flex-shrink: 0;
+}
+
+/* ---- Copy ---- */
+.about__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding-top: var(--s-4);
+}
+
+.about__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.about__meta .mono-label {
+  color: var(--c-violet-bright);
+}
+
+.about__title {
+  max-width: 18ch;
+  margin-bottom: var(--s-2);
+}
+
+/* SplitText line wrapper — padded so the mask box clears descenders. */
+.about__line {
+  display: block;
+  padding-bottom: 0.12em;
+  will-change: transform;
+}
+
+/* ---- Stats ---- */
+.about__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-5);
+  margin-top: var(--s-5);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--c-line-soft);
+}
+
+.about__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.about__stat-value {
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  font-weight: 750;
+  font-stretch: 108%;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  background: var(--g-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.about__stat-label {
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 1023px) {
+  .about__grid {
+    grid-template-columns: 1fr;
+    gap: var(--s-7);
+  }
+
+  .about__visual {
+    max-width: 420px;
+  }
+
+  .about__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-6) var(--s-5);
+  }
+}
+
+@media (max-width: 479px) {
+  .about__stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

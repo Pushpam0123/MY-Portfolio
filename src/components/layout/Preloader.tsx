@@ -31,11 +31,26 @@ export function Preloader() {
         return images.filter((img) => img.complete).length / images.length;
       };
 
+      const done = () => {
+        document.body.dataset.loading = 'false';
+        finish();
+        ScrollTrigger.refresh();
+      };
+
+      /*
+       * Failsafe. GSAP's ticker runs on requestAnimationFrame, which browsers
+       * throttle to zero in a background or occluded tab — and the preloader
+       * covers the entire site. Without this, a visitor who opens the page in a
+       * background tab (or hits any error mid-timeline) is left staring at a
+       * loader that can never finish. setTimeout still fires when rAF does not,
+       * so it guarantees the content is always reachable.
+       */
+      const failsafe = window.setTimeout(done, 6000);
+
       const tl = gsap.timeline({
         onComplete: () => {
-          document.body.dataset.loading = 'false';
-          finish();
-          ScrollTrigger.refresh();
+          window.clearTimeout(failsafe);
+          done();
         },
       });
 
@@ -43,6 +58,7 @@ export function Preloader() {
         setCount(100);
         tl.to(root.current, { autoAlpha: 0, duration: 0.3 });
         return () => {
+          window.clearTimeout(failsafe);
           tl.kill();
           document.body.dataset.loading = 'false';
         };
@@ -80,6 +96,7 @@ export function Preloader() {
         .set(root.current, { autoAlpha: 0 });
 
       return () => {
+        window.clearTimeout(failsafe);
         tl.kill();
         document.body.dataset.loading = 'false';
       };

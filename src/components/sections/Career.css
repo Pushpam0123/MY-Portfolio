@@ -1,0 +1,221 @@
+.career {
+  position: relative;
+}
+
+.career__list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+  padding-left: 0;
+}
+
+/* ---- Progress rail ---- */
+.career__rail {
+  position: absolute;
+  left: 172px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--c-line);
+}
+
+.career__rail-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--c-violet-bright), var(--c-violet));
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+/* ---- Entry ---- */
+.career__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 148px 1fr;
+  column-gap: var(--s-7);
+  align-items: start;
+}
+
+.career__node {
+  position: absolute;
+  left: 172px;
+  top: 10px;
+  width: 11px;
+  height: 11px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: var(--c-base);
+  border: 1px solid var(--c-line);
+  transition:
+    background-color var(--d-mid) var(--e-out),
+    border-color var(--d-mid) var(--e-out),
+    box-shadow var(--d-mid) var(--e-out);
+}
+
+.career__item.is-active .career__node {
+  background: var(--c-violet-bright);
+  border-color: var(--c-violet-bright);
+  box-shadow: 0 0 0 5px rgba(168, 85, 247, 0.16);
+}
+
+.career__node-pulse {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: var(--c-live);
+  animation: career-pulse 2.4s var(--e-in-out) infinite;
+}
+
+@keyframes career-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(74, 222, 128, 0);
+  }
+}
+
+.career__period {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-2);
+  padding-top: 4px;
+  text-align: left;
+}
+
+.career__badge {
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--r-pill);
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-live);
+}
+
+/* ---- Card ---- */
+.career__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-5) var(--s-6);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-line-soft);
+  background: linear-gradient(160deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.3) 100%);
+  transition:
+    border-color var(--d-mid) var(--e-out),
+    box-shadow var(--d-mid) var(--e-out);
+}
+
+.career__item.is-active .career__card {
+  border-color: rgba(124, 77, 255, 0.34);
+  box-shadow: var(--sh-card);
+}
+
+.career__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.career__org {
+  font-family: var(--f-display);
+  font-size: var(--t-h3);
+  font-weight: 720;
+  font-stretch: 106%;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--c-text);
+}
+
+.career__role {
+  font-size: var(--t-body-lg);
+  font-weight: 500;
+  color: var(--c-lilac);
+}
+
+.career__place {
+  margin-top: var(--s-1);
+}
+
+.career__points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--c-line-soft);
+  font-size: var(--t-body);
+  line-height: 1.65;
+  color: var(--c-muted);
+}
+
+.career__points li {
+  position: relative;
+  padding-left: var(--s-5);
+  text-wrap: pretty;
+}
+
+.career__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 10px;
+  height: 1px;
+  background: var(--c-violet);
+}
+
+/* Education entries read as secondary to the work history. */
+.career__item--education .career__card {
+  background: transparent;
+  border-style: dashed;
+}
+
+.career__item--education .career__org {
+  font-size: var(--t-h4);
+}
+
+@media (max-width: 1023px) {
+  .career__item {
+    grid-template-columns: 1fr;
+    row-gap: var(--s-4);
+    padding-left: var(--s-6);
+  }
+
+  .career__rail {
+    left: 4px;
+  }
+
+  .career__node {
+    left: 4px;
+    top: 6px;
+  }
+
+  .career__period {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--s-4);
+  }
+}
+
+@media (max-width: 479px) {
+  .career__card {
+    padding: var(--s-5) var(--s-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .career__rail-fill {
+    transform: scaleY(1);
+  }
+
+  .career__node-pulse {
+    animation: none;
+  }
+}

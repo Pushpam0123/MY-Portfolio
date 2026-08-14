@@ -31,6 +31,11 @@ export default tseslint.config(
   {
     files: ['scripts/**/*.mjs'],
     extends: [js.configs.recommended],
-    languageOptions: { globals: globals.node, sourceType: 'module' },
+    languageOptions: {
+      // Node for the script body; browser globals too, because the callbacks
+      // passed to page.evaluate() are serialised and run inside the page.
+      globals: { ...globals.node, ...globals.browser },
+      sourceType: 'module',
+    },
   },
 );

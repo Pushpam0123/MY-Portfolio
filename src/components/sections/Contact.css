@@ -1,0 +1,256 @@
+.contact {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact__bloom {
+  bottom: -18%;
+  left: 28%;
+  width: min(60vw, 760px);
+  aspect-ratio: 1;
+  opacity: 0.7;
+}
+
+.contact__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: start;
+}
+
+/* ---- Lead column ---- */
+.contact__lead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-5);
+}
+
+/* Sized so "SOMETHING" — the widest line — stays inside the left column. */
+.contact__headline {
+  font-size: clamp(2.25rem, 5.4vw, 4.75rem);
+  font-stretch: 108%;
+  background: var(--g-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.contact__blurb {
+  max-width: 46ch;
+}
+
+/* ---- Big email ---- */
+.contact__mail {
+  display: block;
+  max-width: 100%;
+  margin-top: var(--s-2);
+  overflow: hidden;
+  font-family: var(--f-mono);
+  font-size: clamp(1rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.02em;
+  color: var(--c-lilac);
+  word-break: break-all;
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.contact__mail:hover {
+  color: var(--c-text);
+}
+
+.contact__mail-char {
+  display: inline-block;
+  will-change: transform;
+  transition: transform var(--d-fast) var(--e-out);
+}
+
+/* Per-character lift on hover — the "distort" without a shader. */
+.contact__mail:hover .contact__mail-char:nth-child(odd) {
+  transform: translateY(-3px);
+}
+
+.contact__mail:hover .contact__mail-char:nth-child(even) {
+  transform: translateY(3px);
+}
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.contact__copy {
+  padding: 0.5rem 1.05rem;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-pill);
+  font-size: var(--t-small);
+  color: var(--c-muted);
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.contact__copy:hover {
+  border-color: var(--c-violet);
+  color: var(--c-text);
+}
+
+.contact__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
+  margin-top: var(--s-3);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--c-line-soft);
+  width: 100%;
+}
+
+.contact__socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-body);
+  color: var(--c-muted);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.contact__socials a:hover {
+  color: var(--c-violet-bright);
+}
+
+/* ---- Form panel ---- */
+.contact__panel {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--c-line-soft);
+  background: linear-gradient(165deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.5) 100%);
+  box-shadow: var(--sh-card);
+}
+
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.contact__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.contact__field label {
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-faint);
+}
+
+.contact__field input,
+.contact__field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  background: rgba(8, 7, 12, 0.55);
+  font-size: var(--t-body);
+  color: var(--c-text);
+  resize: vertical;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+}
+
+.contact__field input::placeholder,
+.contact__field textarea::placeholder {
+  color: var(--c-faint);
+}
+
+.contact__field input:focus,
+.contact__field textarea:focus {
+  border-color: var(--c-violet);
+  background: rgba(124, 77, 255, 0.06);
+}
+
+/* Show the browser's validity state, but only after the user has engaged. */
+.contact__field input:user-invalid,
+.contact__field textarea:user-invalid {
+  border-color: var(--c-error);
+}
+
+.contact__honey {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.contact__status {
+  min-height: 1.4em;
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+.contact__status--sent {
+  color: var(--c-live);
+}
+
+.contact__status--error {
+  color: var(--c-error);
+}
+
+.contact__fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+}
+
+.contact__fallback-title {
+  font-family: var(--f-display);
+  font-size: var(--t-h3);
+  font-weight: 720;
+  font-stretch: 106%;
+  letter-spacing: -0.025em;
+  color: var(--c-text);
+}
+
+.contact__fallback-note {
+  margin-top: var(--s-2);
+}
+
+.contact__fallback-note a {
+  color: var(--c-lilac);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--d-fast) var(--e-out);
+}
+
+.contact__fallback-note a:hover {
+  border-bottom-color: var(--c-lilac);
+}
+
+.contact__fallback code {
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--r-sm);
+  background: rgba(124, 77, 255, 0.12);
+  font-family: var(--f-mono);
+  font-size: 0.85em;
+  color: var(--c-lilac);
+}
+
+@media (max-width: 1023px) {
+  .contact__inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact__mail:hover .contact__mail-char {
+    transform: none;
+  }
+}
