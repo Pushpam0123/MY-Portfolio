@@ -104,9 +104,15 @@ const main = async () => {
     // Wait for the scroll to actually land before timing anything. Sections
     // that mount a canvas on entry can reflow mid-scroll, and a fixed delay
     // silently captures the wrong part of the page when that happens.
+    // Compare against the reachable position: the last section cannot scroll to
+    // its own offset once the document bottom is hit, and treating that as a
+    // failure is a false positive.
     await page
       .waitForFunction(
-        (target) => Math.abs(window.scrollY - target) < 4,
+        (target) => {
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          return Math.abs(window.scrollY - Math.min(target, max)) < 4;
+        },
         { timeout: 8000, polling: 100 },
         Math.max(0, found - 8),
       )

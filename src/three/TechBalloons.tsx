@@ -1,140 +1,83 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, Lightformer, useTexture } from '@react-three/drei';
-import {
-  BallCollider,
-  Physics,
-  RigidBody,
-  type RapierRigidBody,
-} from '@react-three/rapier';
 import * as THREE from 'three';
-import { techBalls, type TechBall } from '@/data/skills';
+import { techBalls } from '@/data/skills';
 import { techTextureUrl } from '@/assets/images';
+import {
+  createBody,
+  defaultOptions,
+  makeRng,
+  stepSolver,
+  type SphereBody,
+} from './spherePhysics';
 
 /**
  * Physics-driven tech stack.
  *
- * The world runs at zero gravity; what keeps the spheres on screen is a
- * per-frame impulse toward the origin. That is deliberately not a container of
- * walls — an attractor lets the cluster breathe, drift apart when shoved, and
- * gather again, which reads as buoyant rather than boxed in.
+ * Zero gravity plus a spring toward the origin: the spheres hang together as a
+ * cluster, scatter when the cursor drives through them, then re-gather. The
+ * cursor is a real collider in the simulation, not a visual effect layered on
+ * top, so the scattering is genuinely solved rather than faked.
  *
- * The cursor is a real kinematic body, not a post-hoc effect: it collides with
- * the spheres, so the scattering is solved by the simulation.
+ * The solver lives in ./spherePhysics — see the note there on why this does not
+ * use a physics engine.
  */
-
-/** Impulse pulling each body back toward the centre, scaled by its mass. */
-const ATTRACTION = 0.42;
-
-function Balloon({ ball, position }: { ball: TechBall; position: [number, number, number] }) {
-  const body = useRef<RapierRigidBody>(null);
-  const texture = useTexture(techTextureUrl(ball.id));
-
-  useMemo(() => {
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = 4;
-  }, [texture]);
-
-  const vec = useMemo(() => new THREE.Vector3(), []);
-
-  useFrame((_, delta) => {
-    const api = body.current;
-    if (!api) return;
-    // Clamp: a long frame (tab regains focus) would otherwise fire one huge
-    // impulse and fling the whole cluster off screen.
-    const step = Math.min(delta, 0.1);
-    const t = api.translation();
-    vec.set(t.x, t.y, t.z).negate().multiplyScalar(step * ATTRACTION * ball.scale);
-    api.applyImpulse(vec, true);
-  });
-
-  return (
-    <RigidBody
-      ref={body}
-      position={position}
-      linearDamping={1.6}
-      angularDamping={0.6}
-      friction={0.12}
-      restitution={0.35}
-      colliders={false}
-    >
-      <BallCollider args={[ball.scale]} />
-      <mesh scale={ball.scale} castShadow receiveShadow>
-        <sphereGeometry args={[1, 42, 42]} />
-        <meshPhysicalMaterial
-          map={texture}
-          roughness={0.18}
-          metalness={0}
-          clearcoat={1}
-          clearcoatRoughness={0.12}
-          iridescence={0.85}
-          iridescenceIOR={1.28}
-          envMapIntensity={1.15}
-        />
-      </mesh>
-    </RigidBody>
-  );
-}
-
-/**
- * The cursor's body in the simulation. Kinematic, so the spheres cannot push it
- * back — it moves exactly where the pointer is and they get out of the way.
- */
-function Pointer() {
-  const body = useRef<RapierRigidBody>(null);
-  const target = useMemo(() => new THREE.Vector3(), []);
-  const { viewport } = useThree();
-
-  useFrame(({ pointer }) => {
-    target.set((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0);
-    body.current?.setNextKinematicTranslation(target);
-  });
-
-  return (
-    <RigidBody type="kinematicPosition" colliders={false} ref={body}>
-      <BallCollider args={[0.85]} />
-      <mesh>
-        <sphereGeometry args={[0.42, 24, 24]} />
-        <meshBasicMaterial color="#c9a6ff" toneMapped={false} />
-      </mesh>
-      <pointLight intensity={9} distance={7} color="#a855f7" />
-    </RigidBody>
-  );
-}
-
-/**
- * Start the spheres on a loose sphere shell rather than a grid, so the first
- * frames look like a cluster settling instead of a formation collapsing.
- */
-function useStartPositions(count: number) {
-  return useMemo(() => {
-    const positions: [number, number, number][] = [];
-    // Golden-angle distribution — evenly spread without visible banding.
-    const golden = Math.PI * (3 - Math.sqrt(5));
-    for (let i = 0; i < count; i += 1) {
-      const y = 1 - (i / Math.max(1, count - 1)) * 2;
-      const radius = Math.sqrt(Math.max(0, 1 - y * y));
-      const theta = golden * i;
-      const spread = 5.5;
-      positions.push([
-        Math.cos(theta) * radius * spread,
-        y * spread * 0.7,
-        Math.sin(theta) * radius * spread * 0.6,
-      ]);
-    }
-    return positions;
-  }, [count]);
-}
 
 /** Approximate width of the settled cluster, in world units. */
 const CLUSTER_WIDTH = 15;
 
+/** Fixed timestep; the frame's elapsed time is consumed in chunks of this. */
+const FIXED_STEP = 1 / 120;
+
+function useBallTextures() {
+  const urls = useMemo(() => techBalls.map((ball) => techTextureUrl(ball.id)), []);
+  const textures = useTexture(urls);
+
+  useMemo(() => {
+    for (const texture of textures) {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = 4;
+    }
+  }, [textures]);
+
+  return textures;
+}
+
 /**
- * Pulls the camera back until the whole cluster fits horizontally.
+ * Starting layout: a golden-angle shell rather than a grid, so the opening
+ * frames read as a cluster settling instead of a formation collapsing.
+ */
+function useStartBodies(): SphereBody[] {
+  return useMemo(() => {
+    const rng = makeRng(20260815);
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    const count = techBalls.length;
+
+    return techBalls.map((ball, i) => {
+      const y = 1 - (i / Math.max(1, count - 1)) * 2;
+      const ring = Math.sqrt(Math.max(0, 1 - y * y));
+      const theta = golden * i;
+      const spread = 5.4;
+
+      return createBody(
+        new THREE.Vector3(
+          Math.cos(theta) * ring * spread,
+          y * spread * 0.72,
+          Math.sin(theta) * ring * spread * 0.55,
+        ),
+        ball.scale,
+        rng,
+      );
+    });
+  }, []);
+}
+
+/**
+ * Pulls the camera back until the cluster fits.
  *
  * A perspective camera's `fov` is vertical, so on a narrow viewport the visible
- * width collapses and the outer spheres get cropped off both edges. Solving for
- * the distance that fits CLUSTER_WIDTH keeps the composition intact on a phone.
+ * width collapses and the outer spheres get cropped off both edges.
  */
 function FitCamera() {
   const { camera, size } = useThree();
@@ -144,9 +87,9 @@ function FitCamera() {
     const aspect = size.width / Math.max(1, size.height);
     const vFov = (cam.fov * Math.PI) / 180;
 
-    // On portrait screens, fitting the cluster's full width shrinks it to a
-    // speck marooned in empty space. Framing a narrower slice keeps the spheres
-    // large and lets the outermost ones run off the edges — which is how the
+    // On portrait screens, fitting the full width shrinks the cluster to a speck
+    // marooned in empty space. Framing a narrower slice keeps the spheres large
+    // and lets the outermost ones run off the edges — which is how the
     // composition is meant to read anyway.
     const target = aspect < 1 ? CLUSTER_WIDTH * 0.7 : CLUSTER_WIDTH;
     const needed = target / 2 / (Math.tan(vFov / 2) * aspect);
@@ -158,9 +101,101 @@ function FitCamera() {
   return null;
 }
 
-function Scene() {
-  const positions = useStartPositions(techBalls.length);
+function Cluster() {
+  const bodies = useStartBodies();
+  const textures = useBallTextures();
+  const meshes = useRef<(THREE.Mesh | null)[]>([]);
+  const cursor = useRef<THREE.Mesh>(null);
 
+  const pointerWorld = useMemo(() => new THREE.Vector3(), []);
+  const pointerPrev = useMemo(() => new THREE.Vector3(), []);
+  const pointerVelocity = useMemo(() => new THREE.Vector3(), []);
+  const pointerActive = useRef(false);
+  const accumulator = useRef(0);
+
+  useFrame(({ pointer, viewport }, delta) => {
+    // Project the pointer onto the z=0 plane in world units.
+    pointerWorld.set((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0);
+
+    // A pointer parked exactly at the origin means "never moved" — R3F's default.
+    // Treating that as a collider would punch a hole in the middle of the cluster
+    // before the visitor has touched anything.
+    if (!pointerActive.current && (pointer.x !== 0 || pointer.y !== 0)) {
+      pointerActive.current = true;
+      pointerPrev.copy(pointerWorld);
+    }
+
+    // Clamp: a long frame (tab regains focus) would otherwise teleport the
+    // cursor across the scene and fling everything off screen.
+    const frame = Math.min(delta, 0.05);
+
+    if (frame > 0) {
+      pointerVelocity.subVectors(pointerWorld, pointerPrev).divideScalar(frame);
+    }
+    pointerPrev.copy(pointerWorld);
+
+    // Fixed-timestep integration, so behaviour is identical at 60 and 144 Hz.
+    accumulator.current = Math.min(accumulator.current + frame, 0.25);
+    while (accumulator.current >= FIXED_STEP) {
+      stepSolver(
+        bodies,
+        pointerActive.current ? pointerWorld : null,
+        pointerVelocity,
+        FIXED_STEP,
+        defaultOptions,
+      );
+      accumulator.current -= FIXED_STEP;
+    }
+
+    for (let i = 0; i < bodies.length; i += 1) {
+      const mesh = meshes.current[i];
+      if (!mesh) continue;
+      mesh.position.copy(bodies[i].position);
+      mesh.quaternion.copy(bodies[i].quaternion);
+    }
+
+    if (cursor.current) {
+      cursor.current.position.copy(pointerWorld);
+      cursor.current.visible = pointerActive.current;
+    }
+  });
+
+  return (
+    <>
+      {techBalls.map((ball, i) => (
+        <mesh
+          key={ball.id}
+          ref={(node) => {
+            meshes.current[i] = node;
+          }}
+          scale={ball.scale}
+          castShadow
+          receiveShadow
+        >
+          <sphereGeometry args={[1, 42, 42]} />
+          <meshPhysicalMaterial
+            map={textures[i]}
+            roughness={0.18}
+            metalness={0}
+            clearcoat={1}
+            clearcoatRoughness={0.12}
+            iridescence={0.85}
+            iridescenceIOR={1.28}
+            envMapIntensity={1.15}
+          />
+        </mesh>
+      ))}
+
+      <mesh ref={cursor} visible={false}>
+        <sphereGeometry args={[0.44, 24, 24]} />
+        <meshBasicMaterial color="#c9a6ff" toneMapped={false} />
+        <pointLight intensity={8} distance={7} color="#a855f7" />
+      </mesh>
+    </>
+  );
+}
+
+function Scene() {
   return (
     <>
       <FitCamera />
@@ -168,12 +203,7 @@ function Scene() {
       <spotLight position={[16, 16, 14]} angle={0.35} penumbra={1} intensity={1.4} castShadow />
       <directionalLight position={[-10, -6, -8]} intensity={0.35} />
 
-      <Physics gravity={[0, 0, 0]} timeStep="vary">
-        <Pointer />
-        {techBalls.map((ball, i) => (
-          <Balloon key={ball.id} ball={ball} position={positions[i]} />
-        ))}
-      </Physics>
+      <Cluster />
 
       {/*
         Environment built from Lightformers rather than a `preset`. Presets are
@@ -183,7 +213,13 @@ function Scene() {
       <Environment resolution={256}>
         <Lightformer intensity={2.4} form="circle" scale={12} position={[0, 6, -9]} />
         <Lightformer intensity={1.6} form="ring" scale={9} position={[-8, 2, -6]} color="#c4b5fd" />
-        <Lightformer intensity={1.2} form="rect" scale={[14, 6, 1]} position={[6, -5, -8]} color="#7c4dff" />
+        <Lightformer
+          intensity={1.2}
+          form="rect"
+          scale={[14, 6, 1]}
+          position={[6, -5, -8]}
+          color="#7c4dff"
+        />
         <Lightformer intensity={0.9} form="rect" scale={[12, 12, 1]} position={[0, 0, 10]} />
       </Environment>
     </>
@@ -196,7 +232,7 @@ export default function TechBalloons() {
       className="stack__canvas"
       shadows
       dpr={[1, 1.75]}
-      camera={{ position: [0, 0, 18], fov: 34, near: 1, far: 50 }}
+      camera={{ position: [0, 0, 18], fov: 34, near: 1, far: 60 }}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
       <Suspense fallback={null}>

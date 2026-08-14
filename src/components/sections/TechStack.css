@@ -63,12 +63,6 @@
 }
 
 .stack__hint {
-  position: absolute;
-  left: 50%;
-  bottom: var(--s-6);
-  transform: translateX(-50%);
-  z-index: 2;
-  white-space: nowrap;
   color: var(--c-faint);
   pointer-events: none;
 }

@@ -81,10 +81,6 @@ export function TechStack() {
               <TechBalloons />
             </Suspense>
           )}
-
-          <p className="stack__hint mono-label" aria-hidden="true">
-            {isTouch ? 'Touch to push them around' : 'Move your cursor through them'}
-          </p>
         </div>
       ) : (
         <div className="shell">
@@ -94,6 +90,12 @@ export function TechStack() {
 
       {interactive && (
         <div className="shell stack__footer">
+          {/* Below the stage, not over it — floating on the canvas put it behind
+              whichever sphere happened to drift into that corner. */}
+          <p className="stack__hint mono-label" aria-hidden="true">
+            {isTouch ? 'Touch to push them around' : 'Move your cursor through them'}
+          </p>
+
           {/*
             The spheres can only carry technologies that have a logo, which
             leaves out the AI and automation work — the most important part of

@@ -81,6 +81,11 @@ It produces:
 - `avatar-desk` — the seated scene for the About section
 - `avatar-face-1..3` — the three expressions cut out of the contact sheet, one
   per "What I Do" card
+- `tech-<id>` — equirectangular sphere textures for the Tech Stack scene, built
+  from `simple-icons` brand paths (or a wordmark where simple-icons carries no
+  logo). The logo repeats three times around the equator so a mark faces the
+  camera from any angle; poles stay blank because that is where equirectangular
+  distortion is worst. Driven by `techBalls` in `src/data/skills.ts`.
 - `public/noise.png`, `public/og.png`, and the résumé copied to `public/resume/`
 - `manifest.ts` — the widths actually rendered, so `srcset` never advertises a
   size that was not produced
@@ -125,8 +130,8 @@ OG, Twitter, JSON-LD), `public/sitemap.xml`, and `public/robots.txt`.
 ## Accessibility & motion
 
 - `prefers-reduced-motion` is honoured throughout: smooth scrolling off, no
-  pinning, no cursor-follow, marquees become a static wrapped grid, and the hero
-  renders a plain `<img>` instead of the WebGL scene.
+  pinning, no cursor-follow, the hero renders a plain `<img>` instead of the
+  WebGL scene, and the Tech Stack physics scene becomes a static chip grid.
 - The WebGL hero falls back to a static portrait on three conditions — no WebGL
   support, reduced motion, or a runtime context loss.
 - `node scripts/audit.mjs` reports zero axe violations (WCAG 2.1 A/AA +
@@ -135,9 +140,13 @@ OG, Twitter, JSON-LD), `public/sitemap.xml`, and `public/robots.txt`.
 
 ## Performance notes
 
-- Three.js (~234 kB gzip) is behind a `React.lazy` boundary, so it is not in the
-  initial bundle and never downloads for reduced-motion or non-WebGL visitors.
-  Initial JS is ~132 kB gzip.
+- Three.js (~232 kB gzip) sits behind `React.lazy` boundaries, shared by the hero
+  avatar and the Tech Stack scene. It is not in the initial bundle and never
+  downloads for reduced-motion or non-WebGL visitors. Initial JS is ~137 kB gzip.
+- The Tech Stack physics is a ~21 kB gzip hand-written sphere solver
+  (`src/three/spherePhysics.ts`). Rapier was used first and dropped: it ships its
+  WASM base64-inlined, which cost 865 kB gzip for behaviour that, with only
+  spheres involved, is sixty lines of maths.
 - `vite.config.ts` deliberately sets **no** `manualChunks`: naming a Three.js
   chunk pulls React in with it, which makes the entry chunk import it statically
   and defeats the lazy boundary.
