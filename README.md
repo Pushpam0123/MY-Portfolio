@@ -83,9 +83,11 @@ It produces:
   per "What I Do" card
 - `tech-<id>` — equirectangular sphere textures for the Tech Stack scene, built
   from `simple-icons` brand paths (or a wordmark where simple-icons carries no
-  logo). The logo repeats three times around the equator so a mark faces the
-  camera from any angle; poles stay blank because that is where equirectangular
-  distortion is worst. Driven by `techBalls` in `src/data/skills.ts`.
+  logo), on a pale tint of the brand hue so the balls are distinguishable at a
+  glance rather than reading as one mass of white pearls. The mark repeats twice,
+  half a turn apart, and the solver steers the nearest one back to face the
+  camera; poles stay blank because that is where equirectangular distortion is
+  worst. Driven by `techBalls` in `src/data/skills.ts`.
 - `public/noise.png`, `public/og.png`, and the résumé copied to `public/resume/`
 - `manifest.ts` — the widths actually rendered, so `srcset` never advertises a
   size that was not produced
@@ -136,7 +138,12 @@ OG, Twitter, JSON-LD), `public/sitemap.xml`, and `public/robots.txt`.
   support, reduced motion, or a runtime context loss.
 - `node scripts/audit.mjs` reports zero axe violations (WCAG 2.1 A/AA +
   best-practice), one `h1`, no skipped heading levels, and a visible focus ring on
-  every stop.
+  every stop. It runs at **both 1280×900 and 390×844** — type is sized with
+  `clamp()` and WCAG's contrast threshold steps down for large text, so a colour
+  can pass at desktop width and fail AA on a phone.
+- Lighthouse (12, against `npm run preview`): desktop 98 / 100 / 100 / 100,
+  mobile ~65 / 100 / 100 / 100. Mobile performance is bound by client-side JS
+  under CPU throttling rather than by bytes — see `HANDOFF.md` §7.5.
 
 ## Performance notes
 
