@@ -66,6 +66,24 @@ export function techTextureUrl(id: string): string {
   return url(`tech-${id}`, 1536, 'webp');
 }
 
+/**
+ * Issuer logos for the Credentials section, supplied by Pushpam as SVG.
+ *
+ * Separate from the generated pipeline: these are vendor marks shipped as-is,
+ * not derived from anything. Kept eager for the same reason as above — they are
+ * four URL strings.
+ */
+const logoFiles = import.meta.glob('./source/logos/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+
+/** Resolves an issuer logo, or `undefined` when that issuer has no file yet. */
+export function issuerLogoUrl(slug: string): string | undefined {
+  return logoFiles[`./source/logos/${slug}.svg`];
+}
+
 export const heroAvatar = image('avatar-hero');
 export const deskAvatar = image('avatar-desk');
 // Note: avatar-hero-chrome is intentionally not exposed via image() — it exists

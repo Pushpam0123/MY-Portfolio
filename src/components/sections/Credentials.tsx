@@ -1,9 +1,13 @@
 import { useRef } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { achievements, certifications } from '@/data/credentials';
+import { achievements, certifications, type Certification } from '@/data/credentials';
+import { issuerLogoUrl } from '@/assets/images';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Credentials.css';
+
+/** The issuer's mark, when one has been supplied for that certification. */
+const logo = (cert: Certification) => (cert.logo ? issuerLogoUrl(cert.logo) : undefined);
 
 export function Credentials() {
   const root = useRef<HTMLElement>(null);
@@ -50,7 +54,20 @@ export function Credentials() {
               {certifications.map((cert) => (
                 <li className="cred__cert" key={cert.id}>
                   <div className="cred__cert-top">
-                    <span className="cred__cert-issuer">{cert.issuer}</span>
+                    {/* The logo carries the issuer visually; the name stays in
+                        the DOM as the accessible label rather than as alt text
+                        on a decorative mark, so it also survives a failed load. */}
+                    {logo(cert) ? (
+                      <img
+                        className="cred__cert-logo"
+                        src={logo(cert)}
+                        alt={cert.issuer}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <span className="cred__cert-issuer">{cert.issuer}</span>
+                    )}
                     {cert.year && <span className="mono-label">{cert.year}</span>}
                   </div>
                   <p className="cred__cert-title">{cert.title}</p>
