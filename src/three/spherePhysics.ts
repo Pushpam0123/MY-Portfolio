@@ -79,18 +79,47 @@ export interface SolverOptions {
   facing: number;
   /** Radius of the cursor's collider. */
   pointerRadius: number;
+  /**
+   * Bounciness of a cursor contact specifically, separate from `restitution`.
+   *
+   * The cursor is meant to feel like it is really knocking things about, which
+   * wants a much livelier response than balls jostling each other — at a shared
+   * value, either the cursor feels limp or the cluster never stops rattling.
+   */
+  pointerRestitution: number;
+  /**
+   * How much of the cursor's own travel is handed to a ball it strikes.
+   *
+   * Collision response alone only reacts to the approach along the contact
+   * normal, so a fast sideways swipe barely moves anything. This carries the
+   * swipe itself through, which is what makes the pit feel sensitive.
+   */
+  pointerImpulse: number;
+  /**
+   * Hard ceiling on speed, in world units per second.
+   *
+   * A fast flick can otherwise hand a ball enough velocity to clear the frame
+   * before the spring reels it back, and a logo that leaves the screen is a
+   * logo nobody read.
+   */
+  maxSpeed: number;
 }
 
 export const defaultOptions: SolverOptions = {
-  attraction: 2.4,
+  // Stiffer than it looks: the cluster rests in contact, so a scatter travels
+  // much further than it used to and needs a firmer pull home.
+  attraction: 3.1,
   swirl: 0.05,
-  linearDamping: 1.35,
+  linearDamping: 1.25,
   angularDamping: 0.7,
-  restitution: 0.45,
+  restitution: 0.4,
   spin: 1.5,
   upright: 2.2,
   facing: 1.5,
-  pointerRadius: 1.5,
+  pointerRadius: 1.7,
+  pointerRestitution: 1.15,
+  pointerImpulse: 0.42,
+  maxSpeed: 26,
 };
 
 export function createBody(
@@ -155,6 +184,9 @@ export function stepSolver(
     upright,
     facing,
     pointerRadius,
+    pointerRestitution,
+    pointerImpulse,
+    maxSpeed,
   } = options;
 
   // Integrate forces.
@@ -233,8 +265,15 @@ export function stepSolver(
       relative.subVectors(body.velocity, pointerVelocity);
       const alongNormal = relative.dot(normal);
       if (alongNormal < 0) {
-        body.velocity.addScaledVector(normal, -(1 + restitution) * alongNormal);
+        body.velocity.addScaledVector(normal, -(1 + pointerRestitution) * alongNormal);
       }
+
+      // Carry the swipe itself through, not just the approach along the normal.
+      // Lighter balls take more of it, so the pit does not move as one slab.
+      body.velocity.addScaledVector(
+        pointerVelocity,
+        pointerImpulse * Math.min(1.6, body.invMass),
+      );
 
       tangent.copy(relative).addScaledVector(normal, -alongNormal);
       torque.crossVectors(normal, tangent).multiplyScalar(spin * 0.04);
@@ -244,6 +283,9 @@ export function stepSolver(
 
   // Integrate position and orientation.
   for (const body of bodies) {
+    const speed = body.velocity.length();
+    if (speed > maxSpeed) body.velocity.multiplyScalar(maxSpeed / speed);
+
     body.position.addScaledVector(body.velocity, dt);
 
     const angularSpeed = body.angularVelocity.length();

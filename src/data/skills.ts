@@ -17,6 +17,7 @@ export const skillGroups: SkillGroup[] = [
       'NLP',
       'LLMs',
       'Generative AI',
+      'RAG Systems',
       'Workflow Automation',
       'Model Prototyping',
       'Benchmarking',
@@ -26,13 +27,32 @@ export const skillGroups: SkillGroup[] = [
     id: 'languages',
     title: 'Languages & Frameworks',
     direction: 'right',
-    items: ['Python', 'Java', 'JavaScript', 'React.js', 'Express.js', 'Node.js', 'SQL'],
+    items: [
+      'Python',
+      'Java',
+      'JavaScript',
+      'TypeScript',
+      'Kotlin',
+      'React.js',
+      'Express.js',
+      'Node.js',
+      'FastAPI',
+      'SQL',
+    ],
   },
   {
     id: 'data',
     title: 'Data & Libraries',
     direction: 'left',
-    items: ['Pandas', 'NumPy', 'scikit-learn', 'NLTK', 'Tableau', 'Jupyter Notebook'],
+    items: [
+      'Pandas',
+      'NumPy',
+      'scikit-learn',
+      'NLTK',
+      'ONNX Runtime',
+      'Tableau',
+      'Jupyter Notebook',
+    ],
   },
   {
     id: 'tools',
@@ -41,9 +61,12 @@ export const skillGroups: SkillGroup[] = [
     items: [
       'Git',
       'GitHub',
+      'Docker',
       'MongoDB',
       'PostgreSQL',
+      'SQLite',
       'REST API',
+      'Socket.IO',
       'AWS',
       'GCP',
       'Agile',
@@ -54,8 +77,14 @@ export const skillGroups: SkillGroup[] = [
 /**
  * The physics spheres in the Tech Stack section.
  *
- * Every entry is a technology that actually appears on the résumé — the point
- * of the section is to be scannable and true, not to pad the list.
+ * Every entry is a technology Pushpam demonstrably uses: either it appears on
+ * the résumé, or it is the stack of one of the four public repositories linked
+ * from the Work section (Kotlin and ONNX from ScamShield, FastAPI and Docker
+ * from Sahayak, Claude from both RAG projects, TypeScript and Socket.IO from
+ * TaskFlow AI). A repository anyone can open is stronger evidence than a CV
+ * line, but the bar is the same either way — **nothing goes on a ball that is
+ * not backed by one of those two sources.** The point of the section is to be
+ * scannable and true, not to pad the list.
  *
  * `icon` is a simple-icons slug. Two entries have no icon: Amazon Web Services
  * and Tableau were removed from simple-icons over trademark policy, so they
@@ -93,6 +122,15 @@ export const techBalls: TechBall[] = [
   { id: 'aws', name: 'AWS', label: 'aws', hex: 'FF9900', scale: 1.1 },
   { id: 'gcp', name: 'Google Cloud', icon: 'googlecloud', scale: 1 },
   { id: 'tableau', name: 'Tableau', label: 'Tableau', hex: 'E97627', scale: 0.95 },
+  // Evidenced by the four linked repositories rather than the résumé.
+  { id: 'typescript', name: 'TypeScript', icon: 'typescript', scale: 1.1 },
+  { id: 'fastapi', name: 'FastAPI', icon: 'fastapi', scale: 1.05 },
+  { id: 'docker', name: 'Docker', icon: 'docker', scale: 1.05 },
+  { id: 'kotlin', name: 'Kotlin', icon: 'kotlin', scale: 1 },
+  { id: 'claude', name: 'Claude', icon: 'claude', scale: 1.05 },
+  { id: 'socketio', name: 'Socket.IO', icon: 'socketdotio', scale: 0.9 },
+  { id: 'onnx', name: 'ONNX Runtime', icon: 'onnx', scale: 0.9 },
+  { id: 'sqlite', name: 'SQLite', icon: 'sqlite', scale: 0.9 },
 ];
 
 export interface Service {

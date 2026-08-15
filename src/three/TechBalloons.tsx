@@ -59,8 +59,37 @@ function useBallTextures() {
 }
 
 /**
- * Starting layout: a golden-angle shell rather than a grid, so the opening
- * frames read as a cluster settling instead of a formation collapsing.
+ * Relaxation pass settings: collisions dominate, nothing bounces, and the
+ * anchor field does not turn. Purely for computing the packed layout below.
+ */
+const RELAX_OPTIONS = {
+  ...defaultOptions,
+  attraction: 0.9,
+  swirl: 0,
+  restitution: 0,
+  linearDamping: 6,
+  pointerImpulse: 0,
+};
+
+/** Enough steps for the seed clump to push itself apart and come to rest. */
+const RELAX_STEPS = 900;
+
+const NO_POINTER_VELOCITY = new THREE.Vector3();
+
+/**
+ * Starting layout: the balls resting *in contact* with one another.
+ *
+ * Seeded as a deliberately overlapping clump on a golden-angle disc, then run
+ * through the solver with collisions dominant until they have shouldered each
+ * other apart and stopped. Wherever they end up becomes their anchor.
+ *
+ * Placing them by formula instead — on a shell, or spaced on a grid — leaves
+ * visible gaps between neighbours, and closing those gaps by hand for twenty-odd
+ * balls of four different radii is exactly the packing problem the solver
+ * already knows how to do. Relaxing into it also guarantees the resting layout
+ * is a genuine equilibrium: no overlaps for the collision pass to fight, so the
+ * cluster sits still instead of jittering, and a scattered pit reassembles into
+ * precisely this arrangement.
  */
 function useStartBodies(): SphereBody[] {
   return useMemo(() => {
@@ -68,11 +97,12 @@ function useStartBodies(): SphereBody[] {
     const golden = Math.PI * (3 - Math.sqrt(5));
     const count = techBalls.length;
 
-    return techBalls.map((ball, i) => {
-      const y = 1 - (i / Math.max(1, count - 1)) * 2;
-      const ring = Math.sqrt(Math.max(0, 1 - y * y));
+    const bodies = techBalls.map((ball, i) => {
+      // Sunflower disc: even angular coverage, radius growing as sqrt so the
+      // seed has uniform density rather than a jammed centre.
+      const radius = Math.sqrt((i + 0.5) / count);
       const theta = golden * i;
-      const spread = 5.9;
+      const seed = 4.2;
 
       // Wider than it is tall, and flatter still in depth. A round cloud leaves
       // dead black margins on a landscape stage, and depth spread is the axis
@@ -80,14 +110,26 @@ function useStartBodies(): SphereBody[] {
       // its mark unreadable.
       return createBody(
         new THREE.Vector3(
-          Math.cos(theta) * ring * spread * 1.34,
-          y * spread * 0.64,
-          Math.sin(theta) * ring * spread * 0.42,
+          Math.cos(theta) * radius * seed * 2.05,
+          Math.sin(theta) * radius * seed * 0.6,
+          (rng() - 0.5) * seed * 0.5,
         ),
         ball.scale,
         rng,
       );
     });
+
+    for (let step = 0; step < RELAX_STEPS; step += 1) {
+      stepSolver(bodies, null, NO_POINTER_VELOCITY, FIXED_STEP, RELAX_OPTIONS);
+    }
+
+    // Freeze the packed result as the layout the cluster returns to.
+    for (const body of bodies) {
+      body.anchor.copy(body.position);
+      body.velocity.set(0, 0, 0);
+    }
+
+    return bodies;
   }, []);
 }
 
@@ -116,8 +158,13 @@ function FitCamera() {
     // canvas aspect: the stage is short enough on a phone that its aspect sits
     // right on 1.0, so an aspect test flips branches — and yanks the camera
     // back mid-scroll — on a few pixels of address-bar movement.
+    // Cropping harder than it used to: the cluster now rests packed in contact,
+    // and a dense band reads perfectly well running off both edges. The earlier
+    // caution against this was for a sparse layout, where an isolated ball
+    // sliced in half at the frame edge looked like a mistake rather than a pit
+    // continuing past the viewport.
     const narrow = size.width < 768;
-    const target = narrow ? CLUSTER_WIDTH * 0.86 : CLUSTER_WIDTH;
+    const target = narrow ? CLUSTER_WIDTH * 0.62 : CLUSTER_WIDTH;
     const needed = target / 2 / (Math.tan(vFov / 2) * aspect);
 
     cam.position.z = Math.max(17, needed + 2);
@@ -159,26 +206,49 @@ function Cluster({ start, onFocus }: SceneProps) {
   // it was last seen — holding a hole open in the cluster, and leaving the
   // violet marker sitting in the middle of the scene long after the reader has
   // scrolled away.
+  /**
+   * Whether the pointer is physically over the canvas right now.
+   *
+   * This has to come from the DOM, not from `state.pointer`. R3F leaves that
+   * value frozen at wherever the pointer last was when it left the canvas, so
+   * "has it moved from the origin?" stays true forever afterwards — an earlier
+   * attempt at this cleared `pointerActive` on `pointerleave` and the re-arm
+   * check below turned it straight back on the next frame, leaving the collider
+   * (and its violet marker) parked in the scene exactly as before.
+   */
+  const pointerInside = useRef(false);
+
   useEffect(() => {
     const canvas = gl.domElement;
-    const standDown = () => {
-      pointerActive.current = false;
+    const enter = () => {
+      pointerInside.current = true;
     };
-    canvas.addEventListener('pointerleave', standDown);
-    return () => canvas.removeEventListener('pointerleave', standDown);
+    const leave = () => {
+      pointerInside.current = false;
+    };
+    canvas.addEventListener('pointermove', enter);
+    canvas.addEventListener('pointerleave', leave);
+    return () => {
+      canvas.removeEventListener('pointermove', enter);
+      canvas.removeEventListener('pointerleave', leave);
+    };
   }, [gl]);
 
   useFrame(({ pointer, viewport }, delta) => {
     // Project the pointer onto the z=0 plane in world units.
     pointerWorld.set((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0);
 
-    // A pointer parked exactly at the origin means "never moved" — R3F's default.
-    // Treating that as a collider would punch a hole in the middle of the cluster
-    // before the visitor has touched anything.
-    if (!pointerActive.current && (pointer.x !== 0 || pointer.y !== 0)) {
-      pointerActive.current = true;
+    // Live only while the pointer is genuinely over the canvas *and* has moved
+    // off R3F's default origin — parked at (0, 0) means "never touched", and
+    // treating that as a collider punches a hole in the middle of the cluster
+    // before the visitor has done anything.
+    const live = pointerInside.current && (pointer.x !== 0 || pointer.y !== 0);
+    if (live && !pointerActive.current) {
+      // Fresh arrival: reset the trail, or the first frame reads as a colossal
+      // pointer velocity from wherever it was last seen.
       pointerPrev.copy(pointerWorld);
     }
+    pointerActive.current = live;
 
     // Clamp: a long frame (tab regains focus) would otherwise teleport the
     // cursor across the scene and fling everything off screen.
