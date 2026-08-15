@@ -36,6 +36,18 @@
    */
   --c-faint: #7d7a93;
 
+  /*
+   * Resting colour of the custom cursor's ring.
+   *
+   * Its own token because two places have to agree on it — Cursor.css paints
+   * it, and Cursor.tsx tweens `borderColor` back to it when leaving a hover
+   * state. It was --c-line, a *border* colour at 1.24:1 against the page: the
+   * ring was essentially invisible, readable only through its 6% backdrop
+   * invert, which reads as the cursor flickering out over darker sections.
+   * ~3.3:1 here — visible on any part of the page, still quiet.
+   */
+  --c-cursor-ring: rgba(196, 181, 253, 0.5);
+
   /* ---- Status ---- */
   --c-live: #4ade80;
   --c-error: #f87171;

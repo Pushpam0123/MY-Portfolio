@@ -8,10 +8,13 @@
   border-radius: 50%;
 }
 
+/* The halo keeps the dot readable where the page goes light or violet — over
+   the primary button it is otherwise violet-on-violet and vanishes. */
 .cursor-dot {
   width: 6px;
   height: 6px;
   background: var(--c-violet-bright);
+  box-shadow: 0 0 0 1px rgba(8, 7, 12, 0.55);
 }
 
 .cursor-ring {
@@ -19,7 +22,7 @@
   place-items: center;
   width: 34px;
   height: 34px;
-  border: 1px solid var(--c-line);
+  border: 1px solid var(--c-cursor-ring);
   backdrop-filter: invert(6%);
 }
 
@@ -35,21 +38,29 @@
 /*
  * Hide the native cursor only where the custom one is actually running.
  * Text inputs keep their caret cursor — replacing it hurts usability.
+ *
+ * Gated on an attribute Cursor.tsx sets while it is mounted, not on a media
+ * query. A media query is an independent condition that has to agree with the
+ * component's own `enabled` check forever, and when the two disagree — or when
+ * the component is mounted but not drawing — the result is a page with no
+ * pointer at all. Tying it to the component means every failure degrades to the
+ * ordinary system cursor.
+ *
+ * `cursor` inherits, but the UA stylesheet's `a { cursor: pointer }` beats
+ * inheritance, so links and buttons need naming explicitly.
  */
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  body {
-    cursor: none;
-  }
+:root[data-custom-cursor] body {
+  cursor: none;
+}
 
-  body a,
-  body button,
-  body [role='button'] {
-    cursor: none;
-  }
+:root[data-custom-cursor] body a,
+:root[data-custom-cursor] body button,
+:root[data-custom-cursor] body [role='button'] {
+  cursor: none;
+}
 
-  body input,
-  body textarea,
-  body select {
-    cursor: auto;
-  }
+:root[data-custom-cursor] body input,
+:root[data-custom-cursor] body textarea,
+:root[data-custom-cursor] body select {
+  cursor: auto;
 }
