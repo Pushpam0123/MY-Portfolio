@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -20,6 +20,36 @@ export function AvatarPlane({ reduced }: { reduced: boolean }) {
   const mesh = useRef<THREE.Mesh>(null);
   const material = useRef<THREE.ShaderMaterial>(null);
   const { viewport } = useThree();
+  const gl = useThree((state) => state.gl);
+
+  /**
+   * Whether a pointer has actually been over the canvas.
+   *
+   * R3F leaves `state.pointer` at its initial (0, 0) until an event lands on the
+   * canvas, and it stops updating once the pointer leaves. (0, 0) in normalised
+   * device coordinates is the *centre* of the canvas, which is exactly where
+   * this plane is — so raycasting it unconditionally reports a hit on the middle
+   * of the face before anyone has touched the mouse, and keeps reporting the
+   * stale hit afterwards. That welded the violet chrome grade over the portrait
+   * from first paint, which is not the render Pushpam supplied.
+   */
+  const pointerOnCanvas = useRef(false);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const enter = () => {
+      pointerOnCanvas.current = true;
+    };
+    const leave = () => {
+      pointerOnCanvas.current = false;
+    };
+    canvas.addEventListener('pointermove', enter);
+    canvas.addEventListener('pointerleave', leave);
+    return () => {
+      canvas.removeEventListener('pointermove', enter);
+      canvas.removeEventListener('pointerleave', leave);
+    };
+  }, [gl]);
 
   const [base, chrome] = useTexture([BASE, CHROME]);
 
@@ -65,15 +95,20 @@ export function AvatarPlane({ reduced }: { reduced: boolean }) {
 
     mat.uniforms.uTime.value = state.clock.elapsedTime;
 
-    // Raycast the pointer against this plane to get true UV coordinates.
-    state.raycaster.setFromCamera(state.pointer, state.camera);
-    const hits = mesh.current ? state.raycaster.intersectObject(mesh.current) : [];
-
-    if (hits.length > 0 && hits[0].uv) {
-      target.current.copy(hits[0].uv);
-      targetActive.current = 1;
-    } else {
+    if (!pointerOnCanvas.current) {
+      // No real pointer here: hold the portrait at the untouched base render.
       targetActive.current = 0;
+    } else {
+      // Raycast the pointer against this plane to get true UV coordinates.
+      state.raycaster.setFromCamera(state.pointer, state.camera);
+      const hits = mesh.current ? state.raycaster.intersectObject(mesh.current) : [];
+
+      if (hits.length > 0 && hits[0].uv) {
+        target.current.copy(hits[0].uv);
+        targetActive.current = 1;
+      } else {
+        targetActive.current = 0;
+      }
     }
 
     // Frame-rate independent damping — `1 - exp(-k*dt)` keeps the feel
