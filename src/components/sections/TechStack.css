@@ -157,8 +157,10 @@
 
 @media (max-width: 767px) {
   .stack__stage {
-    /* Shorter than desktop so the cluster is not stranded in empty space. */
-    height: clamp(380px, 54vh, 520px);
+    /* Shorter than desktop so the cluster is not stranded in empty space. The
+       pit is a wide, flat band, and the camera frames it by width — so any
+       height beyond what the band needs is dead black. */
+    height: clamp(330px, 46vh, 440px);
   }
 
   .stack__title {

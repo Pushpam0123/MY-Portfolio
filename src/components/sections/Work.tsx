@@ -130,7 +130,7 @@ export function Work() {
                     data-cursor="link"
                     data-work-reveal
                   >
-                    <span>View on GitHub</span>
+                    <span>{project.repoLabel ?? 'View on GitHub'}</span>
                     <span aria-hidden="true">↗</span>
                   </a>
                 )}

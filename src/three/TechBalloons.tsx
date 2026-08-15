@@ -105,11 +105,19 @@ function FitCamera() {
     const aspect = size.width / Math.max(1, size.height);
     const vFov = (cam.fov * Math.PI) / 180;
 
-    // On portrait screens, fitting the full width shrinks the cluster to a speck
-    // marooned in empty space. Framing a narrower slice keeps the spheres large
-    // and lets the outermost ones run off the edges — which is how the
-    // composition is meant to read anyway.
-    const target = aspect < 1 ? CLUSTER_WIDTH * 0.7 : CLUSTER_WIDTH;
+    // On a phone, fitting the full width shrinks the cluster to a speck marooned
+    // in empty space. Framing a narrower slice keeps the spheres large and lets
+    // the outermost ones run off the edges — which is how the composition is
+    // meant to read anyway. Only slightly narrower, though: cropped hard enough
+    // that the outer balls are sliced clean in half, it stops reading as a pit
+    // that overflows the frame and starts reading as a layout mistake.
+    //
+    // Keyed to viewport width, matching the CSS breakpoint, rather than to the
+    // canvas aspect: the stage is short enough on a phone that its aspect sits
+    // right on 1.0, so an aspect test flips branches — and yanks the camera
+    // back mid-scroll — on a few pixels of address-bar movement.
+    const narrow = size.width < 768;
+    const target = narrow ? CLUSTER_WIDTH * 0.86 : CLUSTER_WIDTH;
     const needed = target / 2 / (Math.tan(vFov / 2) * aspect);
 
     cam.position.z = Math.max(17, needed + 2);

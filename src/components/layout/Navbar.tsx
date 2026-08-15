@@ -19,6 +19,7 @@ function scrollToSection(id: string) {
 
 export function Navbar() {
   const root = useRef<HTMLElement>(null);
+  const progress = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<string>('');
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
@@ -30,6 +31,19 @@ export function Navbar() {
         start: 'top -80',
         end: 99999,
         onToggle: (self) => root.current?.classList.toggle('nav--pinned', self.isActive),
+      });
+
+      // How far through the page the reader is. Driven straight off the
+      // ScrollTrigger progress value rather than a tween, so it tracks
+      // ScrollSmoother's eased position exactly instead of chasing it.
+      ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          if (progress.current) {
+            progress.current.style.transform = `scaleX(${self.progress})`;
+          }
+        },
       });
 
       // Only observe sections that are actually mounted — ScrollTrigger warns
@@ -87,6 +101,8 @@ export function Navbar() {
 
   return (
     <header className="nav" ref={root}>
+      <div className="nav__progress" ref={progress} aria-hidden="true" />
+
       <div className="nav__inner">
         <a
           className="nav__brand"

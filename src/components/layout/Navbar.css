@@ -20,6 +20,33 @@
   border-bottom-color: var(--c-line-soft);
 }
 
+/* ---- Read-progress rule ---- */
+
+/*
+ * Sits on the nav's own bottom border, so it costs no layout and cannot push
+ * the bar around as it grows. `scaleX` from a left origin rather than `width`,
+ * because only transform and opacity animate off the main thread — this updates
+ * on every scroll frame, which is exactly where a layout-triggering property
+ * would be felt.
+ */
+.nav__progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: var(--g-accent);
+  opacity: 0;
+  transition: opacity var(--d-mid) var(--e-out);
+  pointer-events: none;
+}
+
+.nav--pinned .nav__progress {
+  opacity: 1;
+}
+
 .nav__inner {
   display: flex;
   align-items: center;

@@ -18,6 +18,13 @@ export interface Project {
   metrics: ProjectMetric[];
   /** TODO(links): replace with the real repo / live URLs once available. */
   repo?: string;
+  /**
+   * Wording for the repo link. Overridden while `repo` still points at the
+   * profile root: "View on GitHub" promises a repository, and a promise that
+   * lands on a profile page reads worse than no link at all. Drop this field
+   * once the real repository URLs are in.
+   */
+  repoLabel?: string;
   demo?: string;
   /** Accent used for the panel bloom, so each project reads distinctly. */
   accent: string;
@@ -48,6 +55,7 @@ export const projects: Project[] = [
       { value: 25, suffix: '%', prefix: '+', label: 'Customer satisfaction' },
     ],
     repo: PROFILE_REPOS,
+    repoLabel: 'More on GitHub',
     accent: '#7c4dff',
   },
   {
@@ -68,6 +76,7 @@ export const projects: Project[] = [
       { value: 100, suffix: '%', label: 'Real-time sync coverage' },
     ],
     repo: PROFILE_REPOS,
+    repoLabel: 'More on GitHub',
     accent: '#a855f7',
   },
 ];
