@@ -76,7 +76,13 @@ const main = async () => {
       const c = document.querySelector('canvas');
       return c ? { w: c.width, h: c.height } : null;
     })(),
-    heroFadeOpacity: getComputedStyle(document.querySelector('[data-hero-fade]')).opacity,
+    // Guarded: if the page is mid-reload (an asset rebuild kicks off an HMR
+    // storm, for one) this element may not be mounted yet, and letting the
+    // whole run die on a missing node loses every screenshot with it.
+    heroFadeOpacity: (() => {
+      const el = document.querySelector('[data-hero-fade]');
+      return el ? getComputedStyle(el).opacity : 'missing';
+    })(),
   }));
 
   console.log(`viewport ${width}x${height}${reduceMotion ? ' (reduced motion)' : ''}`);

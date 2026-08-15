@@ -328,54 +328,182 @@ async function buildOgImage() {
   console.log('  built  og.png');
 }
 
+/* ---- Colour helpers for the sphere textures ---- */
+
+const clamp255 = (v) => Math.max(0, Math.min(255, Math.round(v)));
+
+const parseHex = (hex) => {
+  const h = hex.replace('#', '');
+  return [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16),
+  ];
+};
+
+const toHex = (rgb) => `#${rgb.map((c) => clamp255(c).toString(16).padStart(2, '0')).join('')}`;
+
+/** Linear blend between two hex colours; `t` = 0 returns `a`, 1 returns `b`. */
+const mix = (a, b, t) => {
+  const [ar, ag, ab] = parseHex(a);
+  const [br, bg, bb] = parseHex(b);
+  return toHex([ar + (br - ar) * t, ag + (bg - ag) * t, ab + (bb - ab) * t]);
+};
+
+/** WCAG relative luminance, 0–1. */
+const luminance = (hex) => {
+  const channel = (c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const [r, g, b] = parseHex(hex);
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+};
+
+const rgbToHsl = (hex) => {
+  const [r, g, b] = parseHex(hex).map((c) => c / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  const d = max - min;
+  if (d === 0) return [0, 0, l];
+
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h;
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else h = ((r - g) / d + 4) / 6;
+  return [h, s, l];
+};
+
+const hslToHex = ([h, s, l]) => {
+  if (s === 0) return toHex([l * 255, l * 255, l * 255]);
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const channel = (t) => {
+    let v = t;
+    if (v < 0) v += 1;
+    if (v > 1) v -= 1;
+    if (v < 1 / 6) return p + (q - p) * 6 * v;
+    if (v < 1 / 2) return q;
+    if (v < 2 / 3) return p + (q - p) * (2 / 3 - v) * 6;
+    return p;
+  };
+  return toHex([channel(h + 1 / 3) * 255, channel(h) * 255, channel(h - 1 / 3) * 255]);
+};
+
+/**
+ * A pale shell tone in the brand's hue, at an explicitly chosen lightness.
+ *
+ * Blending the brand toward white does not work uniformly: a high-luminance
+ * brand like JavaScript's yellow is barely moved by it and comes out an olive
+ * ball next to seventeen near-white ones. Setting hue-saturation-lightness
+ * directly gives every ball the same pale weight no matter where its brand
+ * colour started, so the hue is all that distinguishes them — which is the
+ * point.
+ */
+const shellTone = (hex, lightness) => {
+  const [h, s] = rgbToHsl(hex);
+  return hslToHex([h, Math.min(s, 0.42), lightness]);
+};
+
+/**
+ * Darkens a brand colour until it reads against the pale shell it is drawn on.
+ *
+ * Brands like AWS (#FF9900) and Tableau (#E97627) are bright enough that a
+ * tinted-with-their-own-colour background leaves the mark barely visible —
+ * pale orange on pale orange. Anything above the threshold gets pulled toward
+ * black until it separates; darker brands are left exactly as they are.
+ */
+const readable = (hex, limit) => {
+  let out = hex;
+  let guard = 0;
+  while (luminance(out) > limit && guard < 24) {
+    out = mix(out, '#000000', 0.1);
+    guard += 1;
+  }
+  return out;
+};
+
+/**
+ * How dark a mark has to get before it is left alone.
+ *
+ * Two limits, because the two kinds of mark fail at different points. A logo is
+ * a big solid shape — JavaScript's square covers a third of the ball — and stays
+ * perfectly readable at a contrast that would be marginal for text; pushed as
+ * far as the wordmarks need, its yellow turns to olive. Wordmarks are
+ * letterforms at a fraction of that stroke weight and need the harder limit.
+ */
+const INK_ICON = 0.42;
+const INK_WORDMARK = 0.28;
+
 /**
  * Sphere textures for the Tech Stack physics scene.
  *
  * Three.js maps a SphereGeometry equirectangularly, so a 2:1 texture wraps once
- * around the ball. The logo is drawn three times along the equator, 120° apart,
- * which means a mark is facing the camera from almost any orientation — with a
- * single centred logo the spheres read as blank most of the time. Poles stay
- * empty on purpose: that is where equirectangular distortion is worst.
+ * around the ball, with u = 0.25 sitting dead centre of the camera-facing side
+ * at zero yaw. The mark is drawn twice — at u = 0.25 and u = 0.75 — so whichever
+ * way a ball ends up spun, the nearer of the two is at most a half-turn from
+ * front, and `spherePhysics` rotates it the rest of the way. Two large repeats
+ * beat the several small ones that would be needed to cover every orientation
+ * by brute force: the logo is the point of the section, so it should be big.
+ *
+ * The ground is a tint of the brand colour rather than flat white. Seventeen
+ * identical white pearls read as one undifferentiated mass; tinted, each ball
+ * is recognisable from across the section even before its logo turns into view.
+ * The vertical gradient darkens toward both poles, which doubles as cover for
+ * the equirectangular pinch where the distortion is worst.
  */
 async function buildTechTextures() {
   const { techBalls } = await loadTechBalls();
   const si = await import('simple-icons');
 
-  const W = 1024;
-  const H = 512;
-  const LOGO = 168; // drawn size in px
-  const positions = [W / 6, W / 2, (5 * W) / 6];
+  const W = 1536;
+  const H = 768;
+  const LOGO = 384; // ~90° of arc — large, but short of the foreshortened edge
+  const positions = [W * 0.25, W * 0.75];
 
   for (const ball of techBalls) {
-    let marks = '';
+    let brand = ball.hex ? `#${ball.hex}` : '#333333';
+    let iconPath = null;
 
     if (ball.icon) {
       const key = `si${ball.icon.charAt(0).toUpperCase()}${ball.icon.slice(1)}`;
       const icon = si[key] ?? si.default?.[key];
       if (!icon) throw new Error(`simple-icons has no "${ball.icon}" (looked for ${key})`);
+      brand = `#${ball.hex ?? icon.hex}`;
+      iconPath = icon.path;
+    }
 
-      const color = `#${ball.hex ?? icon.hex}`;
+    const ink = readable(brand, iconPath ? INK_ICON : INK_WORDMARK);
+
+    const shellLight = shellTone(brand, 0.95);
+    const shellMid = shellTone(brand, 0.9);
+    const shellDeep = shellTone(brand, 0.78);
+
+    let marks = '';
+
+    if (iconPath) {
       const s = LOGO / 24; // simple-icons paths use a 24x24 viewBox
 
       marks = positions
         .map(
           (cx) =>
             `<g transform="translate(${cx - LOGO / 2} ${H / 2 - LOGO / 2}) scale(${s})">` +
-            `<path d="${icon.path}" fill="${color}"/></g>`,
+            `<path d="${iconPath}" fill="${ink}"/></g>`,
         )
         .join('');
     } else {
       // Wordmark fallback for brands simple-icons does not carry.
       //
-      // Size to fit its third of the texture: at a fixed size a long word like
+      // Size to fit its half of the texture: at a fixed size a long word like
       // "Tableau" runs past the panel and collides with the next repeat, which
       // shows up on the sphere as garbled text ("ableauTa").
-      const color = `#${ball.hex ?? '333333'}`;
       const panel = W / positions.length;
-      const maxTextWidth = panel * 0.78;
+      const maxTextWidth = panel * 0.62;
       const avgGlyphRatio = 0.58; // bold Helvetica, roughly
       const fontSize = Math.min(
-        104,
+        200,
         Math.round(maxTextWidth / (avgGlyphRatio * ball.label.length)),
       );
 
@@ -383,15 +511,24 @@ async function buildTechTextures() {
         .map(
           (cx) =>
             `<text x="${cx}" y="${H / 2}" font-family="Helvetica, Arial, sans-serif" ` +
-            `font-size="${fontSize}" font-weight="700" fill="${color}" text-anchor="middle" ` +
-            `dominant-baseline="central" letter-spacing="-1">${ball.label}</text>`,
+            `font-size="${fontSize}" font-weight="700" fill="${ink}" text-anchor="middle" ` +
+            `dominant-baseline="central" letter-spacing="-2">${ball.label}</text>`,
         )
         .join('');
     }
 
     const svg = Buffer.from(
       `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-         <rect width="${W}" height="${H}" fill="#ffffff"/>
+         <defs>
+           <linearGradient id="shell" x1="0" y1="0" x2="0" y2="1">
+             <stop offset="0%"   stop-color="${shellDeep}"/>
+             <stop offset="26%"  stop-color="${shellMid}"/>
+             <stop offset="50%"  stop-color="${shellLight}"/>
+             <stop offset="74%"  stop-color="${shellMid}"/>
+             <stop offset="100%" stop-color="${shellDeep}"/>
+           </linearGradient>
+         </defs>
+         <rect width="${W}" height="${H}" fill="url(#shell)"/>
          ${marks}
        </svg>`,
     );

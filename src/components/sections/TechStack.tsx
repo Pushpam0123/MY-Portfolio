@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useCallback, useState } from 'react';
 import { skillGroups, techBalls } from '@/data/skills';
 import { useInView } from '@/hooks/useInView';
 import { useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
@@ -61,11 +61,23 @@ export function TechStack() {
   const reduced = useReducedMotion();
   const isTouch = useIsTouch();
   const [supported] = useState(hasWebGL);
+  const [focused, setFocused] = useState<string | null>(null);
+
   // `once` — the scene keeps its settled state instead of re-simulating from
   // scratch every time the section scrolls back into view.
   const { ref, inView } = useInView<HTMLElement>({ rootMargin: '500px', once: true });
+  // A second, tighter gate: the canvas above is mounted early so it is warm on
+  // arrival, but the balls should not finish arriving before anyone can see it.
+  const { ref: stageRef, inView: onScreen } = useInView<HTMLDivElement>({
+    rootMargin: '-20% 0px',
+    once: true,
+  });
 
   const interactive = supported && !reduced;
+
+  // Identity-stable: the scene calls this from its frame loop, and a fresh
+  // function each render would remount nothing but is needless churn.
+  const handleFocus = useCallback((name: string | null) => setFocused(name), []);
 
   return (
     <section className="section stack" id="stack" ref={ref}>
@@ -75,10 +87,10 @@ export function TechStack() {
       </div>
 
       {interactive ? (
-        <div className="stack__stage">
+        <div className="stack__stage" ref={stageRef}>
           {inView && (
             <Suspense fallback={null}>
-              <TechBalloons />
+              <TechBalloons start={onScreen} onFocus={handleFocus} />
             </Suspense>
           )}
         </div>
@@ -91,9 +103,17 @@ export function TechStack() {
       {interactive && (
         <div className="shell stack__footer">
           {/* Below the stage, not over it — floating on the canvas put it behind
-              whichever sphere happened to drift into that corner. */}
-          <p className="stack__hint mono-label" aria-hidden="true">
-            {isTouch ? 'Touch to push them around' : 'Move your cursor through them'}
+              whichever sphere happened to drift into that corner.
+
+              Doubles as a readout: once the pointer is on a ball it names the
+              technology, which is what an unlabelled logo cannot do for anyone
+              who does not already recognise the mark. `aria-hidden` because the
+              same names are in the list further down, spelled out properly. */}
+          <p
+            className={`stack__hint mono-label${focused ? ' is-focused' : ''}`}
+            aria-hidden="true"
+          >
+            {focused ?? (isTouch ? 'Touch to push them around' : 'Move your cursor through them')}
           </p>
 
           {/*

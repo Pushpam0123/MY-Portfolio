@@ -63,7 +63,7 @@ export function imageUrl(name: ImageName, width: number, ext: 'png' | 'webp' | '
  * width by scripts/prepare-assets.mjs, so there is no srcset to pick from.
  */
 export function techTextureUrl(id: string): string {
-  return url(`tech-${id}`, 1024, 'webp');
+  return url(`tech-${id}`, 1536, 'webp');
 }
 
 export const heroAvatar = image('avatar-hero');

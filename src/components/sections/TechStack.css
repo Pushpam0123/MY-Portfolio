@@ -12,7 +12,10 @@
  */
 .stack__heading {
   position: absolute;
-  top: clamp(3.5rem, 12vh, 8rem);
+  /* High in the stage, above the band the cluster settles into. Sitting lower
+     put the densest part of the pit straight through the middle word, and a
+     title you cannot read is not a title. */
+  top: clamp(2.5rem, 7vh, 5rem);
   left: 50%;
   transform: translateX(-50%);
   z-index: 0;
@@ -62,9 +65,21 @@
   inset: 0;
 }
 
+/*
+ * Fixed height and centred, because this line swaps between the instruction and
+ * the name of whichever ball the pointer is on. Letting it size to its content
+ * would nudge the whole capabilities block up and down as the reader sweeps
+ * across the cluster.
+ */
 .stack__hint {
+  min-height: 1.4em;
   color: var(--c-faint);
   pointer-events: none;
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.stack__hint.is-focused {
+  color: var(--c-violet-bright);
 }
 
 /* ---- Capabilities line under the scene ---- */
