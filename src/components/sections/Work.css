@@ -45,7 +45,12 @@
   padding: var(--s-7);
 }
 
+/* Watermark behind the schematic, not the plate's subject. */
 .work__media-index {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--f-display);
   font-size: clamp(6rem, 16vw, 12rem);
   font-weight: 800;
@@ -53,7 +58,73 @@
   line-height: 1;
   letter-spacing: -0.05em;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(196, 181, 253, 0.28);
+  -webkit-text-stroke: 1px rgba(196, 181, 253, 0.16);
+}
+
+/* ---- Pipeline schematic ---- */
+
+/*
+ * What the plate holds instead of a product screenshot. There are no real
+ * screenshots of either project, and a plate carrying nothing but a ghosted
+ * index number spent half the section saying nothing — a diagram of the stages
+ * the copy describes at least earns the space it occupies.
+ */
+.work__flow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--s-4), 2.6vw, var(--s-5));
+  width: min(100%, 19rem);
+}
+
+/* The spine, inset by half a dot so it runs through their centres and stopped
+   short at both ends so it reads as connecting the stages, not escaping them. */
+.work__flow::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--panel-accent, var(--c-violet)) 22%,
+    var(--panel-accent, var(--c-violet)) 78%,
+    transparent
+  );
+  opacity: 0.55;
+}
+
+.work__flow-step {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.work__flow-dot {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--panel-accent, var(--c-violet));
+  background: var(--c-base);
+  box-shadow: 0 0 0 4px rgba(8, 7, 12, 0.9);
+}
+
+.work__flow-step:first-child .work__flow-dot,
+.work__flow-step:last-child .work__flow-dot {
+  background: var(--panel-accent, var(--c-violet));
+}
+
+.work__flow-label {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--c-text-soft);
 }
 
 .work__media-glow {
@@ -71,8 +142,9 @@
 
 .work__media-stack {
   position: absolute;
+  z-index: 1;
   left: var(--s-6);
-  bottom: var(--s-7);
+  bottom: var(--s-6);
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-2);

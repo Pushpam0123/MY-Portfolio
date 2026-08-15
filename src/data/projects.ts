@@ -15,6 +15,17 @@ export interface Project {
   summary: string;
   points: string[];
   stack: string[];
+  /**
+   * The system's stages, in order, for the schematic on the panel plate.
+   *
+   * Decorative and marked aria-hidden — every claim it makes is already stated
+   * in `points` as real text. It exists because the plate was otherwise an empty
+   * rectangle taking up half the section, and a diagram of what the thing
+   * actually does beats a placeholder. Each stage must be traceable to the
+   * résumé's description of the project; this is not the place to invent
+   * architecture.
+   */
+  pipeline: string[];
   metrics: ProjectMetric[];
   /** TODO(links): replace with the real repo / live URLs once available. */
   repo?: string;
@@ -50,6 +61,8 @@ export const projects: Project[] = [
       'Boosted customer satisfaction by 25% through faster, more accurate signal on inbound feedback.',
     ],
     stack: ['Python', 'NLTK', 'scikit-learn', 'LLMs'],
+    // Straight from the pipeline described in `points`.
+    pipeline: ['Social · reviews · market data', 'Preprocess & tokenize', 'Vectorize', 'Classify', 'Sentiment score'],
     metrics: [
       { value: 94, suffix: '%', label: 'Accuracy' },
       { value: 25, suffix: '%', prefix: '+', label: 'Customer satisfaction' },
@@ -71,6 +84,7 @@ export const projects: Project[] = [
       'Improved productivity tracking and process efficiency by 40%.',
     ],
     stack: ['Python', 'React', 'Node.js', 'Express', 'MongoDB'],
+    pipeline: ['React client', 'JWT auth', 'REST API', 'ML prioritization', 'WebSocket sync'],
     metrics: [
       { value: 40, suffix: '%', prefix: '+', label: 'Process efficiency' },
       { value: 100, suffix: '%', label: 'Real-time sync coverage' },
