@@ -106,9 +106,12 @@
   text-wrap: balance;
 }
 
+/* Decorative, but it sits inline inside the sentence, so contrast checkers
+   score it as part of that text rather than as an ornament. --c-line is a
+   border colour and nowhere near readable at text size. */
 .stack__sep {
   margin-inline: 0.6em;
-  color: var(--c-line);
+  color: var(--c-faint);
 }
 
 /* ---- Static fallback ---- */

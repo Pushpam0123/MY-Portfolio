@@ -26,7 +26,15 @@
   --c-text: #f4f2ff;
   --c-text-soft: #c9c5da;
   --c-muted: #9a96ad;
-  --c-faint: #6b6880;
+  /*
+   * 4.9:1 on --c-base. It was #6b6880, which is 3.8:1 — enough for large text
+   * and no more. Almost everything wearing it is a `.mono-label`, whose size
+   * comes from a clamp: on a wide viewport those labels clear the 18.66px
+   * large-text threshold and 3.8:1 is compliant, but on a phone they drop under
+   * it and the same colour becomes a genuine AA failure. A desktop-only audit
+   * cannot see that, which is why it went unnoticed.
+   */
+  --c-faint: #7d7a93;
 
   /* ---- Status ---- */
   --c-live: #4ade80;

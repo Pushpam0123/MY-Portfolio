@@ -5,6 +5,12 @@
  * heading order, landmark presence, keyboard reachability of the primary
  * actions, and that every image carries an alt attribute.
  *
+ * The axe pass runs at a phone width as well as a desktop one, because some
+ * failures only exist at one of them. Type here is sized with `clamp()`, and
+ * WCAG's contrast threshold steps down for large text — so a colour can be
+ * compliant on a wide viewport and a real AA failure on a narrow one, with
+ * nothing but the viewport between the two. A desktop-only audit reports clean.
+ *
  * Usage: node scripts/audit.mjs [--url=http://localhost:5173]
  */
 import { createRequire } from 'node:module';
@@ -32,37 +38,49 @@ const main = async () => {
   });
 
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: 'networkidle2', timeout: 45_000 });
-  await page.waitForFunction(() => !document.querySelector('.preload'), { timeout: 20_000 });
-  await new Promise((r) => setTimeout(r, 1000));
 
-  // Reveal every scroll-triggered section so axe sees the real, settled DOM
-  // rather than elements still parked at opacity 0.
-  await page.evaluate(async () => {
-    const step = window.innerHeight * 0.75;
-    for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-      window.scrollTo({ top: y, behavior: 'instant' });
-      await new Promise((r) => setTimeout(r, 220));
-    }
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    await new Promise((r) => setTimeout(r, 600));
-  });
+  /** Load, settle, and run axe at the given viewport. */
+  const axeAt = async (width, height) => {
+    await page.setViewport({ width, height });
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 45_000 });
+    await page.waitForFunction(() => !document.querySelector('.preload'), { timeout: 20_000 });
+    await new Promise((r) => setTimeout(r, 1000));
 
-  await page.addScriptTag({ path: axePath });
-
-  const results = await page.evaluate(async () => {
-    // eslint-disable-next-line no-undef
-    const run = await axe.run(document, {
-      resultTypes: ['violations'],
-      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] },
+    // Reveal every scroll-triggered section so axe sees the real, settled DOM
+    // rather than elements still parked at opacity 0.
+    await page.evaluate(async () => {
+      const step = window.innerHeight * 0.75;
+      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+        window.scrollTo({ top: y, behavior: 'instant' });
+        await new Promise((r) => setTimeout(r, 220));
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      await new Promise((r) => setTimeout(r, 600));
     });
-    return run.violations.map((v) => ({
-      id: v.id,
-      impact: v.impact,
-      help: v.help,
-      nodes: v.nodes.slice(0, 4).map((n) => n.html.slice(0, 130)),
-    }));
-  });
+
+    await page.addScriptTag({ path: axePath });
+
+    return page.evaluate(async () => {
+      // eslint-disable-next-line no-undef
+      const run = await axe.run(document, {
+        resultTypes: ['violations'],
+        runOnly: {
+          type: 'tag',
+          values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
+        },
+      });
+      return run.violations.map((v) => ({
+        id: v.id,
+        impact: v.impact,
+        help: v.help,
+        nodes: v.nodes.slice(0, 4).map((n) => n.html.slice(0, 130)),
+      }));
+    });
+  };
+
+  const mobileResults = await axeAt(390, 844);
+  // Desktop last, so the structure and keyboard checks below run against it.
+  const results = await axeAt(1280, 900);
 
   const structure = await page.evaluate(() => {
     // Report the accessible name, not raw textContent: an aria-label overrides
@@ -139,11 +157,16 @@ const main = async () => {
     console.log(`  ${f.outline ? '✓' : '✗ no ring'} <${f.tag}> ${f.label}`);
   }
 
-  console.log('\nAXE VIOLATIONS');
-  if (!results.length) {
-    console.log('  none');
-  } else {
-    for (const v of results) {
+  for (const [label, found] of [
+    ['AXE VIOLATIONS — 1280x900', results],
+    ['AXE VIOLATIONS — 390x844', mobileResults],
+  ]) {
+    console.log(`\n${label}`);
+    if (!found.length) {
+      console.log('  none');
+      continue;
+    }
+    for (const v of found) {
       console.log(`  [${v.impact}] ${v.id} — ${v.help}`);
       for (const n of v.nodes) console.log(`      ${n}`);
     }
