@@ -57,14 +57,4 @@ export const timeline: TimelineEntry[] = [
       'Specialized coursework across artificial intelligence, machine learning, and data engineering.',
     ],
   },
-  {
-    id: 'dav',
-    kind: 'education',
-    org: 'DAV Public School (CBSE)',
-    title: 'Class XII',
-    location: 'Patna, India',
-    period: '2019 — 2021',
-    meta: '84%',
-    points: ['Science stream, Central Board of Secondary Education.'],
-  },
 ];

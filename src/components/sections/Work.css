@@ -162,6 +162,30 @@
   color: var(--c-faint);
 }
 
+/* Honest badge for a project whose own README says it is not finished. */
+.work__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  align-self: flex-start;
+  padding: 0.28rem 0.75rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line);
+  background: rgba(8, 7, 12, 0.5);
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.work__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--panel-accent, var(--c-violet));
+}
+
 /* ---- Copy ---- */
 .work__body {
   display: flex;

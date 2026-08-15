@@ -53,7 +53,8 @@ export function Work() {
       <div className="shell">
         <SectionHeading index="04" eyebrow="Work" title="Systems I designed and shipped.">
           <p className="lede">
-            Two projects where the measurable outcome mattered more than the demo.
+            Four systems where the measurable outcome mattered more than the demo — each one
+            open on GitHub.
           </p>
         </SectionHeading>
       </div>
@@ -105,6 +106,13 @@ export function Work() {
                   {project.title}
                 </h3>
 
+                {project.status && (
+                  <p className="work__status" data-work-reveal>
+                    <span className="work__status-dot" aria-hidden="true" />
+                    {project.status}
+                  </p>
+                )}
+
                 <p className="lede work__summary" data-work-reveal>
                   {project.summary}
                 </p>
@@ -115,20 +123,24 @@ export function Work() {
                   ))}
                 </ul>
 
-                <dl className="work__metrics" data-work-reveal>
-                  {project.metrics.map((metric) => (
-                    <div className="work__metric" key={metric.label}>
-                      <dt className="work__metric-value">
-                        <Counter
-                          value={metric.value}
-                          prefix={metric.prefix}
-                          suffix={metric.suffix}
-                        />
-                      </dt>
-                      <dd className="work__metric-label mono-label">{metric.label}</dd>
-                    </div>
-                  ))}
-                </dl>
+                {/* Not every project has numbers worth standing behind — see the
+                    note on ScamShield in projects.ts. */}
+                {project.metrics && (
+                  <dl className="work__metrics" data-work-reveal>
+                    {project.metrics.map((metric) => (
+                      <div className="work__metric" key={metric.label}>
+                        <dt className="work__metric-value">
+                          <Counter
+                            value={metric.value}
+                            prefix={metric.prefix}
+                            suffix={metric.suffix}
+                          />
+                        </dt>
+                        <dd className="work__metric-label mono-label">{metric.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
 
                 <ul className="work__chips" data-work-reveal>
                   {project.stack.map((tech) => (
@@ -147,7 +159,7 @@ export function Work() {
                     data-cursor="link"
                     data-work-reveal
                   >
-                    <span>{project.repoLabel ?? 'View on GitHub'}</span>
+                    <span>View on GitHub</span>
                     <span aria-hidden="true">↗</span>
                   </a>
                 )}
