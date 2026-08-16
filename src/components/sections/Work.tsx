@@ -50,7 +50,7 @@ export function Work() {
   return (
     <section className="section work" id="work" ref={root}>
       <div className="shell">
-        <SectionHeading index="04" eyebrow="Work" title="Systems I designed and shipped.">
+        <SectionHeading index="04" eyebrow="Work" title="Systems I designed and built.">
           <p className="lede">
             Four systems where the measurable outcome mattered more than the demo — each one open on
             GitHub.
