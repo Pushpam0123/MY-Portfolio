@@ -59,17 +59,11 @@ from that data, so updating the site is a one-file edit — no JSX changes neede
 The source of truth for all of it is the résumé at
 `src/assets/source/Pushpam's Resume.pdf`.
 
-### Still to fill in
-
-`src/data/projects.ts` is marked `TODO(links)` — the two projects currently point
-at the GitHub profile root because the résumé lists no repository or demo URLs.
-Swap in the real ones and nothing else needs to change.
-
 ---
 
 ## Assets
 
-`scripts/prepare-assets.mjs` derives everything the site imports from three source
+`scripts/prepare-assets.mjs` derives everything the site imports from the source
 renders in `src/assets/source/`. It is idempotent — re-run it any time.
 
 It produces:
@@ -78,9 +72,10 @@ It produces:
 - `avatar-hero-chrome` — a violet-metal grade of the **same crop**, used as the
   second texture in the cursor reveal. Pixel-identical framing is the whole
   effect, which is why both come from one crop.
-- `avatar-desk` — the seated scene for the About section
-- `avatar-face-1..3` — the three expressions cut out of the contact sheet, one
-  per "What I Do" card
+- `avatar-desk` — the seated scene for the About section, built from
+  `desk-scene.png`, which is frame 0 of `public/media/desk-scene.mp4`. It doubles
+  as the still fallback *and* as the frame the looping video dissolves through, so
+  re-cutting the video means re-extracting this image from its new first frame.
 - `tech-<id>` — equirectangular sphere textures for the Tech Stack scene, built
   from `simple-icons` brand paths (or a wordmark where simple-icons carries no
   logo), on a pale tint of the brand hue so the balls are distinguishable at a
