@@ -6,7 +6,6 @@ import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Credentials.css';
 
-/** The issuer's mark, when one has been supplied for that certification. */
 const logo = (cert: Certification) => (cert.logo ? issuerLogoUrl(cert.logo) : undefined);
 
 export function Credentials() {
@@ -54,9 +53,7 @@ export function Credentials() {
               {certifications.map((cert) => (
                 <li className="cred__cert" key={cert.id}>
                   <div className="cred__cert-top">
-                    {/* The logo carries the issuer visually; the name stays in
-                        the DOM as the accessible label rather than as alt text
-                        on a decorative mark, so it also survives a failed load. */}
+                    {}
                     {logo(cert) ? (
                       <img
                         className="cred__cert-logo"

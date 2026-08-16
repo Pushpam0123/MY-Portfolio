@@ -1,13 +1,4 @@
-/*
- * Design tokens.
- *
- * The palette is sampled from the avatar renders themselves — the violet rim
- * light in the source images is the accent — so the portraits sit natively on
- * the page instead of looking pasted onto it.
- */
-
 :root {
-  /* ---- Surface ---- */
   --c-base: #08070c;
   --c-base-deep: #050409;
   --c-surface: #101018;
@@ -15,55 +6,30 @@
   --c-line: #221f30;
   --c-line-soft: #1a1826;
 
-  /* ---- Accent ---- */
   --c-violet: #7c4dff;
   --c-violet-bright: #a855f7;
   --c-violet-dim: #5b34c4;
   --c-lilac: #c4b5fd;
   --c-glow: rgba(124, 77, 255, 0.4);
 
-  /* ---- Text ---- */
   --c-text: #f4f2ff;
   --c-text-soft: #c9c5da;
   --c-muted: #9a96ad;
-  /*
-   * 4.9:1 on --c-base. It was #6b6880, which is 3.8:1 — enough for large text
-   * and no more. Almost everything wearing it is a `.mono-label`, whose size
-   * comes from a clamp: on a wide viewport those labels clear the 18.66px
-   * large-text threshold and 3.8:1 is compliant, but on a phone they drop under
-   * it and the same colour becomes a genuine AA failure. A desktop-only audit
-   * cannot see that, which is why it went unnoticed.
-   */
+
   --c-faint: #7d7a93;
 
-  /*
-   * Resting colour of the custom cursor's ring.
-   *
-   * Its own token because two places have to agree on it — Cursor.css paints
-   * it, and Cursor.tsx tweens `borderColor` back to it when leaving a hover
-   * state. It was --c-line, a *border* colour at 1.24:1 against the page: the
-   * ring was essentially invisible, readable only through its 6% backdrop
-   * invert, which reads as the cursor flickering out over darker sections.
-   * ~3.3:1 here — visible on any part of the page, still quiet.
-   */
   --c-cursor-ring: rgba(196, 181, 253, 0.5);
 
-  /* ---- Status ---- */
   --c-live: #4ade80;
   --c-error: #f87171;
 
-  /* ---- Gradients ---- */
   --g-accent: linear-gradient(135deg, var(--c-violet) 0%, var(--c-violet-bright) 100%);
   --g-text: linear-gradient(180deg, var(--c-text) 30%, rgba(244, 242, 255, 0.62) 100%);
 
-  /* ---- Type ---- */
   --f-display: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
   --f-body: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --f-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Fluid scale — clamp(min, preferred, max), 390px → 1600px viewports. */
-  /* Sized so the longest name line ("PUSHPAM") still fits the hero's left
-     column at every breakpoint without wrapping. */
   --t-hero: clamp(3rem, 8.2vw, 8.5rem);
   --t-h2: clamp(2.25rem, 6vw, 5rem);
   --t-h3: clamp(1.5rem, 3vw, 2.5rem);
@@ -73,7 +39,6 @@
   --t-small: 0.875rem;
   --t-label: 0.75rem;
 
-  /* ---- Space ---- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -88,14 +53,12 @@
   --gutter: clamp(1.25rem, 5vw, 5.5rem);
   --maxw: 1440px;
 
-  /* ---- Radius ---- */
   --r-sm: 6px;
   --r-md: 12px;
   --r-lg: 20px;
   --r-xl: 28px;
   --r-pill: 999px;
 
-  /* ---- Motion ---- */
   --e-out: cubic-bezier(0.22, 1, 0.36, 1);
   --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -103,12 +66,10 @@
   --d-mid: 0.45s;
   --d-slow: 0.85s;
 
-  /* ---- Elevation ---- */
   --sh-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 44px rgba(0, 0, 0, 0.5);
   --sh-lift: 0 30px 70px rgba(0, 0, 0, 0.62);
   --sh-glow: 0 0 90px rgba(124, 77, 255, 0.28);
 
-  /* ---- Layers ---- */
   --z-noise: 60;
   --z-nav: 70;
   --z-cursor: 90;

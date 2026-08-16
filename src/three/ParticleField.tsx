@@ -2,13 +2,6 @@ import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-/**
- * Depth field of violet motes behind the avatar.
- *
- * Written as a single Points object with a custom shader rather than instanced
- * meshes — a few thousand additive sprites cost almost nothing this way, and
- * the per-point size attenuation gives the depth cue the flat backdrop lacks.
- */
 export function ParticleField({ count = 900, reduced }: { count?: number; reduced: boolean }) {
   const points = useRef<THREE.Points>(null);
   const { viewport } = useThree();
@@ -19,7 +12,6 @@ export function ParticleField({ count = 900, reduced }: { count?: number; reduce
     const seeds = new Float32Array(count);
 
     for (let i = 0; i < count; i += 1) {
-      // Bias toward a ring so the centre stays clear behind the portrait.
       const radius = 2.2 + Math.pow(Math.random(), 0.6) * 6.5;
       const angle = Math.random() * Math.PI * 2;
 
@@ -34,10 +26,7 @@ export function ParticleField({ count = 900, reduced }: { count?: number; reduce
     return { positions, scales, seeds };
   }, [count]);
 
-  const uniforms = useMemo(
-    () => ({ uTime: { value: 0 }, uPixelRatio: { value: 1 } }),
-    [],
-  );
+  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uPixelRatio: { value: 1 } }), []);
 
   useFrame((state, delta) => {
     if (!points.current) return;
@@ -47,7 +36,6 @@ export function ParticleField({ count = 900, reduced }: { count?: number; reduce
     if (reduced) return;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
 
-    // Very slow drift, plus a whisper of pointer parallax.
     points.current.rotation.z += delta * 0.012;
     points.current.position.x += (state.pointer.x * 0.35 - points.current.position.x) * 0.03;
     points.current.position.y += (state.pointer.y * 0.25 - points.current.position.y) * 0.03;
@@ -65,7 +53,7 @@ export function ParticleField({ count = 900, reduced }: { count?: number; reduce
         transparent
         depthWrite={false}
         blending={THREE.AdditiveBlending}
-        vertexShader={/* glsl */ `
+        vertexShader={`
           attribute float aScale;
           attribute float aSeed;
           uniform float uTime;
@@ -81,17 +69,15 @@ export function ParticleField({ count = 900, reduced }: { count?: number; reduce
             gl_Position = projectionMatrix * mv;
             gl_PointSize = aScale * uPixelRatio * (14.0 / -mv.z);
 
-            // Twinkle, and fade the far ones out for depth.
             vAlpha = (0.35 + 0.65 * (sin(uTime * 0.9 + aSeed) * 0.5 + 0.5))
                    * smoothstep(14.0, 3.0, -mv.z);
           }
         `}
-        fragmentShader={/* glsl */ `
+        fragmentShader={`
           precision mediump float;
           varying float vAlpha;
 
           void main() {
-            // Round, soft-edged point instead of the default square.
             float d = length(gl_PointCoord - 0.5);
             float mask = smoothstep(0.5, 0.05, d);
             if (mask < 0.01) discard;

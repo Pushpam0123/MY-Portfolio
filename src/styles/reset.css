@@ -11,7 +11,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-behavior: auto; /* ScrollSmoother owns scrolling; native smooth fights it */
+  scroll-behavior: auto;
 }
 
 body {
@@ -82,7 +82,6 @@ a {
   border-radius: var(--r-sm);
 }
 
-/* Only remove the outline where focus-visible is actually supported. */
 @supports selector(:focus-visible) {
   :focus:not(:focus-visible) {
     outline: none;

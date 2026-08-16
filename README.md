@@ -143,7 +143,7 @@ OG, Twitter, JSON-LD), `public/sitemap.xml`, and `public/robots.txt`.
   can pass at desktop width and fail AA on a phone.
 - Lighthouse (12, against `npm run preview`): desktop 98 / 100 / 100 / 100,
   mobile ~65 / 100 / 100 / 100. Mobile performance is bound by client-side JS
-  under CPU throttling rather than by bytes — see `HANDOFF.md` §7.5.
+  under CPU throttling rather than by bytes.
 
 ## Performance notes
 
@@ -179,5 +179,4 @@ Both expect Chrome at `/Applications/Google Chrome.app`.
 
 ## Credit
 
-Design and code by Pushpam Raj, built with Claude Code. The avatar renders are
-original assets.
+Design and code by Pushpam Raj. The avatar renders are original assets.

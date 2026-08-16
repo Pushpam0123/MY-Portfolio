@@ -2,14 +2,6 @@ import { useRef, type ReactNode } from 'react';
 import { ScrollSmoother, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
 
-/**
- * ScrollSmoother wrapper.
- *
- * Smoothing is deliberately skipped on touch devices — hijacking momentum
- * scrolling on a phone makes it feel broken rather than premium — and under
- * reduced-motion. In both cases `data-smooth="off"` restores normal document
- * flow via global.css, and ScrollTrigger continues to work unchanged.
- */
 export function Smoother({ children }: { children: ReactNode }) {
   const wrapper = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);

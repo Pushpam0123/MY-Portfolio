@@ -20,7 +20,6 @@
   align-items: start;
 }
 
-/* ---- Lead column ---- */
 .contact__lead {
   display: flex;
   flex-direction: column;
@@ -32,7 +31,6 @@
   display: block;
 }
 
-/* Sized so "SOMETHING" — the widest line — stays inside the left column. */
 .contact__headline {
   font-size: clamp(2.25rem, 5.4vw, 4.75rem);
   font-stretch: 108%;
@@ -46,7 +44,6 @@
   max-width: 46ch;
 }
 
-/* ---- Big email ---- */
 .contact__mail {
   display: block;
   max-width: 100%;
@@ -70,7 +67,6 @@
   transition: transform var(--d-fast) var(--e-out);
 }
 
-/* Per-character lift on hover — the "distort" without a shader. */
 .contact__mail:hover .contact__mail-char:nth-child(odd) {
   transform: translateY(-3px);
 }
@@ -124,7 +120,6 @@
   color: var(--c-violet-bright);
 }
 
-/* ---- Form panel ---- */
 .contact__panel {
   padding: clamp(1.5rem, 3vw, 2.5rem);
   border-radius: var(--r-xl);
@@ -179,7 +174,6 @@
   background: rgba(124, 77, 255, 0.06);
 }
 
-/* Show the browser's validity state, but only after the user has engaged. */
 .contact__field input:user-invalid,
 .contact__field textarea:user-invalid {
   border-color: var(--c-error);

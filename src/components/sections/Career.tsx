@@ -13,7 +13,6 @@ export function Career() {
     () => {
       if (reduced) return;
 
-      // The rail fills as the section scrolls — a progress bar for the career.
       gsap.fromTo(
         '.career__rail-fill',
         { scaleY: 0 },
@@ -29,7 +28,6 @@ export function Career() {
         },
       );
 
-      // Each entry rises and settles as it enters, and its node lights up.
       gsap.utils.toArray<HTMLElement>('.career__item').forEach((item) => {
         gsap.from(item, {
           y: 48,

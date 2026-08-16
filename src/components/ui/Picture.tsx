@@ -3,7 +3,7 @@ import type { ResponsiveImage } from '@/assets/images';
 interface PictureProps {
   image: ResponsiveImage;
   alt: string;
-  /** The `sizes` attribute — required for srcset to select correctly. */
+
   sizes: string;
   className?: string;
   priority?: boolean;
@@ -11,10 +11,6 @@ interface PictureProps {
   height?: number;
 }
 
-/**
- * <picture> with AVIF → WebP → PNG fallbacks. Explicit width/height (or the
- * asset's own max width) reserve layout space so images never cause CLS.
- */
 export function Picture({
   image,
   alt,

@@ -11,12 +11,6 @@ interface Props {
   duration?: number;
 }
 
-/**
- * Number that counts up when it scrolls into view.
- *
- * The final value is rendered as the initial text content, so it is correct for
- * screen readers, for reduced-motion users, and if JS animation never runs.
- */
 export function Counter({
   value,
   decimals = 0,

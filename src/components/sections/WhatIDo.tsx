@@ -30,11 +30,7 @@ export function WhatIDo() {
   return (
     <section className="section wid" id="services" ref={root}>
       <div className="shell">
-        <SectionHeading
-          index="02"
-          eyebrow="What I Do"
-          title="Three ways I move a team forward."
-        >
+        <SectionHeading index="02" eyebrow="What I Do" title="Three ways I move a team forward.">
           <p className="lede">
             The through-line is the same in each: find the slow, manual step and replace it with
             something measured, repeatable, and shipped.

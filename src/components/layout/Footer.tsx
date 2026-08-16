@@ -3,7 +3,6 @@ import { ScrollSmoother } from '@/lib/gsap';
 import { profile, socials } from '@/data/profile';
 import './Footer.css';
 
-/** Live clock in Pushpam's timezone — a small signal that the page is alive. */
 function useLocalTime(timeZone: string) {
   const [time, setTime] = useState('');
 

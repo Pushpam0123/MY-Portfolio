@@ -1,12 +1,5 @@
 import { useSyncExternalStore } from 'react';
 
-/**
- * Media query as reactive state.
- *
- * `useSyncExternalStore` rather than useState+useEffect: it reads the current
- * match during render, so the first paint is already correct instead of
- * flashing the desktop layout on mobile.
- */
 export function useMediaQuery(query: string): boolean {
   const subscribe = (onChange: () => void) => {
     const list = window.matchMedia(query);
@@ -17,7 +10,7 @@ export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(
     subscribe,
     () => window.matchMedia(query).matches,
-    () => false, // SSR / prerender default
+    () => false,
   );
 }
 

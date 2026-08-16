@@ -1,7 +1,7 @@
 export interface SkillGroup {
   id: string;
   title: string;
-  /** Marquee scroll direction — adjacent rails run opposite each other. */
+
   direction: 'left' | 'right';
   items: string[];
 }
@@ -74,33 +74,16 @@ export const skillGroups: SkillGroup[] = [
   },
 ];
 
-/**
- * The physics spheres in the Tech Stack section.
- *
- * Every entry is a technology Pushpam demonstrably uses: either it appears on
- * the résumé, or it is the stack of one of the four public repositories linked
- * from the Work section (Kotlin and ONNX from ScamShield, FastAPI and Docker
- * from Sahayak, Claude from both RAG projects, TypeScript and Socket.IO from
- * TaskFlow AI). A repository anyone can open is stronger evidence than a CV
- * line, but the bar is the same either way — **nothing goes on a ball that is
- * not backed by one of those two sources.** The point of the section is to be
- * scannable and true, not to pad the list.
- *
- * `icon` is a simple-icons slug. Two entries have no icon: Amazon Web Services
- * and Tableau were removed from simple-icons over trademark policy, so they
- * render as wordmarks via `label` instead.
- */
 export interface TechBall {
-  /** Stable id — also the generated texture filename. */
   id: string;
   name: string;
-  /** simple-icons slug, when one exists. */
+
   icon?: string;
-  /** Wordmark text used when there is no icon. */
+
   label?: string;
-  /** Override the brand colour (hex without '#'). */
+
   hex?: string;
-  /** Relative sphere size; a little variety reads better than a uniform grid. */
+
   scale: number;
 }
 
@@ -122,7 +105,7 @@ export const techBalls: TechBall[] = [
   { id: 'aws', name: 'AWS', label: 'aws', hex: 'FF9900', scale: 1.1 },
   { id: 'gcp', name: 'Google Cloud', icon: 'googlecloud', scale: 1 },
   { id: 'tableau', name: 'Tableau', label: 'Tableau', hex: 'E97627', scale: 0.95 },
-  // Evidenced by the four linked repositories rather than the résumé.
+
   { id: 'typescript', name: 'TypeScript', icon: 'typescript', scale: 1.1 },
   { id: 'fastapi', name: 'FastAPI', icon: 'fastapi', scale: 1.05 },
   { id: 'docker', name: 'Docker', icon: 'docker', scale: 1.05 },
@@ -141,7 +124,6 @@ export interface Service {
   bullets: string[];
 }
 
-/** The three "What I Do" cards, each paired with one avatar expression. */
 export const services: Service[] = [
   {
     id: 'ai-ml',

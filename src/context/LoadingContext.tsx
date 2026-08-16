@@ -1,26 +1,29 @@
-/* eslint-disable react-refresh/only-export-components --
-   The provider and its hook belong together; splitting them across files to
-   satisfy fast refresh would be worse for readability than the lost HMR. */
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 interface LoadingState {
-  /** True until the preloader has finished its exit animation. */
   loading: boolean;
-  /** True once the intro is done — sections use this to trigger entrance tweens. */
   ready: boolean;
   finish: () => void;
 }
 
 const LoadingContext = createContext<LoadingState | null>(null);
 
-/** The intro runs once per browser session, not on every route/refresh. */
 const SESSION_KEY = 'pr-intro-played';
 
 const alreadyPlayed = () => {
   try {
     return sessionStorage.getItem(SESSION_KEY) === '1';
   } catch {
-    // Private-mode Safari throws on sessionStorage access. Play the intro.
+    return false;
+  }
+};
+
+const rememberPlayed = () => {
+  try {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    return true;
+  } catch {
     return false;
   }
 };
@@ -30,11 +33,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(() => alreadyPlayed());
 
   const finish = useCallback(() => {
-    try {
-      sessionStorage.setItem(SESSION_KEY, '1');
-    } catch {
-      /* non-fatal */
-    }
+    rememberPlayed();
     setLoading(false);
     setReady(true);
   }, []);

@@ -10,7 +10,6 @@
   padding-left: 0;
 }
 
-/* ---- Progress rail ---- */
 .career__rail {
   position: absolute;
   left: 172px;
@@ -29,7 +28,6 @@
   transform: scaleY(0);
 }
 
-/* ---- Entry ---- */
 .career__item {
   position: relative;
   display: grid;
@@ -99,7 +97,6 @@
   color: var(--c-live);
 }
 
-/* ---- Card ---- */
 .career__card {
   display: flex;
   flex-direction: column;
@@ -171,7 +168,6 @@
   background: var(--c-violet);
 }
 
-/* Education entries read as secondary to the work history. */
 .career__item--education .career__card {
   background: transparent;
   border-style: dashed;

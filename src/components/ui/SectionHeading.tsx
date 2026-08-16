@@ -11,12 +11,6 @@ interface Props {
   children?: ReactNode;
 }
 
-/**
- * Section header with a line-by-line masked reveal driven by SplitText.
- *
- * The split is reverted on cleanup so the DOM returns to plain text — otherwise
- * re-running the effect would split the already-split markup.
- */
 export function SectionHeading({ index, eyebrow, title, align = 'left', children }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -31,7 +25,7 @@ export function SectionHeading({ index, eyebrow, title, align = 'left', children
         type: 'lines',
         linesClass: 'sec-head__line',
         mask: 'lines',
-        aria: 'none', // the heading text remains in the DOM and reads normally
+        aria: 'none',
       });
 
       gsap.from(split.lines, {

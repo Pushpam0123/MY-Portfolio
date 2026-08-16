@@ -15,11 +15,6 @@ type Props = BaseProps &
     | ({ as: 'a' } & React.AnchorHTMLAttributes<HTMLAnchorElement>)
   );
 
-/**
- * Pill button that drifts toward the pointer. Renders as <a> or <button>
- * depending on whether it navigates — keeps the semantics honest for
- * screen readers and keyboard users.
- */
 export function MagneticButton({
   children,
   variant = 'solid',
@@ -41,7 +36,9 @@ export function MagneticButton({
     );
   }
 
-  const { as: _as, ...buttonProps } = rest as { as?: 'button' } & React.ButtonHTMLAttributes<HTMLButtonElement>;
+  const { as: _as, ...buttonProps } = rest as {
+    as?: 'button';
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>;
   return (
     <button ref={ref as React.Ref<HTMLButtonElement>} className={classes} {...buttonProps}>
       <span className="mbtn__label" data-magnetic-inner>

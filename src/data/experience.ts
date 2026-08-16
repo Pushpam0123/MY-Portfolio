@@ -1,8 +1,3 @@
-/**
- * Career timeline. Work history first, then education — rendered as one
- * continuous pinned rail in the Career section.
- */
-
 export type TimelineKind = 'work' | 'education';
 
 export interface TimelineEntry {
@@ -12,7 +7,7 @@ export interface TimelineEntry {
   title: string;
   location: string;
   period: string;
-  /** Drives the "current role" pulse indicator. */
+
   current?: boolean;
   points: string[];
   meta?: string;

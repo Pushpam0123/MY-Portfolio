@@ -1,8 +1,3 @@
-/**
- * Identity and contact details. Everything here comes from the resume PDF in
- * src/assets/source — treat that as the source of truth when updating.
- */
-
 export interface SocialLink {
   label: string;
   short: string;
@@ -14,13 +9,8 @@ export const profile = {
   firstName: 'Pushpam',
   lastName: 'Raj',
   role: 'AI / ML Engineer',
-  /** Cycled one at a time under the hero headline. */
-  roles: [
-    'AI / ML Engineer',
-    'Automation Systems',
-    'LLM Tooling',
-    'Full-Stack Delivery',
-  ],
+
+  roles: ['AI / ML Engineer', 'Automation Systems', 'LLM Tooling', 'Full-Stack Delivery'],
   tagline: 'I build AI-native tooling and automation systems that make teams measurably faster.',
   location: 'New Delhi, India',
   timezone: 'Asia/Kolkata',
@@ -34,7 +24,6 @@ export const profile = {
   summary:
     'Computer Science graduate specializing in Artificial Intelligence, Machine Learning, and workflow automation, with hands-on experience building AI-native tooling and automation systems that improve operational efficiency and productivity. Skilled at rapidly onboarding to existing AI and automation projects and delivering data-driven solutions from prototype to production, with a focus on process improvement and continuous enhancement.',
 
-  /** Short paragraphs for the About section — the summary above, broken for pacing. */
   about: [
     'I am a Computer Science graduate specializing in Artificial Intelligence, Machine Learning, and workflow automation.',
     'My work is building AI-native tooling and automation systems that improve operational efficiency and productivity — the internal tools, benchmarking harnesses, and pipelines that let a team move faster than it otherwise could.',
@@ -52,7 +41,6 @@ export const socials: SocialLink[] = [
   { label: 'Email', short: 'EM', href: `mailto:${profile.email}` },
 ];
 
-/** Headline figures for the About section counters. */
 export const stats = [
   { value: 8.22, suffix: '', label: 'CGPA at VIT', decimals: 2 },
   { value: 4, suffix: '', label: 'Certifications', decimals: 0 },

@@ -7,11 +7,6 @@ import './Contact.css';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
-/**
- * Public form endpoint (Formspree / Web3Forms). Safe to ship in the bundle —
- * it is a submission URL, not a secret. When it is absent the form is replaced
- * by a plain mailto link rather than silently failing on submit.
- */
 const ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT?.trim();
 
 if (import.meta.env.DEV && !ENDPOINT) {
@@ -34,8 +29,6 @@ export function Contact() {
       const mail = root.current?.querySelector<HTMLElement>('.contact__mail-text');
       if (!mail) return;
 
-      // The wrapping <a> already carries the accessible name, and aria-label is
-      // prohibited on a plain <span> — so keep SplitText out of the ARIA layer.
       const split = new SplitText(mail, {
         type: 'chars',
         charsClass: 'contact__mail-char',
@@ -61,7 +54,7 @@ export function Contact() {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard can be blocked by permissions; the mailto link still works.
+      setCopied(false);
     }
   };
 
@@ -72,7 +65,6 @@ export function Contact() {
     const form = event.currentTarget;
     const data = new FormData(form);
 
-    // Honeypot — real people leave this hidden field empty.
     if (data.get('company')) {
       setStatus('sent');
       return;
@@ -109,7 +101,7 @@ export function Contact() {
       <div className="shell contact__inner">
         <div className="contact__lead">
           <span className="eyebrow">Contact</span>
-          {/* aria-label supplies the spacing the two visual lines lack. */}
+          {}
           <h2 className="contact__headline display" aria-label="Let's build something">
             <span aria-hidden="true">Let&apos;s build</span>
             <span aria-hidden="true">something</span>
@@ -197,10 +189,16 @@ export function Contact() {
                 />
               </div>
 
-              {/* Honeypot: hidden from people, irresistible to bots. */}
+              {}
               <div className="contact__honey" aria-hidden="true">
                 <label htmlFor="contact-company">Company</label>
-                <input id="contact-company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+                <input
+                  id="contact-company"
+                  name="company"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
               </div>
 
               <MagneticButton as="button" type="submit" disabled={status === 'sending'}>
@@ -218,12 +216,6 @@ export function Contact() {
               </p>
             </form>
           ) : (
-            /*
-             * Visitor-facing fallback. Deliberately says nothing about missing
-             * configuration — that is the site owner's problem, not something a
-             * recruiter reading the page should ever see. The setup hint goes to
-             * the console in development instead.
-             */
             <div className="contact__fallback">
               <h3 className="contact__fallback-title">Drop me a line</h3>
               <p className="body-copy">

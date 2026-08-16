@@ -26,7 +26,6 @@ export function Work() {
           scrollTrigger: { trigger: panel, start: 'top 74%', once: true },
         });
 
-        // Slow counter-scroll on the panel art, for depth against the copy.
         if (media) {
           gsap.fromTo(
             media,
@@ -53,8 +52,8 @@ export function Work() {
       <div className="shell">
         <SectionHeading index="04" eyebrow="Work" title="Systems I designed and shipped.">
           <p className="lede">
-            Four systems where the measurable outcome mattered more than the demo — each one
-            open on GitHub.
+            Four systems where the measurable outcome mattered more than the demo — each one open on
+            GitHub.
           </p>
         </SectionHeading>
       </div>
@@ -67,9 +66,7 @@ export function Work() {
             style={{ '--panel-accent': project.accent } as React.CSSProperties}
           >
             <div className="shell work__panel-inner">
-              {/* Decorative in full: the schematic restates `points`, and the
-                  chip row restates `stack`, both of which are real text in the
-                  copy column beside it. */}
+              {}
               <div className="work__media" aria-hidden="true">
                 <div className="work__media-inner">
                   <div className="work__media-glow" />
@@ -85,10 +82,7 @@ export function Work() {
                   </ol>
                 </div>
 
-                {/* Outside `-inner`, which is inset past the plate's edges and
-                    parallaxed — anything absolutely positioned within it is
-                    measured against those overhanging edges, which is what was
-                    slicing the first chip off. */}
+                {}
                 <ul className="work__media-stack">
                   {project.stack.map((tech) => (
                     <li key={tech}>{tech}</li>
@@ -123,8 +117,7 @@ export function Work() {
                   ))}
                 </ul>
 
-                {/* Not every project has numbers worth standing behind — see the
-                    note on ScamShield in projects.ts. */}
+                {}
                 {project.metrics && (
                   <dl className="work__metrics" data-work-reveal>
                     {project.metrics.map((metric) => (

@@ -8,12 +8,6 @@ import { MagneticButton } from '@/components/ui/MagneticButton';
 import { StaticAvatar } from '@/components/ui/StaticAvatar';
 import './Landing.css';
 
-/*
- * Three.js is ~1 MB minified — by far the heaviest thing on the page, and the
- * hero must not wait on it. Loading the scene lazily keeps it out of the initial
- * bundle: the static portrait paints immediately and the WebGL version swaps in
- * once it arrives. Visitors on reduced motion or without WebGL never fetch it.
- */
 const AvatarScene = lazy(() => import('@/three/AvatarScene'));
 
 export function Landing() {
@@ -23,7 +17,6 @@ export function Landing() {
   const reduced = useReducedMotion();
   const [roleIndex, setRoleIndex] = useState(0);
 
-  // Entrance — runs only after the preloader has handed over.
   useGSAP(
     () => {
       if (!ready) return;
@@ -34,9 +27,7 @@ export function Landing() {
       }
 
       const title = inner.current!.querySelector<HTMLElement>('.hero__title');
-      // aria: 'none' — the <h1> carries its own aria-label (below). Letting
-      // SplitText derive one would announce "PushpamRaj", since the two line
-      // spans concatenate without whitespace.
+
       const split = title
         ? new SplitText(title, { type: 'chars', charsClass: 'hero__char', aria: 'none' })
         : null;
@@ -62,11 +53,6 @@ export function Landing() {
     { dependencies: [ready, reduced], scope: inner },
   );
 
-  // Role rotator under the headline.
-  //
-  // Driven by a single repeating GSAP timeline rather than setInterval: the
-  // ticker pauses with document visibility, whereas an interval keeps firing in
-  // a hidden tab and would queue swaps that can never render.
   useGSAP(
     () => {
       if (!ready || reduced) return;
@@ -74,8 +60,7 @@ export function Landing() {
       if (!el) return;
 
       const tl = gsap.timeline({ repeat: -1 });
-      // Long hold, quick swap — the label should read as settled text most of
-      // the time rather than something perpetually in motion.
+
       tl.to({}, { duration: 3.2 })
         .to(el, { yPercent: -110, opacity: 0, duration: 0.34, ease: 'power3.in' })
         .call(() => setRoleIndex((i) => (i + 1) % profile.roles.length))
@@ -100,7 +85,7 @@ export function Landing() {
 
   return (
     <section className="hero" id="top" ref={scope}>
-      {/* Slowest layer — the bloom barely moves, which sets the depth floor. */}
+      {}
       <div className="hero__bloom" data-parallax="0.08" aria-hidden="true" />
       <div className="hero__grid-lines" aria-hidden="true" />
 
@@ -110,8 +95,7 @@ export function Landing() {
             {profile.location} — Available worldwide
           </p>
 
-          {/* Each line is its own masked block: the char reveal slides up from
-              behind it, and nowrap stops the name breaking mid-word. */}
+          {}
           <h1 className="display hero__title" data-parallax="0.2" aria-label={profile.name}>
             <span className="hero__title-line" aria-hidden="true">
               {profile.firstName}
@@ -156,7 +140,7 @@ export function Landing() {
           )}
         </div>
 
-        {/* Fastest layer — the portrait lifts off the page as you scroll. */}
+        {}
         <div className="hero__visual" data-parallax="0.24" data-cursor="drag">
           <div className="hero__visual-glow" aria-hidden="true" />
           {reduced ? (

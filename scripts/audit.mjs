@@ -1,18 +1,3 @@
-/**
- * Accessibility + structure audit.
- *
- * Runs axe-core against the live page, then adds a few checks axe cannot make:
- * heading order, landmark presence, keyboard reachability of the primary
- * actions, and that every image carries an alt attribute.
- *
- * The axe pass runs at a phone width as well as a desktop one, because some
- * failures only exist at one of them. Type here is sized with `clamp()`, and
- * WCAG's contrast threshold steps down for large text — so a colour can be
- * compliant on a wide viewport and a real AA failure on a narrow one, with
- * nothing but the viewport between the two. A desktop-only audit reports clean.
- *
- * Usage: node scripts/audit.mjs [--url=http://localhost:5173]
- */
 import { createRequire } from 'node:module';
 import puppeteer from 'puppeteer-core';
 
@@ -39,15 +24,12 @@ const main = async () => {
 
   const page = await browser.newPage();
 
-  /** Load, settle, and run axe at the given viewport. */
   const axeAt = async (width, height) => {
     await page.setViewport({ width, height });
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 45_000 });
     await page.waitForFunction(() => !document.querySelector('.preload'), { timeout: 20_000 });
     await new Promise((r) => setTimeout(r, 1000));
 
-    // Reveal every scroll-triggered section so axe sees the real, settled DOM
-    // rather than elements still parked at opacity 0.
     await page.evaluate(async () => {
       const step = window.innerHeight * 0.75;
       for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
@@ -79,12 +61,10 @@ const main = async () => {
   };
 
   const mobileResults = await axeAt(390, 844);
-  // Desktop last, so the structure and keyboard checks below run against it.
+
   const results = await axeAt(1280, 900);
 
   const structure = await page.evaluate(() => {
-    // Report the accessible name, not raw textContent: an aria-label overrides
-    // the content, and visually-broken lines can concatenate without spaces.
     const headings = [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].map((h) => ({
       level: Number(h.tagName[1]),
       text: (h.getAttribute('aria-label') ?? h.textContent ?? '')
@@ -115,13 +95,11 @@ const main = async () => {
         .map((i) => i.currentSrc.split('/').pop()),
       langAttr: document.documentElement.lang,
       title: document.title,
-      metaDescription: document
-        .querySelector('meta[name="description"]')
-        ?.getAttribute('content')?.length,
+      metaDescription: document.querySelector('meta[name="description"]')?.getAttribute('content')
+        ?.length,
     };
   });
 
-  // Keyboard reachability: tab through and record what receives focus.
   const focusOrder = [];
   for (let i = 0; i < 14; i += 1) {
     await page.keyboard.press('Tab');
@@ -131,7 +109,10 @@ const main = async () => {
       const style = getComputedStyle(el);
       return {
         tag: el.tagName.toLowerCase(),
-        label: (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 34),
+        label: (el.getAttribute('aria-label') || el.textContent || '')
+          .trim()
+          .replace(/\s+/g, ' ')
+          .slice(0, 34),
         outline: style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0,
       };
     });
@@ -147,10 +128,14 @@ const main = async () => {
   console.log('  h1 count        :', structure.h1Count);
   console.log('  landmarks       :', JSON.stringify(structure.landmarks));
   console.log('  images w/o alt  :', structure.imagesMissingAlt.length || 'none');
-  console.log('  skipped levels  :', structure.skippedLevels.length ? structure.skippedLevels : 'none');
+  console.log(
+    '  skipped levels  :',
+    structure.skippedLevels.length ? structure.skippedLevels : 'none',
+  );
 
   console.log('\nHEADING OUTLINE');
-  for (const h of structure.headings) console.log(`  ${'  '.repeat(h.level - 1)}h${h.level} ${h.text}`);
+  for (const h of structure.headings)
+    console.log(`  ${'  '.repeat(h.level - 1)}h${h.level} ${h.text}`);
 
   console.log('\nKEYBOARD FOCUS ORDER (first 14 stops)');
   for (const f of focusOrder) {

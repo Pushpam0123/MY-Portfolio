@@ -20,12 +20,10 @@
   align-items: center;
 }
 
-/* Alternate the media side so the two panels do not read as a list. */
 .work__panel:nth-child(even) .work__media {
   order: 2;
 }
 
-/* ---- Media plate ---- */
 .work__media {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -45,7 +43,6 @@
   padding: var(--s-7);
 }
 
-/* Watermark behind the schematic, not the plate's subject. */
 .work__media-index {
   position: absolute;
   top: 50%;
@@ -61,14 +58,6 @@
   -webkit-text-stroke: 1px rgba(196, 181, 253, 0.16);
 }
 
-/* ---- Pipeline schematic ---- */
-
-/*
- * What the plate holds instead of a product screenshot. There are no real
- * screenshots of either project, and a plate carrying nothing but a ghosted
- * index number spent half the section saying nothing — a diagram of the stages
- * the copy describes at least earns the space it occupies.
- */
 .work__flow {
   position: relative;
   z-index: 1;
@@ -78,8 +67,6 @@
   width: min(100%, 19rem);
 }
 
-/* The spine, inset by half a dot so it runs through their centres and stopped
-   short at both ends so it reads as connecting the stages, not escaping them. */
 .work__flow::before {
   content: '';
   position: absolute;
@@ -162,7 +149,6 @@
   color: var(--c-faint);
 }
 
-/* Honest badge for a project whose own README says it is not finished. */
 .work__status {
   display: inline-flex;
   align-items: center;
@@ -186,7 +172,6 @@
   background: var(--panel-accent, var(--c-violet));
 }
 
-/* ---- Copy ---- */
 .work__body {
   display: flex;
   flex-direction: column;
@@ -243,7 +228,6 @@
   background: var(--panel-accent, var(--c-violet));
 }
 
-/* ---- Metrics ---- */
 .work__metrics {
   display: flex;
   flex-wrap: wrap;
@@ -274,7 +258,6 @@
   font-size: 0.66rem;
 }
 
-/* ---- Chips + link ---- */
 .work__chips {
   display: flex;
   flex-wrap: wrap;
@@ -309,7 +292,6 @@
   gap: var(--s-4);
 }
 
-/* The stack is duplicated on the media plate at wide sizes; hide one. */
 @media (max-width: 1023px) {
   .work__panel-inner {
     grid-template-columns: 1fr;
@@ -337,7 +319,6 @@
 }
 
 @media (min-width: 1024px) {
-  /* At desktop the plate carries the stack, so the inline chips are redundant. */
   .work__chips {
     display: none;
   }

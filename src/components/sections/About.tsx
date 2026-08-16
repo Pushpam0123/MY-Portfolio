@@ -16,11 +16,8 @@ export function About() {
     () => {
       if (reduced) return;
 
-      // Copy reveals line by line as the pinned portrait holds beside it.
       const paragraphs = gsap.utils.toArray<HTMLElement>('.about__para');
-      // aria: 'none' — SplitText otherwise stamps an aria-label onto the element
-      // it splits, and aria-label is prohibited on a bare <p>. The paragraph text
-      // stays in the DOM either way, so screen readers still read it normally.
+
       const splits = paragraphs.map(
         (p) =>
           new SplitText(p, {
@@ -45,8 +42,6 @@ export function About() {
         });
       });
 
-      // Pin the portrait through the copy. Skipped on mobile, where the single
-      // column makes pinning feel like the page has jammed.
       let pin: ScrollTrigger | undefined;
       if (!isMobile) {
         pin = ScrollTrigger.create({
@@ -116,11 +111,7 @@ export function About() {
               {stats.map((stat) => (
                 <div className="about__stat" key={stat.label}>
                   <dt className="about__stat-value">
-                    <Counter
-                      value={stat.value}
-                      decimals={stat.decimals}
-                      suffix={stat.suffix}
-                    />
+                    <Counter value={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
                   </dt>
                   <dd className="about__stat-label mono-label">{stat.label}</dd>
                 </div>

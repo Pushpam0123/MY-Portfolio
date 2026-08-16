@@ -8,8 +8,6 @@
   border-radius: 50%;
 }
 
-/* The halo keeps the dot readable where the page goes light or violet — over
-   the primary button it is otherwise violet-on-violet and vanishes. */
 .cursor-dot {
   width: 6px;
   height: 6px;
@@ -28,27 +26,13 @@
 
 .cursor-ring__label {
   font-family: var(--f-mono);
-  font-size: 3.4px; /* scaled up ~3.4x by the ring transform on hover */
+  font-size: 3.4px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--c-text);
   white-space: nowrap;
 }
 
-/*
- * Hide the native cursor only where the custom one is actually running.
- * Text inputs keep their caret cursor — replacing it hurts usability.
- *
- * Gated on an attribute Cursor.tsx sets while it is mounted, not on a media
- * query. A media query is an independent condition that has to agree with the
- * component's own `enabled` check forever, and when the two disagree — or when
- * the component is mounted but not drawing — the result is a page with no
- * pointer at all. Tying it to the component means every failure degrades to the
- * ordinary system cursor.
- *
- * `cursor` inherits, but the UA stylesheet's `a { cursor: pointer }` beats
- * inheritance, so links and buttons need naming explicitly.
- */
 :root[data-custom-cursor] body {
   cursor: none;
 }

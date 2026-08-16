@@ -20,8 +20,7 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      // `^_` also covers destructuring-rest omissions like `const { as: _as, ...rest }`,
-      // which is how discriminated props are stripped before spreading onto the DOM.
+
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', ignoreRestSiblings: true },
@@ -32,8 +31,6 @@ export default tseslint.config(
     files: ['scripts/**/*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: {
-      // Node for the script body; browser globals too, because the callbacks
-      // passed to page.evaluate() are serialised and run inside the page.
       globals: { ...globals.node, ...globals.browser },
       sourceType: 'module',
     },

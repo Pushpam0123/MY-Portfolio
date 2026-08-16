@@ -3,14 +3,7 @@ export interface Certification {
   title: string;
   issuer: string;
   year?: string;
-  /**
-   * Filename (without extension) in `src/assets/source/logos/`.
-   *
-   * The issuer marks are Pushpam's own SVG files rather than an icon package:
-   * Oracle, AWS and J.P. Morgan have all been dropped from simple-icons over
-   * trademark policy, so there is no accurate path to pull for any of them.
-   * Omitting this field is safe — the card falls back to the issuer's name.
-   */
+
   logo?: string;
 }
 

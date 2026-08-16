@@ -7,7 +7,6 @@
   padding-block: calc(var(--s-10) + 2rem) var(--s-8);
 }
 
-/* ---- Backdrop ---- */
 .hero__bloom {
   position: absolute;
   top: 44%;
@@ -21,7 +20,6 @@
   z-index: 0;
 }
 
-/* Faint vertical rules — structure without decoration. */
 .hero__grid-lines {
   position: absolute;
   inset: 0;
@@ -37,7 +35,6 @@
   mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
 }
 
-/* ---- Layout ---- */
 .hero__inner {
   position: relative;
   z-index: 1;
@@ -58,7 +55,6 @@
   font-size: var(--t-hero);
 }
 
-/* One mask per line, so the per-character reveal slides up from behind it. */
 .hero__title-line {
   display: block;
   overflow: hidden;
@@ -71,7 +67,6 @@
   will-change: transform;
 }
 
-/* ---- Role rotator ---- */
 .hero__role {
   display: flex;
   align-items: center;
@@ -82,10 +77,6 @@
   color: var(--c-faint);
 }
 
-/*
- * The mask height is set in the *value's* font size, not the parent's, and left
- * roomy enough to clear descenders — a tight box clips the "y" in "Systems".
- */
 .hero__role-window {
   position: relative;
   display: block;
@@ -144,15 +135,13 @@
   }
 }
 
-/* ---- Visual ---- */
 .hero__visual {
   position: relative;
   aspect-ratio: 1;
   width: 100%;
   max-width: 620px;
   margin-inline: auto;
-  /* The "lifted sheet" shadow — this is what makes the portrait read as a
-     separate plane floating above the page rather than printed onto it. */
+
   filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.55));
 }
 
@@ -187,7 +176,6 @@
   opacity: 0.75;
 }
 
-/* ---- Scroll cue ---- */
 .hero__scroll {
   position: absolute;
   right: var(--gutter);
@@ -228,14 +216,12 @@
   }
 }
 
-/* ---- Responsive ---- */
 @media (max-width: 1023px) {
   .hero__inner {
     grid-template-columns: 1fr;
     gap: var(--s-6);
   }
 
-  /* Portrait first on narrow screens — it is the strongest hook. */
   .hero__visual {
     order: -1;
     max-width: min(78vw, 420px);
@@ -254,7 +240,6 @@
     justify-content: center;
   }
 
-  /* Centred and wrapping, the leading rule detaches from the text — drop it. */
   .hero__eyebrow::before {
     display: none;
   }

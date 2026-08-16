@@ -15,40 +15,20 @@ export interface Project {
   summary: string;
   points: string[];
   stack: string[];
-  /**
-   * The system's stages, in order, for the schematic on the panel plate.
-   *
-   * Decorative and marked aria-hidden — every claim it makes is already stated
-   * in `points` as real text. It exists because the plate was otherwise an empty
-   * rectangle taking up half the section, and a diagram of what the thing
-   * actually does beats a placeholder. Each stage must be traceable to the
-   * project's own README; this is not the place to invent architecture.
-   */
+
   pipeline: string[];
-  /**
-   * Omitted where the project has no outcome numbers worth standing behind.
-   * Inventing a metric to fill the slot is worse than leaving it empty.
-   */
+
   metrics?: ProjectMetric[];
-  /** Shown as a badge. Use only where the repository says so itself. */
+
   status?: string;
   repo?: string;
   demo?: string;
-  /** Accent used for the panel bloom, so each project reads distinctly. */
+
   accent: string;
 }
 
 const GH = 'https://github.com/Pushpam0123';
 
-/**
- * The four projects, newest first.
- *
- * Copy is written against each repository's own README rather than invented,
- * and every card links to the real repository. Metrics are the one place the
- * two sources can disagree: where the résumé states an outcome, the résumé's
- * number is used (Pushpam's call); where it says nothing, the README's measured
- * figures are used, because they are the only ones anybody can verify.
- */
 export const projects: Project[] = [
   {
     id: 'scamshield',
@@ -70,9 +50,7 @@ export const projects: Project[] = [
       'Fusion layer',
       'Verdict with reasons',
     ],
-    // No metrics on purpose. The README is explicit that the bundled model is a
-    // stand-in and its accuracy numbers do not mean anything yet — quoting them
-    // would be the one dishonest thing on this page.
+
     status: 'Work in progress',
     repo: `${GH}/ScamShield`,
     accent: '#22d3ee',
@@ -97,7 +75,7 @@ export const projects: Project[] = [
       'Grounded answer with citations',
       'Groundedness audit',
     ],
-    // From the repository's own EVALS benchmark table.
+
     metrics: [
       { value: 94, suffix: '%', label: 'Hybrid Recall@5' },
       { value: 89, suffix: 'ms', label: 'Avg query latency' },

@@ -1,10 +1,6 @@
 import { socials } from '@/data/profile';
 import './SocialRail.css';
 
-/**
- * Fixed vertical social rail on the left edge. Hidden below 1280px, where the
- * links live in the footer and contact section instead.
- */
 export function SocialRail() {
   return (
     <aside className="rail" aria-label="Social links">

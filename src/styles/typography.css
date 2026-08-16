@@ -1,9 +1,7 @@
-/* Shared type roles. Sections compose these rather than redefining sizes. */
-
 .display {
   font-family: var(--f-display);
   font-weight: 800;
-  font-stretch: 118%; /* Archivo's width axis — the wide-grotesque look */
+  font-stretch: 118%;
   line-height: 0.86;
   letter-spacing: -0.035em;
   text-transform: uppercase;
@@ -73,7 +71,6 @@
   color: var(--c-lilac);
 }
 
-/* Visible only to screen readers. */
 .sr-only {
   position: absolute;
   width: 1px;

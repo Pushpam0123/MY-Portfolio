@@ -4,7 +4,6 @@ export interface NavItem {
   index: string;
 }
 
-/** Section ids double as scroll targets and as the active-state key. */
 export const navItems: NavItem[] = [
   { id: 'about', label: 'About', index: '01' },
   { id: 'services', label: 'What I Do', index: '02' },

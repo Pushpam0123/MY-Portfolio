@@ -1,16 +1,3 @@
-/**
- * Visual verification harness.
- *
- * Drives a real Chrome via CDP: loads the site, waits for the intro to clear,
- * then walks the page section by section capturing screenshots and collecting
- * console errors. Unlike an in-editor browser pane, this page is genuinely
- * "visible", so requestAnimationFrame runs and the GSAP/Three.js work actually
- * executes rather than sitting frozen.
- *
- * Usage:
- *   node scripts/shoot.mjs [--url=http://localhost:5173] [--width=1280]
- *                          [--height=800] [--out=./shots] [--motion=reduce]
- */
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import puppeteer from 'puppeteer-core';
@@ -46,9 +33,7 @@ const main = async () => {
   const page = await browser.newPage();
 
   if (reduceMotion) {
-    await page.emulateMediaFeatures([
-      { name: 'prefers-reduced-motion', value: 'reduce' },
-    ]);
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   }
 
   const errors = [];
@@ -62,7 +47,6 @@ const main = async () => {
 
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 45_000 });
 
-  // Wait for the preloader to hand over before measuring anything.
   await page
     .waitForFunction(() => !document.querySelector('.preload'), { timeout: 20_000 })
     .catch(() => errors.push('preloader never dismissed'));
@@ -76,9 +60,7 @@ const main = async () => {
       const c = document.querySelector('canvas');
       return c ? { w: c.width, h: c.height } : null;
     })(),
-    // Guarded: if the page is mid-reload (an asset rebuild kicks off an HMR
-    // storm, for one) this element may not be mounted yet, and letting the
-    // whole run die on a missing node loses every screenshot with it.
+
     heroFadeOpacity: (() => {
       const el = document.querySelector('[data-hero-fade]');
       return el ? getComputedStyle(el).opacity : 'missing';
@@ -88,15 +70,17 @@ const main = async () => {
   console.log(`viewport ${width}x${height}${reduceMotion ? ' (reduced motion)' : ''}`);
   console.log('  page height :', meta.docHeight);
   console.log('  smoothing   :', meta.smooth);
-  console.log('  hero canvas :', meta.canvas ? `${meta.canvas.w}x${meta.canvas.h}` : 'static image');
+  console.log(
+    '  hero canvas :',
+    meta.canvas ? `${meta.canvas.w}x${meta.canvas.h}` : 'static image',
+  );
   console.log('  hero copy   : opacity', meta.heroFadeOpacity);
 
   for (const id of SECTIONS) {
     const found = await page.evaluate((sectionId) => {
       const el = document.getElementById(sectionId);
       if (!el) return null;
-      // ScrollSmoother transforms the content, so scrollIntoView alone is not
-      // enough; drive window.scrollTo with the element's absolute offset.
+
       const y = el.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: Math.max(0, y - 8), behavior: 'instant' });
       return Math.round(y);
@@ -107,12 +91,6 @@ const main = async () => {
       continue;
     }
 
-    // Wait for the scroll to actually land before timing anything. Sections
-    // that mount a canvas on entry can reflow mid-scroll, and a fixed delay
-    // silently captures the wrong part of the page when that happens.
-    // Compare against the reachable position: the last section cannot scroll to
-    // its own offset once the document bottom is hit, and treating that as a
-    // failure is a false positive.
     await page
       .waitForFunction(
         (target) => {
@@ -124,8 +102,6 @@ const main = async () => {
       )
       .catch(() => errors.push(`scroll to #${id} did not settle`));
 
-    // Then let smooth-scrolling ease out and scroll-triggered animation play.
-    // Staggered per-line reveals and lazily-loaded scenes need more than a beat.
     await new Promise((r) => setTimeout(r, 3200));
     await page.screenshot({ path: path.join(outDir, `${id}.png`) });
     console.log(`  shot        : ${id}.png (y≈${found})`);

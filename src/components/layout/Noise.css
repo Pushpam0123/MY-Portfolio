@@ -10,7 +10,6 @@
   mix-blend-mode: overlay;
 }
 
-/* The grain is decoration; drop it when motion/contrast sensitivity is signalled. */
 @media (prefers-reduced-motion: reduce) {
   .noise {
     opacity: 0.24;

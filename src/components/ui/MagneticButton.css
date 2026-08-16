@@ -27,7 +27,6 @@
   pointer-events: none;
 }
 
-/* Fill that wipes up from the bottom on hover. */
 .mbtn::after {
   content: '';
   position: absolute;

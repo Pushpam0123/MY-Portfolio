@@ -5,11 +5,6 @@ import { profile } from '@/data/profile';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Preloader.css';
 
-/**
- * Intro screen. The counter is driven by real progress: it tracks how many of
- * the page's images have settled, then eases the last stretch to 100 so a fast
- * cache hit still reads as a deliberate intro rather than a flash.
- */
 export function Preloader() {
   const root = useRef<HTMLDivElement>(null);
   const [count, setCount] = useState(0);
@@ -24,7 +19,6 @@ export function Preloader() {
       const progress = { value: 0 };
       const setCounter = () => setCount(Math.round(progress.value));
 
-      // Real asset progress, polled against the document's images.
       const assetProgress = () => {
         const images = Array.from(document.images);
         if (images.length === 0) return 1;
@@ -37,14 +31,6 @@ export function Preloader() {
         ScrollTrigger.refresh();
       };
 
-      /*
-       * Failsafe. GSAP's ticker runs on requestAnimationFrame, which browsers
-       * throttle to zero in a background or occluded tab — and the preloader
-       * covers the entire site. Without this, a visitor who opens the page in a
-       * background tab (or hits any error mid-timeline) is left staring at a
-       * loader that can never finish. setTimeout still fires when rAF does not,
-       * so it guarantees the content is always reachable.
-       */
       const failsafe = window.setTimeout(done, 6000);
 
       const tl = gsap.timeline({
@@ -69,7 +55,6 @@ export function Preloader() {
         duration: 1.5,
         ease: 'power2.inOut',
         onUpdate: () => {
-          // Never run ahead of what has actually loaded by more than a nudge.
           progress.value = Math.min(progress.value, assetProgress() * 100 + 18);
           setCounter();
         },
@@ -88,11 +73,7 @@ export function Preloader() {
           stagger: 0.06,
         })
         .to('.preload__meta', { autoAlpha: 0, duration: 0.35 }, '<')
-        .to(
-          root.current,
-          { yPercent: -100, duration: 1, ease: 'expo.inOut' },
-          '-=0.25',
-        )
+        .to(root.current, { yPercent: -100, duration: 1, ease: 'expo.inOut' }, '-=0.25')
         .set(root.current, { autoAlpha: 0 });
 
       return () => {

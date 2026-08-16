@@ -19,3 +19,6 @@ yarn-error.log*
 src/assets/generated/
 public/og.png
 public/noise.png
+
+.claude/
+HANDOFF.md

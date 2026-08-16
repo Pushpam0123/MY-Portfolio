@@ -5,7 +5,6 @@ import { profile } from '@/data/profile';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Navbar.css';
 
-/** Scrolls to a section through ScrollSmoother when it is running. */
 function scrollToSection(id: string) {
   const target = document.getElementById(id);
   if (!target) return;
@@ -24,7 +23,6 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
 
-  // Condense the bar after leaving the hero, and track the active section.
   useGSAP(
     () => {
       ScrollTrigger.create({
@@ -33,9 +31,6 @@ export function Navbar() {
         onToggle: (self) => root.current?.classList.toggle('nav--pinned', self.isActive),
       });
 
-      // How far through the page the reader is. Driven straight off the
-      // ScrollTrigger progress value rather than a tween, so it tracks
-      // ScrollSmoother's eased position exactly instead of chasing it.
       ScrollTrigger.create({
         start: 0,
         end: 'max',
@@ -46,8 +41,6 @@ export function Navbar() {
         },
       });
 
-      // Only observe sections that are actually mounted — ScrollTrigger warns
-      // loudly for every missing selector otherwise.
       const triggers = navItems
         .map((item) => ({ item, el: document.getElementById(item.id) }))
         .filter((entry): entry is { item: (typeof navItems)[number]; el: HTMLElement } =>
@@ -67,7 +60,6 @@ export function Navbar() {
     { scope: root },
   );
 
-  // Mobile overlay: lock scroll and return focus predictably.
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -95,7 +87,7 @@ export function Navbar() {
 
   const go = (id: string) => {
     setOpen(false);
-    // Let the overlay unmount before measuring scroll targets.
+
     requestAnimationFrame(() => scrollToSection(id));
   };
 
@@ -167,11 +159,7 @@ export function Navbar() {
             <ul>
               {navItems.map((item) => (
                 <li key={item.id} className="nav-overlay__row">
-                  <button
-                    type="button"
-                    className="nav-overlay__item"
-                    onClick={() => go(item.id)}
-                  >
+                  <button type="button" className="nav-overlay__item" onClick={() => go(item.id)}>
                     <span className="nav-overlay__index">{item.index}</span>
                     {item.label}
                   </button>

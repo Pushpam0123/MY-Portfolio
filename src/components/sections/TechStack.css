@@ -3,18 +3,9 @@
   overflow: hidden;
 }
 
-/* ---- Heading ---- */
-
-/*
- * The title sits behind the spheres, centred, and they drift across it. That
- * overlap is the whole composition — so the heading is absolutely positioned
- * inside the stage rather than stacked above it.
- */
 .stack__heading {
   position: absolute;
-  /* High in the stage, above the band the cluster settles into. Sitting lower
-     put the densest part of the pit straight through the middle word, and a
-     title you cannot read is not a title. */
+
   top: clamp(2.5rem, 7vh, 5rem);
   left: 50%;
   transform: translateX(-50%);
@@ -40,12 +31,11 @@
   letter-spacing: 0.01em;
   text-transform: uppercase;
   text-align: center;
-  /* Dimmed so the spheres in front stay the focus. */
+
   color: rgba(244, 242, 255, 0.62);
   white-space: nowrap;
 }
 
-/* ---- Physics stage ---- */
 .stack__stage {
   position: relative;
   z-index: 1;
@@ -53,24 +43,11 @@
   width: 100%;
 }
 
-/*
- * No `touch-action: none` here. The canvas fills most of the viewport on a
- * phone, and disabling touch panning over it would trap the reader inside the
- * section with no way to scroll past. Pointer tracking works regardless; the
- * only thing given up is drag-to-fling on touch, which is a fair trade for the
- * page remaining scrollable.
- */
 .stack__canvas {
   position: absolute;
   inset: 0;
 }
 
-/*
- * Fixed height and centred, because this line swaps between the instruction and
- * the name of whichever ball the pointer is on. Letting it size to its content
- * would nudge the whole capabilities block up and down as the reader sweeps
- * across the cluster.
- */
 .stack__hint {
   min-height: 1.4em;
   color: var(--c-faint);
@@ -82,7 +59,6 @@
   color: var(--c-violet-bright);
 }
 
-/* ---- Capabilities line under the scene ---- */
 .stack__footer {
   position: relative;
   z-index: 2;
@@ -106,15 +82,11 @@
   text-wrap: balance;
 }
 
-/* Decorative, but it sits inline inside the sentence, so contrast checkers
-   score it as part of that text rather than as an ornament. --c-line is a
-   border colour and nowhere near readable at text size. */
 .stack__sep {
   margin-inline: 0.6em;
   color: var(--c-faint);
 }
 
-/* ---- Static fallback ---- */
 .stack__static {
   position: relative;
   z-index: 1;
@@ -160,14 +132,10 @@
 
 @media (max-width: 767px) {
   .stack__stage {
-    /* Shorter than desktop so the cluster is not stranded in empty space. The
-       pit is a wide, flat band, and the camera frames it by width — so any
-       height beyond what the band needs is dead black. */
     height: clamp(330px, 46vh, 440px);
   }
 
   .stack__title {
-    /* Two lines are fine on a phone; one line would be unreadably small. */
     white-space: normal;
     max-width: 12ch;
   }

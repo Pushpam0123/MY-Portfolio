@@ -4,44 +4,15 @@ import { Environment, Lightformer, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { techBalls } from '@/data/skills';
 import { techTextureUrl } from '@/assets/images';
-import {
-  createBody,
-  defaultOptions,
-  makeRng,
-  stepSolver,
-  type SphereBody,
-} from './spherePhysics';
+import { createBody, defaultOptions, makeRng, stepSolver, type SphereBody } from './spherePhysics';
 
-/**
- * Physics-driven tech stack.
- *
- * Zero gravity plus a spring per sphere toward its own slot in the layout: the
- * spheres hang together as a cluster, scatter when the cursor drives through
- * them, then re-gather into the same arrangement. The cursor is a real collider
- * in the simulation, not a visual effect layered on top, so the scattering is
- * genuinely solved rather than faked.
- *
- * The solver lives in ./spherePhysics — see the note there on why this does not
- * use a physics engine.
- */
-
-/** Approximate width of the settled cluster, in world units. */
 const CLUSTER_WIDTH = 17;
 
-/** Fixed timestep; the frame's elapsed time is consumed in chunks of this. */
 const FIXED_STEP = 1 / 120;
 
-/** Seconds each ball takes to swell to full size, and the gap between them. */
 const POP_DURATION = 0.55;
 const POP_STAGGER = 0.045;
 
-/**
- * How far beyond a ball's surface the pointer still counts as "on" it.
- *
- * Must clear the cursor's own collider radius: the cursor shoves bodies away,
- * so the gap between the pointer and the nearest surface never closes below
- * that radius and a tighter threshold would simply never match.
- */
 const FOCUS_MARGIN = defaultOptions.pointerRadius + 0.5;
 
 function useBallTextures() {
@@ -58,10 +29,6 @@ function useBallTextures() {
   return textures;
 }
 
-/**
- * Relaxation pass settings: collisions dominate, nothing bounces, and the
- * anchor field does not turn. Purely for computing the packed layout below.
- */
 const RELAX_OPTIONS = {
   ...defaultOptions,
   attraction: 0.9,
@@ -71,26 +38,10 @@ const RELAX_OPTIONS = {
   pointerImpulse: 0,
 };
 
-/** Enough steps for the seed clump to push itself apart and come to rest. */
 const RELAX_STEPS = 900;
 
 const NO_POINTER_VELOCITY = new THREE.Vector3();
 
-/**
- * Starting layout: the balls resting *in contact* with one another.
- *
- * Seeded as a deliberately overlapping clump on a golden-angle disc, then run
- * through the solver with collisions dominant until they have shouldered each
- * other apart and stopped. Wherever they end up becomes their anchor.
- *
- * Placing them by formula instead — on a shell, or spaced on a grid — leaves
- * visible gaps between neighbours, and closing those gaps by hand for twenty-odd
- * balls of four different radii is exactly the packing problem the solver
- * already knows how to do. Relaxing into it also guarantees the resting layout
- * is a genuine equilibrium: no overlaps for the collision pass to fight, so the
- * cluster sits still instead of jittering, and a scattered pit reassembles into
- * precisely this arrangement.
- */
 function useStartBodies(): SphereBody[] {
   return useMemo(() => {
     const rng = makeRng(20260815);
@@ -98,16 +49,10 @@ function useStartBodies(): SphereBody[] {
     const count = techBalls.length;
 
     const bodies = techBalls.map((ball, i) => {
-      // Sunflower disc: even angular coverage, radius growing as sqrt so the
-      // seed has uniform density rather than a jammed centre.
       const radius = Math.sqrt((i + 0.5) / count);
       const theta = golden * i;
       const seed = 4.2;
 
-      // Wider than it is tall, and flatter still in depth. A round cloud leaves
-      // dead black margins on a landscape stage, and depth spread is the axis
-      // that costs the most legibility — a ball pushed far back is small and
-      // its mark unreadable.
       return createBody(
         new THREE.Vector3(
           Math.cos(theta) * radius * seed * 2.05,
@@ -123,7 +68,6 @@ function useStartBodies(): SphereBody[] {
       stepSolver(bodies, null, NO_POINTER_VELOCITY, FIXED_STEP, RELAX_OPTIONS);
     }
 
-    // Freeze the packed result as the layout the cluster returns to.
     for (const body of bodies) {
       body.anchor.copy(body.position);
       body.velocity.set(0, 0, 0);
@@ -133,12 +77,6 @@ function useStartBodies(): SphereBody[] {
   }, []);
 }
 
-/**
- * Pulls the camera back until the cluster fits.
- *
- * A perspective camera's `fov` is vertical, so on a narrow viewport the visible
- * width collapses and the outer spheres get cropped off both edges.
- */
 function FitCamera() {
   const { camera, size } = useThree();
 
@@ -147,22 +85,6 @@ function FitCamera() {
     const aspect = size.width / Math.max(1, size.height);
     const vFov = (cam.fov * Math.PI) / 180;
 
-    // On a phone, fitting the full width shrinks the cluster to a speck marooned
-    // in empty space. Framing a narrower slice keeps the spheres large and lets
-    // the outermost ones run off the edges — which is how the composition is
-    // meant to read anyway. Only slightly narrower, though: cropped hard enough
-    // that the outer balls are sliced clean in half, it stops reading as a pit
-    // that overflows the frame and starts reading as a layout mistake.
-    //
-    // Keyed to viewport width, matching the CSS breakpoint, rather than to the
-    // canvas aspect: the stage is short enough on a phone that its aspect sits
-    // right on 1.0, so an aspect test flips branches — and yanks the camera
-    // back mid-scroll — on a few pixels of address-bar movement.
-    // Cropping harder than it used to: the cluster now rests packed in contact,
-    // and a dense band reads perfectly well running off both edges. The earlier
-    // caution against this was for a sparse layout, where an isolated ball
-    // sliced in half at the frame edge looked like a mistake rather than a pit
-    // continuing past the viewport.
     const narrow = size.width < 768;
     const target = narrow ? CLUSTER_WIDTH * 0.62 : CLUSTER_WIDTH;
     const needed = target / 2 / (Math.tan(vFov / 2) * aspect);
@@ -175,13 +97,6 @@ function FitCamera() {
 }
 
 interface SceneProps {
-  /**
-   * Gate for the entry animation. The canvas is mounted well before the section
-   * is on screen so it is never caught rendering blank, which means "mounted" is
-   * the wrong cue to animate on — the balls would finish arriving while still
-   * below the fold. The parent flips this only once the section is genuinely in
-   * view.
-   */
   start: boolean;
   onFocus?: (name: string | null) => void;
 }
@@ -201,21 +116,6 @@ function Cluster({ start, onFocus }: SceneProps) {
   const focused = useRef<string | null>(null);
   const gl = useThree((state) => state.gl);
 
-  // Stand the cursor down when it leaves the canvas. R3F simply stops updating
-  // `pointer` on the way out, so without this the collider stays parked wherever
-  // it was last seen — holding a hole open in the cluster, and leaving the
-  // violet marker sitting in the middle of the scene long after the reader has
-  // scrolled away.
-  /**
-   * Whether the pointer is physically over the canvas right now.
-   *
-   * This has to come from the DOM, not from `state.pointer`. R3F leaves that
-   * value frozen at wherever the pointer last was when it left the canvas, so
-   * "has it moved from the origin?" stays true forever afterwards — an earlier
-   * attempt at this cleared `pointerActive` on `pointerleave` and the re-arm
-   * check below turned it straight back on the next frame, leaving the collider
-   * (and its violet marker) parked in the scene exactly as before.
-   */
   const pointerInside = useRef(false);
 
   useEffect(() => {
@@ -235,23 +135,14 @@ function Cluster({ start, onFocus }: SceneProps) {
   }, [gl]);
 
   useFrame(({ pointer, viewport }, delta) => {
-    // Project the pointer onto the z=0 plane in world units.
     pointerWorld.set((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0);
 
-    // Live only while the pointer is genuinely over the canvas *and* has moved
-    // off R3F's default origin — parked at (0, 0) means "never touched", and
-    // treating that as a collider punches a hole in the middle of the cluster
-    // before the visitor has done anything.
     const live = pointerInside.current && (pointer.x !== 0 || pointer.y !== 0);
     if (live && !pointerActive.current) {
-      // Fresh arrival: reset the trail, or the first frame reads as a colossal
-      // pointer velocity from wherever it was last seen.
       pointerPrev.copy(pointerWorld);
     }
     pointerActive.current = live;
 
-    // Clamp: a long frame (tab regains focus) would otherwise teleport the
-    // cursor across the scene and fling everything off screen.
     const frame = Math.min(delta, 0.05);
 
     if (frame > 0) {
@@ -259,7 +150,6 @@ function Cluster({ start, onFocus }: SceneProps) {
     }
     pointerPrev.copy(pointerWorld);
 
-    // Fixed-timestep integration, so behaviour is identical at 60 and 144 Hz.
     accumulator.current = Math.min(accumulator.current + frame, 0.25);
     while (accumulator.current >= FIXED_STEP) {
       stepSolver(
@@ -272,9 +162,6 @@ function Cluster({ start, onFocus }: SceneProps) {
       accumulator.current -= FIXED_STEP;
     }
 
-    // Entry: each ball swells into place, staggered by index. Driven here rather
-    // than by GSAP because the mesh transform is already rewritten every frame
-    // from the solver — a tween on the same property would just be overwritten.
     if (start) elapsed.current += frame;
 
     let nearest: string | null = null;
@@ -289,8 +176,7 @@ function Cluster({ start, onFocus }: SceneProps) {
       mesh.quaternion.copy(body.quaternion);
 
       const t = Math.min(1, Math.max(0, (elapsed.current - i * POP_STAGGER) / POP_DURATION));
-      // Overshoot slightly past 1 and settle — a linear ramp reads as a fade-in
-      // rather than something arriving.
+
       const eased = t >= 1 ? 1 : 1 - (1 - t) ** 3 * Math.cos(t * Math.PI * 0.9);
       mesh.scale.setScalar(body.radius * eased);
 
@@ -322,19 +208,13 @@ function Cluster({ start, onFocus }: SceneProps) {
           ref={(node) => {
             meshes.current[i] = node;
           }}
-          // Starts at zero and is grown by the entry ramp above.
+
           scale={0}
           castShadow
           receiveShadow
         >
           <sphereGeometry args={[1, 48, 48]} />
-          {/*
-            Restrained rather than showroom-glossy. The previous settings —
-            near-mirror roughness, full clearcoat, heavy iridescence, and a
-            bright environment — blew a white specular hotspot across the middle
-            of every ball, which is exactly where the logo is. Softening the
-            reflection keeps the depth cue and hands the centre back to the mark.
-          */}
+          {}
           <meshPhysicalMaterial
             map={textures[i]}
             roughness={0.26}
@@ -363,20 +243,21 @@ function Scene({ start, onFocus }: SceneProps) {
       <FitCamera />
       <ambientLight intensity={1.05} />
       <spotLight position={[14, 15, 16]} angle={0.5} penumbra={1} intensity={1.1} castShadow />
-      {/* Violet kicker from behind and below, so the balls separate from the
-          near-black page instead of dissolving into it at their edges. */}
+      {}
       <directionalLight position={[-9, -7, -6]} intensity={0.5} color="#8b6cff" />
 
       <Cluster start={start} onFocus={onFocus} />
 
-      {/*
-        Environment built from Lightformers rather than a `preset`. Presets are
-        fetched from a CDN at runtime — an external dependency this site does not
-        otherwise have. These give the same studio sheen with nothing to download.
-      */}
+      {}
       <Environment resolution={256}>
         <Lightformer intensity={1.1} form="circle" scale={14} position={[0, 7, -9]} />
-        <Lightformer intensity={0.9} form="ring" scale={10} position={[-8, 2, -6]} color="#c4b5fd" />
+        <Lightformer
+          intensity={0.9}
+          form="ring"
+          scale={10}
+          position={[-8, 2, -6]}
+          color="#c4b5fd"
+        />
         <Lightformer
           intensity={0.8}
           form="rect"

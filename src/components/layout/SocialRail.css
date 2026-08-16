@@ -12,16 +12,11 @@
   pointer-events: none;
 }
 
-/*
- * In a vertical writing mode the axes swap: the inline axis runs top-to-bottom
- * and the block axis runs horizontally. So the main axis must be `row` to stack
- * the links down the edge — `column` would lay them out side by side instead.
- */
 .rail__list {
   display: flex;
   flex-direction: row;
   gap: var(--s-6);
-  /* Rotated so the text reads bottom-to-top along the edge. */
+
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   pointer-events: auto;
