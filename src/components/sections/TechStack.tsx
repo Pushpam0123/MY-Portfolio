@@ -10,6 +10,14 @@ const capabilities = skillGroups.find((g) => g.id === 'ai')!;
 
 const logolessGroups = skillGroups.filter((g) => g.id !== 'ai');
 
+const ballGroups = skillGroups
+  .map((group) => ({
+    id: group.id,
+    title: group.title,
+    count: techBalls.filter((ball) => ball.group === group.id).length,
+  }))
+  .filter((group) => group.count > 0);
+
 function hasWebGL() {
   try {
     const canvas = document.createElement('canvas');
@@ -45,6 +53,7 @@ export function TechStack() {
   const isTouch = useIsTouch();
   const [supported] = useState(hasWebGL);
   const [focused, setFocused] = useState<string | null>(null);
+  const [highlight, setHighlight] = useState<string | null>(null);
 
   const { ref, inView } = useInView<HTMLElement>({ rootMargin: '500px', once: true });
 
@@ -68,7 +77,7 @@ export function TechStack() {
         <div className="stack__stage" ref={stageRef}>
           {inView && (
             <Suspense fallback={null}>
-              <TechBalloons start={onScreen} onFocus={handleFocus} />
+              <TechBalloons start={onScreen} highlight={highlight} onFocus={handleFocus} />
             </Suspense>
           )}
         </div>
@@ -84,6 +93,31 @@ export function TechStack() {
           <p className={`stack__hint mono-label${focused ? ' is-focused' : ''}`} aria-hidden="true">
             {focused ?? (isTouch ? 'Touch to push them around' : 'Move your cursor through them')}
           </p>
+
+          <ul className="stack__legend">
+            {ballGroups.map((group) => (
+              <li key={group.id}>
+                <button
+                  type="button"
+                  className={
+                    highlight === group.id ? 'stack__legend-item is-active' : 'stack__legend-item'
+                  }
+                  aria-pressed={highlight === group.id}
+                  data-cursor="link"
+                  onPointerEnter={() => setHighlight(group.id)}
+                  onPointerLeave={() => setHighlight(null)}
+                  onFocus={() => setHighlight(group.id)}
+                  onBlur={() => setHighlight(null)}
+                  onClick={() =>
+                    setHighlight((current) => (current === group.id ? null : group.id))
+                  }
+                >
+                  <span className="stack__legend-count">{group.count}</span>
+                  <span>{group.title}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
 
           {}
           <h3 className="stack__footer-title mono-label">{capabilities.title}</h3>

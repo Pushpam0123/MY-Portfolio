@@ -98,10 +98,14 @@ function FitCamera() {
 
 interface SceneProps {
   start: boolean;
+  highlight?: string | null;
   onFocus?: (name: string | null) => void;
 }
 
-function Cluster({ start, onFocus }: SceneProps) {
+const FULL_TINT = new THREE.Color('#ffffff');
+const DIM_TINT = new THREE.Color('#8f8fa3');
+
+function Cluster({ start, highlight, onFocus }: SceneProps) {
   const bodies = useStartBodies();
   const textures = useBallTextures();
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
@@ -180,6 +184,10 @@ function Cluster({ start, onFocus }: SceneProps) {
       const eased = t >= 1 ? 1 : 1 - (1 - t) ** 3 * Math.cos(t * Math.PI * 0.9);
       mesh.scale.setScalar(body.radius * eased);
 
+      const lit = !highlight || techBalls[i].group === highlight;
+      const material = mesh.material as THREE.MeshPhysicalMaterial;
+      material.color.lerp(lit ? FULL_TINT : DIM_TINT, 1 - Math.exp(-frame * 9));
+
       if (pointerActive.current) {
         const gap = body.position.distanceTo(pointerWorld) - body.radius;
         if (gap < FOCUS_MARGIN && gap < nearestGap) {
@@ -237,7 +245,7 @@ function Cluster({ start, onFocus }: SceneProps) {
   );
 }
 
-function Scene({ start, onFocus }: SceneProps) {
+function Scene({ start, highlight, onFocus }: SceneProps) {
   return (
     <>
       <FitCamera />
@@ -246,7 +254,7 @@ function Scene({ start, onFocus }: SceneProps) {
       {}
       <directionalLight position={[-9, -7, -6]} intensity={0.5} color="#8b6cff" />
 
-      <Cluster start={start} onFocus={onFocus} />
+      <Cluster start={start} highlight={highlight} onFocus={onFocus} />
 
       {}
       <Environment resolution={256}>
@@ -271,7 +279,7 @@ function Scene({ start, onFocus }: SceneProps) {
   );
 }
 
-export default function TechBalloons({ start, onFocus }: SceneProps) {
+export default function TechBalloons({ start, highlight, onFocus }: SceneProps) {
   return (
     <Canvas
       className="stack__canvas"
@@ -281,7 +289,7 @@ export default function TechBalloons({ start, onFocus }: SceneProps) {
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
       <Suspense fallback={null}>
-        <Scene start={start} onFocus={onFocus} />
+        <Scene start={start} highlight={highlight} onFocus={onFocus} />
       </Suspense>
     </Canvas>
   );

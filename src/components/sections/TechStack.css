@@ -39,7 +39,7 @@
 .stack__stage {
   position: relative;
   z-index: 1;
-  height: clamp(520px, 82vh, 860px);
+  height: clamp(460px, 68vh, 720px);
   width: 100%;
 }
 
@@ -85,6 +85,42 @@
 .stack__sep {
   margin-inline: 0.6em;
   color: var(--c-faint);
+}
+
+.stack__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+
+.stack__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line-soft);
+  background: linear-gradient(160deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.4) 100%);
+  font-size: var(--t-small);
+  color: var(--c-text-soft);
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.stack__legend-item:hover,
+.stack__legend-item.is-active {
+  border-color: rgba(124, 77, 255, 0.5);
+  color: var(--c-text);
+}
+
+.stack__legend-count {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  color: var(--c-violet-bright);
+  font-variant-numeric: tabular-nums;
 }
 
 .stack__static {
