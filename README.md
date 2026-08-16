@@ -94,18 +94,17 @@ and re-run `npm run assets`.
 
 ---
 
-## Contact form
+## Contact
 
-The form posts to a public endpoint (Formspree or Web3Forms). Copy `.env.example`
-to `.env` and set it:
+**There is deliberately no contact form.** The Contact section ships an email
+panel — address, copy-to-clipboard, phone, résumé download and LinkedIn — and that
+is the intended final state, not a placeholder. Everything on it works with
+nothing to sign up for, nothing to keep paying for, and no third-party endpoint
+that can quietly start failing.
 
-```
-VITE_CONTACT_ENDPOINT=https://formspree.io/f/xxxxxxxx
-```
-
-This value is not a secret — it is a public submission URL, safe in the client
-bundle. **With it unset the form is replaced by an email panel**, so the site is
-fully functional either way and visitors never see setup instructions.
+`VITE_CONTACT_ENDPOINT` still exists in `.env.example` and is read by
+`Contact.tsx`, but it is left unset by design. Setting it swaps the panel for a
+POST form.
 
 ---
 
@@ -115,9 +114,7 @@ fully functional either way and visitors never see setup instructions.
 2. On Vercel, **Add New → Project** and import it. The framework is detected as
    Vite; `vercel.json` already sets the build command, output directory, and cache
    headers.
-3. Add `VITE_CONTACT_ENDPOINT` under **Settings → Environment Variables** if you
-   want the form.
-4. Deploy. Every push to the default branch redeploys.
+3. Deploy. Every push to the default branch redeploys.
 
 After you have a real domain, update it in three places: `index.html` (canonical,
 OG, Twitter, JSON-LD), `public/sitemap.xml`, and `public/robots.txt`.
