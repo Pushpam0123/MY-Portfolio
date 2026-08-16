@@ -1,12 +1,43 @@
 import { useRef } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { achievements, certifications, type Certification } from '@/data/credentials';
+import {
+  achievements,
+  certifications,
+  simulations,
+  type Certification,
+} from '@/data/credentials';
 import { issuerLogoUrl } from '@/assets/images';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Credentials.css';
 
 const logo = (cert: Certification) => (cert.logo ? issuerLogoUrl(cert.logo) : undefined);
+
+function CertList({ items }: { items: Certification[] }) {
+  return (
+    <ul className="cred__certs">
+      {items.map((cert) => (
+        <li className="cred__cert" key={cert.id}>
+          <div className="cred__cert-top">
+            {logo(cert) ? (
+              <img
+                className="cred__cert-logo"
+                src={logo(cert)}
+                alt={cert.issuer}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span className="cred__cert-issuer">{cert.issuer}</span>
+            )}
+            {cert.year && <span className="mono-label">{cert.year}</span>}
+          </div>
+          <p className="cred__cert-title">{cert.title}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function Credentials() {
   const root = useRef<HTMLElement>(null);
@@ -49,28 +80,10 @@ export function Credentials() {
         <div className="cred__grid">
           <div className="cred__col">
             <h3 className="cred__col-title mono-label">Certifications</h3>
-            <ul className="cred__certs">
-              {certifications.map((cert) => (
-                <li className="cred__cert" key={cert.id}>
-                  <div className="cred__cert-top">
-                    {}
-                    {logo(cert) ? (
-                      <img
-                        className="cred__cert-logo"
-                        src={logo(cert)}
-                        alt={cert.issuer}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : (
-                      <span className="cred__cert-issuer">{cert.issuer}</span>
-                    )}
-                    {cert.year && <span className="mono-label">{cert.year}</span>}
-                  </div>
-                  <p className="cred__cert-title">{cert.title}</p>
-                </li>
-              ))}
-            </ul>
+            <CertList items={certifications} />
+
+            <h3 className="cred__col-title cred__col-title--sub mono-label">Job Simulations</h3>
+            <CertList items={simulations} />
           </div>
 
           <div className="cred__col">

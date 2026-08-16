@@ -43,7 +43,7 @@ export const socials: SocialLink[] = [
 
 export const stats = [
   { value: 8.22, suffix: '', label: 'CGPA at VIT', decimals: 2 },
-  { value: 4, suffix: '', label: 'Certifications', decimals: 0 },
+  { value: 3, suffix: '', label: 'Certifications', decimals: 0 },
   { value: 2, suffix: '', label: 'Engineering roles', decimals: 0 },
   { value: 94, suffix: '%', label: 'Best model accuracy', decimals: 0 },
 ];

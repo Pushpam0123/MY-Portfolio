@@ -28,15 +28,18 @@ export const certifications: Certification[] = [
     issuer: 'Amazon Web Services',
     logo: 'aws',
   },
+];
+
+export const simulations: Certification[] = [
   {
     id: 'jpm',
-    title: 'Investment Banking Job Simulation',
+    title: 'Investment Banking',
     issuer: 'J.P. Morgan',
     logo: 'jpmorgan',
   },
   {
     id: 'deloitte',
-    title: 'Data Analytics Job Simulation',
+    title: 'Data Analytics',
     issuer: 'Deloitte',
     logo: 'deloitte',
   },
