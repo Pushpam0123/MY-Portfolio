@@ -35,10 +35,6 @@
   box-shadow: var(--sh-card);
 }
 
-.about__portrait img {
-  width: 100%;
-  height: auto;
-}
 
 .about__portrait::after {
   content: '';

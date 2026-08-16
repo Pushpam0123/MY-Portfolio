@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 import { gsap, ScrollTrigger, SplitText, useGSAP } from '@/lib/gsap';
 import { profile, stats } from '@/data/profile';
-import { deskAvatar } from '@/assets/images';
-import { Picture } from '@/components/ui/Picture';
+import { DeskVideo } from '@/components/ui/DeskVideo';
 import { Counter } from '@/components/ui/Counter';
 import { useIsMobile, useReducedMotion } from '@/hooks/useMediaQuery';
 import './About.css';
@@ -80,12 +79,9 @@ export function About() {
         <div className="about__grid">
           <div className="about__visual">
             <div className="about__portrait">
-              <Picture
-                image={deskAvatar}
+              <DeskVideo
                 alt="Illustrated portrait of Pushpam Raj working at his desk"
                 sizes="(max-width: 767px) 70vw, (max-width: 1023px) 46vw, 36vw"
-                width={1024}
-                height={1536}
               />
             </div>
             <p className="mono-label about__caption">Currently — Silicofeller Quantum</p>

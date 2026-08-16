@@ -12,7 +12,7 @@ const PUBLIC = path.join(root, 'public');
 const ORIGINALS = {
   headshot: '4avatar.png',
   expressions: '3avatar.png',
-  desk: 'fullbody_avatar.png',
+  desk: 'desk-scene.png',
   resume: "Pushpam's Resume.pdf",
 };
 

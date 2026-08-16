@@ -41,9 +41,11 @@ const main = async () => {
     if (msg.type() === 'error') errors.push(`console: ${msg.text()}`);
   });
   page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`));
-  page.on('requestfailed', (req) =>
-    errors.push(`requestfailed: ${req.url()} — ${req.failure()?.errorText}`),
-  );
+  page.on('requestfailed', (req) => {
+    const reason = req.failure()?.errorText;
+    if (req.resourceType() === 'media' && reason === 'net::ERR_ABORTED') return;
+    errors.push(`requestfailed: ${req.url()} — ${reason}`);
+  });
 
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 45_000 });
 
