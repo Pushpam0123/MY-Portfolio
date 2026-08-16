@@ -199,11 +199,17 @@ async function buildHero() {
   // `overlay` keeps the render's own shading: dark bands of the sheen multiply
   // down, light bands screen up, which is exactly the banded highlight roll-off
   // that reads as polished metal. `screen` alone just washes the whole thing out.
+  // The closing brightness is deliberately low. This grade is consumed only as a
+  // WebGL texture, and the shader now encodes its output to sRGB properly
+  // (see src/three/shaders/reveal.ts) — before that it displayed at roughly half
+  // luminance, which was doing the darkening for free. Graded to ~0.95 as it was
+  // written, the correctly-encoded reveal reads as a milky lavender wash rather
+  // than metal, so the darkening it used to get by accident is now explicit.
   const graded = await sharp(base)
     .modulate({ saturation: 0, brightness: 1.0 }) // must be fully neutral first
-    .linear(1.28, -22) // crush to a hard metallic contrast curve
+    .linear(1.34, -26) // crush to a hard metallic contrast curve
     .composite([{ input: sheen, blend: 'overlay' }])
-    .modulate({ brightness: 0.95 }) // no saturation boost — it revives the skin tone
+    .modulate({ brightness: 0.72 }) // no saturation boost — it revives the skin tone
     .png()
     .toBuffer();
 

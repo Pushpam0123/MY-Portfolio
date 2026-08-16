@@ -61,8 +61,10 @@ export const fragmentShader = /* glsl */ `
     vec4 color = mix(base, reveal, mask);
 
     // Violet rim exactly at the transition, which sells it as an energy front.
+    // Added in linear light, so it lands far hotter than the same number would
+    // in sRGB — hence the low multiplier for what is still a visible rim.
     float rim = smoothstep(0.0, 0.35, mask) * smoothstep(1.0, 0.55, mask);
-    color.rgb += vec3(0.36, 0.20, 0.85) * rim * 0.5 * uActive;
+    color.rgb += vec3(0.36, 0.20, 0.85) * rim * 0.22 * uActive;
 
     // Premultiply-safe: the source PNGs carry a radial alpha falloff, and the
     // displaced sample can disagree with the base one at the soft edge. Taking
@@ -70,5 +72,18 @@ export const fragmentShader = /* glsl */ `
     color.a = max(base.a, reveal.a * mask);
 
     gl_FragColor = color;
+
+    /*
+     * Encode linear → the renderer's output colour space.
+     *
+     * Both textures are tagged SRGBColorSpace, so the GPU decodes them to
+     * linear light at sample time. Everything above therefore works in linear,
+     * and writing that straight to the sRGB framebuffer displayed the portrait
+     * at roughly half its real luminance — the face came out markedly darker
+     * than the source render, and darker than the StaticAvatar fallback of the
+     * same image. Built-in materials append this chunk for exactly this reason;
+     * a hand-written fragment shader has to do it itself.
+     */
+    #include <colorspace_fragment>
   }
 `;
