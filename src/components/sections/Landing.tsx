@@ -61,13 +61,20 @@ export function Landing() {
 
       const tl = gsap.timeline({ repeat: -1 });
 
-      tl.to({}, { duration: 3.2 })
+      tl.set(el, { yPercent: 0, opacity: 1 })
+        .to({}, { duration: 3.2 })
         .to(el, { yPercent: -110, opacity: 0, duration: 0.34, ease: 'power3.in' })
         .call(() => setRoleIndex((i) => (i + 1) % profile.roles.length))
         .fromTo(
           el,
           { yPercent: 110, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 0.45, ease: 'expo.out' },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.45,
+            ease: 'expo.out',
+            immediateRender: false,
+          },
         );
 
       return () => tl.kill();
