@@ -26,15 +26,56 @@
   gap: var(--s-4);
 }
 
+@property --about-ring-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .about__portrait {
   position: relative;
   border-radius: var(--r-xl);
   overflow: hidden;
   background: linear-gradient(180deg, var(--c-surface) 0%, var(--c-base) 100%);
   border: 1px solid var(--c-line-soft);
-  box-shadow: var(--sh-card);
+  box-shadow:
+    var(--sh-card),
+    0 0 60px rgba(124, 77, 255, 0.16);
 }
 
+@keyframes about-ring-spin {
+  to {
+    --about-ring-angle: 360deg;
+  }
+}
+
+.about__portrait::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--about-ring-angle),
+    transparent 0deg,
+    rgba(124, 77, 255, 0.15) 40deg,
+    var(--c-violet-bright) 82deg,
+    rgba(124, 77, 255, 0.15) 124deg,
+    transparent 164deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: about-ring-spin 7s linear infinite;
+}
 
 .about__portrait::after {
   content: '';
@@ -119,6 +160,13 @@
 .about__stat-label {
   font-size: 0.66rem;
   line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about__portrait::before {
+    animation: none;
+    background: linear-gradient(160deg, rgba(124, 77, 255, 0.55), transparent 60%);
+  }
 }
 
 @media (max-width: 1023px) {
