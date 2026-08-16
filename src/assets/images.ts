@@ -63,4 +63,3 @@ export function issuerLogoUrl(slug: string): string | undefined {
 export const heroAvatar = image('avatar-hero');
 export const deskAvatar = image('avatar-desk');
 
-export const faceAvatars = [image('avatar-face-1'), image('avatar-face-2'), image('avatar-face-3')];

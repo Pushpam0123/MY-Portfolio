@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { services } from '@/data/skills';
-import { faceAvatars } from '@/assets/images';
-import { Picture } from '@/components/ui/Picture';
+import { ServiceGlyph } from '@/components/ui/ServiceGlyph';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './WhatIDo.css';
@@ -38,18 +37,12 @@ export function WhatIDo() {
         </SectionHeading>
 
         <div className="wid__grid">
-          {services.map((service, i) => (
+          {services.map((service) => (
             <article className="wid__card" key={service.id}>
               <div className="wid__card-glow" aria-hidden="true" />
 
-              <div className="wid__face">
-                <Picture
-                  image={faceAvatars[i]}
-                  alt=""
-                  sizes="(max-width: 767px) 120px, 160px"
-                  width={180}
-                  height={180}
-                />
+              <div className="wid__glyph">
+                <ServiceGlyph id={service.id} />
               </div>
 
               <span className="mono-label wid__index">{service.index}</span>

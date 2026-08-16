@@ -11,7 +11,6 @@ const PUBLIC = path.join(root, 'public');
 
 const ORIGINALS = {
   headshot: '4avatar.png',
-  expressions: '3avatar.png',
   desk: 'desk-scene.png',
   resume: "Pushpam's Resume.pdf",
 };
@@ -172,32 +171,6 @@ async function buildDesk() {
     .ensureAlpha()
     .composite([{ input: edgeMask(width, height), blend: 'dest-in' }]);
   await emit(pipeline, 'avatar-desk');
-}
-
-const EXPRESSION_CENTERS = [0.19, 0.485, 0.783];
-
-async function buildExpressions() {
-  const src = path.join(SOURCE, ORIGINALS.expressions);
-  const { width, height } = await sharp(src).metadata();
-  const side = Math.round(width * 0.235);
-  const top = Math.round(height * 0.235);
-
-  for (let i = 0; i < EXPRESSION_CENTERS.length; i += 1) {
-    const left = Math.max(
-      0,
-      Math.min(width - side, Math.round(width * EXPRESSION_CENTERS[i] - side / 2)),
-    );
-    const boxHeight = Math.min(side, height - top);
-
-    const pipeline = sharp(src)
-      .extract({ left, top, width: side, height: boxHeight })
-      .ensureAlpha()
-      .composite([
-        { input: radialMask(side, boxHeight, { inner: 0.5, outer: 0.94 }), blend: 'dest-in' },
-      ]);
-
-    await emit(pipeline, `avatar-face-${i + 1}`, [180, 260, 640]);
-  }
 }
 
 async function buildNoise() {
@@ -434,7 +407,6 @@ async function main() {
 
   await buildHero();
   await buildDesk();
-  await buildExpressions();
   await buildTechTextures();
   await buildNoise();
   await buildOgImage();
