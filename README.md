@@ -102,9 +102,8 @@ is the intended final state, not a placeholder. Everything on it works with
 nothing to sign up for, nothing to keep paying for, and no third-party endpoint
 that can quietly start failing.
 
-`VITE_CONTACT_ENDPOINT` still exists in `.env.example` and is read by
-`Contact.tsx`, but it is left unset by design. Setting it swaps the panel for a
-POST form.
+The form and its `VITE_CONTACT_ENDPOINT` plumbing were removed outright rather
+than left switched off, so there is no dead branch to mislead the next reader.
 
 ---
 

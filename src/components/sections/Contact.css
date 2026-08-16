@@ -128,88 +128,14 @@
   box-shadow: var(--sh-card);
 }
 
-.contact__form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-5);
-}
-
-.contact__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-2);
-}
-
-.contact__field label {
-  font-family: var(--f-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--c-faint);
-}
-
-.contact__field input,
-.contact__field textarea {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-md);
-  background: rgba(8, 7, 12, 0.55);
-  font-size: var(--t-body);
-  color: var(--c-text);
-  resize: vertical;
-  transition:
-    border-color var(--d-fast) var(--e-out),
-    background-color var(--d-fast) var(--e-out);
-}
-
-.contact__field input::placeholder,
-.contact__field textarea::placeholder {
-  color: var(--c-faint);
-}
-
-.contact__field input:focus,
-.contact__field textarea:focus {
-  border-color: var(--c-violet);
-  background: rgba(124, 77, 255, 0.06);
-}
-
-.contact__field input:user-invalid,
-.contact__field textarea:user-invalid {
-  border-color: var(--c-error);
-}
-
-.contact__honey {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.contact__status {
-  min-height: 1.4em;
-  font-size: var(--t-small);
-  line-height: 1.5;
-}
-
-.contact__status--sent {
-  color: var(--c-live);
-}
-
-.contact__status--error {
-  color: var(--c-error);
-}
-
-.contact__fallback {
+.contact__invite {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--s-4);
 }
 
-.contact__fallback-title {
+.contact__invite-title {
   font-family: var(--f-display);
   font-size: var(--t-h3);
   font-weight: 720;
@@ -218,27 +144,18 @@
   color: var(--c-text);
 }
 
-.contact__fallback-note {
+.contact__invite-note {
   margin-top: var(--s-2);
 }
 
-.contact__fallback-note a {
+.contact__invite-note a {
   color: var(--c-lilac);
   border-bottom: 1px solid transparent;
   transition: border-color var(--d-fast) var(--e-out);
 }
 
-.contact__fallback-note a:hover {
+.contact__invite-note a:hover {
   border-bottom-color: var(--c-lilac);
-}
-
-.contact__fallback code {
-  padding: 0.1rem 0.35rem;
-  border-radius: var(--r-sm);
-  background: rgba(124, 77, 255, 0.12);
-  font-family: var(--f-mono);
-  font-size: 0.85em;
-  color: var(--c-lilac);
 }
 
 @media (max-width: 1023px) {

@@ -1,26 +1,13 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useRef, useState } from 'react';
 import { gsap, SplitText, useGSAP } from '@/lib/gsap';
 import { profile, socials } from '@/data/profile';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Contact.css';
 
-type Status = 'idle' | 'sending' | 'sent' | 'error';
-
-const ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT?.trim();
-
-if (import.meta.env.DEV && !ENDPOINT) {
-  console.info(
-    '[contact] VITE_CONTACT_ENDPOINT is not set — showing the email fallback instead of the form. ' +
-      'See .env.example to enable it.',
-  );
-}
-
 export function Contact() {
   const root = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const [status, setStatus] = useState<Status>('idle');
-  const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
   useGSAP(
@@ -55,42 +42,6 @@ export function Contact() {
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
-    }
-  };
-
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!ENDPOINT) return;
-
-    const form = event.currentTarget;
-    const data = new FormData(form);
-
-    if (data.get('company')) {
-      setStatus('sent');
-      return;
-    }
-
-    setStatus('sending');
-    setError('');
-
-    try {
-      const response = await fetch(ENDPOINT, {
-        method: 'POST',
-        body: data,
-        headers: { Accept: 'application/json' },
-      });
-
-      if (!response.ok) throw new Error(`Request failed (${response.status})`);
-
-      setStatus('sent');
-      form.reset();
-    } catch (err) {
-      setStatus('error');
-      setError(
-        err instanceof Error
-          ? `${err.message}. You can email me directly instead.`
-          : 'Something went wrong. You can email me directly instead.',
-      );
     }
   };
 
@@ -152,88 +103,23 @@ export function Contact() {
         </div>
 
         <div className="contact__panel">
-          {ENDPOINT ? (
-            <form className="contact__form" onSubmit={onSubmit} noValidate={false}>
-              <div className="contact__field">
-                <label htmlFor="contact-name">Name</label>
-                <input
-                  id="contact-name"
-                  name="name"
-                  type="text"
-                  required
-                  autoComplete="name"
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div className="contact__field">
-                <label htmlFor="contact-email">Email</label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  placeholder="you@company.com"
-                />
-              </div>
-
-              <div className="contact__field">
-                <label htmlFor="contact-message">Message</label>
-                <textarea
-                  id="contact-message"
-                  name="message"
-                  rows={5}
-                  required
-                  placeholder="What are you building?"
-                />
-              </div>
-
-              {}
-              <div className="contact__honey" aria-hidden="true">
-                <label htmlFor="contact-company">Company</label>
-                <input
-                  id="contact-company"
-                  name="company"
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-              </div>
-
-              <MagneticButton as="button" type="submit" disabled={status === 'sending'}>
-                {status === 'sending' ? 'Sending…' : 'Send message'}
-                <span aria-hidden="true">→</span>
-              </MagneticButton>
-
-              <p
-                className={`contact__status contact__status--${status}`}
-                role="status"
-                aria-live="polite"
-              >
-                {status === 'sent' && 'Thanks — message received. I usually reply within a day.'}
-                {status === 'error' && error}
-              </p>
-            </form>
-          ) : (
-            <div className="contact__fallback">
-              <h3 className="contact__fallback-title">Drop me a line</h3>
-              <p className="body-copy">
-                Tell me what you&apos;re working on and where I&apos;d fit. I read everything and
-                usually reply within a day.
-              </p>
-              <MagneticButton as="a" href={`mailto:${profile.email}`} data-cursor="link">
-                Email me
-                <span aria-hidden="true">→</span>
-              </MagneticButton>
-              <p className="contact__fallback-note mono-label">
-                Or reach me on{' '}
-                <a href={socials[1].href} target="_blank" rel="noreferrer noopener">
-                  LinkedIn
-                </a>
-              </p>
-            </div>
-          )}
+          <div className="contact__invite">
+            <h3 className="contact__invite-title">Drop me a line</h3>
+            <p className="body-copy">
+              Tell me what you&apos;re working on and where I&apos;d fit. I read everything and
+              usually reply within a day.
+            </p>
+            <MagneticButton as="a" href={`mailto:${profile.email}`} data-cursor="link">
+              Email me
+              <span aria-hidden="true">&rarr;</span>
+            </MagneticButton>
+            <p className="contact__invite-note mono-label">
+              Or reach me on{' '}
+              <a href={socials[1].href} target="_blank" rel="noreferrer noopener">
+                LinkedIn
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </section>
