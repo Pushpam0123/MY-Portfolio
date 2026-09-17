@@ -3,8 +3,8 @@ export interface Certification {
   title: string;
   issuer: string;
   year?: string;
-
   logo?: string;
+  url?: string;
 }
 
 export const certifications: Certification[] = [
@@ -27,6 +27,14 @@ export const certifications: Certification[] = [
     title: 'Certified Solutions Architect — Associate',
     issuer: 'Amazon Web Services',
     logo: 'aws',
+  },
+  {
+    id: 'anthropic-ai-fluency',
+    title: 'AI Fluency: Framework & Foundations',
+    issuer: 'Anthropic',
+    year: '2026',
+    logo: 'anthropic',
+    url: 'https://verify.skilljar.com/c/3gxnuti7etbh',
   },
 ];
 

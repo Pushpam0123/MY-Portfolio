@@ -17,7 +17,20 @@ function CertList({ items }: { items: Certification[] }) {
   return (
     <ul className="cred__certs">
       {items.map((cert) => (
-        <li className="cred__cert" key={cert.id}>
+        <li
+          className={`cred__cert ${cert.url ? 'cred__cert--has-link' : ''}`}
+          key={cert.id}
+        >
+          {cert.url && (
+            <a
+              className="cred__cert-overlay-link"
+              href={cert.url}
+              target="_blank"
+              rel="noreferrer noopener"
+              data-cursor="link"
+              aria-label={`${cert.title} — ${cert.issuer} (verify credential)`}
+            />
+          )}
           <div className="cred__cert-top">
             {logo(cert) ? (
               <img
@@ -30,7 +43,14 @@ function CertList({ items }: { items: Certification[] }) {
             ) : (
               <span className="cred__cert-issuer">{cert.issuer}</span>
             )}
-            {cert.year && <span className="mono-label">{cert.year}</span>}
+            <div className="cred__cert-meta">
+              {cert.year && <span className="mono-label">{cert.year}</span>}
+              {cert.url && (
+                <span className="cred__cert-arrow" aria-hidden="true">
+                  ↗
+                </span>
+              )}
+            </div>
           </div>
           <p className="cred__cert-title">{cert.title}</p>
         </li>
