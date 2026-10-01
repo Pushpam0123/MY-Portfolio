@@ -135,9 +135,9 @@ export function Navbar() {
             href={profile.resumePath}
             download
             data-cursor="link"
-            aria-label="Download résumé as PDF"
+            aria-label="Download resume as PDF"
           >
-            Résumé
+            Resume
           </a>
           <button
             type="button"
@@ -168,7 +168,7 @@ export function Navbar() {
             </ul>
           </nav>
           <a className="nav-overlay__resume" href={profile.resumePath} download>
-            Download résumé →
+            Download resume →
           </a>
         </div>
       )}

@@ -1,0 +1,191 @@
+/* Shared effects: BorderBeam + Spotlight (+ tilt/shine). */
+@property --fx-beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root {
+  --fx-cyan: #22d3ee;
+}
+
+/* ---------- BorderBeam ---------- */
+.fx-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.fx-beam__line,
+.fx-beam__glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--fx-beam-angle),
+    transparent 0deg,
+    rgba(124, 77, 255, 0.2) 30deg,
+    var(--c-violet-bright) 70deg,
+    #fff 78deg,
+    transparent 110deg,
+    transparent 180deg,
+    rgba(34, 211, 238, 0.2) 210deg,
+    var(--fx-cyan) 250deg,
+    #fff 258deg,
+    transparent 290deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: fx-beam-spin var(--fx-beam-dur, 7s) linear infinite;
+}
+
+.fx-beam__glow {
+  padding: 4px;
+  filter: blur(9px);
+  opacity: 0.85;
+}
+
+.fx-beam[data-paused='true'] * {
+  animation-play-state: paused;
+}
+
+@keyframes fx-beam-spin {
+  to {
+    --fx-beam-angle: 360deg;
+  }
+}
+
+/* ---------- Spotlight ---------- */
+.fx-spot {
+  position: relative;
+  isolation: isolate;
+  --fx-x: 50%;
+  --fx-y: 50%;
+  --fx-rx: 0deg;
+  --fx-ry: 0deg;
+}
+
+.fx-spot::before,
+.fx-spot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--e-out);
+}
+
+.fx-spot::before {
+  z-index: -1;
+  background: radial-gradient(
+    420px circle at var(--fx-x) var(--fx-y),
+    rgba(150, 110, 255, 0.28),
+    rgba(34, 211, 238, 0.07) 40%,
+    transparent 70%
+  );
+}
+
+.fx-spot::after {
+  z-index: 4;
+  padding: 1.5px;
+  background: radial-gradient(
+    240px circle at var(--fx-x) var(--fx-y),
+    rgba(196, 181, 253, 0.95),
+    rgba(34, 211, 238, 0.35) 45%,
+    transparent 75%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.fx-spot.is-hot::before,
+.fx-spot.is-hot::after {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fx-spot--tilt {
+    transform: perspective(900px) rotateX(var(--fx-rx)) rotateY(var(--fx-ry));
+    transform-style: preserve-3d;
+    transition:
+      transform 0.18s linear,
+      border-color var(--d-fast) var(--e-out),
+      box-shadow var(--d-mid) var(--e-out);
+  }
+  .fx-spot--tilt:not(.is-hot) {
+    transition:
+      transform 0.7s var(--e-out),
+      border-color var(--d-fast) var(--e-out),
+      box-shadow var(--d-mid) var(--e-out);
+  }
+}
+
+/* ---------- Shine sweep ---------- */
+.fx-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fx-shine::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 55%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 35%,
+    rgba(255, 255, 255, 0.34) 50%,
+    rgba(255, 255, 255, 0.04) 65%,
+    transparent 100%
+  );
+  transform: translateX(-130%) skewX(-18deg);
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fx-spot:hover .fx-shine::before {
+    opacity: 1;
+    transform: translateX(260%) skewX(-18deg);
+    transition:
+      transform 0.95s var(--e-out),
+      opacity 0.2s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-beam__line,
+  .fx-beam__glow {
+    animation: none;
+    --fx-beam-angle: 40deg;
+  }
+  .fx-shine {
+    display: none;
+  }
+  .fx-spot--tilt {
+    transform: none !important;
+  }
+}

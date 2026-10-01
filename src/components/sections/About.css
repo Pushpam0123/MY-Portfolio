@@ -26,12 +26,6 @@
   gap: var(--s-4);
 }
 
-@property --about-ring-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
 .about__portrait {
   position: relative;
   border-radius: var(--r-xl);
@@ -41,40 +35,6 @@
   box-shadow:
     var(--sh-card),
     0 0 60px rgba(124, 77, 255, 0.16);
-}
-
-@keyframes about-ring-spin {
-  to {
-    --about-ring-angle: 360deg;
-  }
-}
-
-.about__portrait::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  padding: 1.5px;
-  pointer-events: none;
-  background: conic-gradient(
-    from var(--about-ring-angle),
-    transparent 0deg,
-    rgba(124, 77, 255, 0.15) 40deg,
-    var(--c-violet-bright) 82deg,
-    rgba(124, 77, 255, 0.15) 124deg,
-    transparent 164deg,
-    transparent 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: about-ring-spin 7s linear infinite;
 }
 
 .about__portrait::after {
@@ -128,44 +88,194 @@
   will-change: transform;
 }
 
-.about__stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--s-5);
-  margin-top: var(--s-5);
-  padding-top: var(--s-6);
-  border-top: 1px solid var(--c-line-soft);
+.about__float {
+  animation: about-float 7s ease-in-out infinite;
+  will-change: transform;
 }
 
-.about__stat {
+@keyframes about-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(0.6deg);
+  }
+}
+
+.about__portrait-inner {
+  will-change: transform;
+}
+
+.about__bento {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+.about__tile {
+  grid-column: span 2;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   gap: var(--s-2);
+  min-height: 132px;
+  padding: var(--s-5);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-card-border);
+  background: var(--c-card-bg);
+  box-shadow: var(--sh-card);
+  overflow: hidden;
+  transition:
+    border-color var(--d-mid) var(--e-out),
+    box-shadow var(--d-mid) var(--e-out);
 }
 
-.about__stat-value {
-  font-family: var(--f-display);
-  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
-  font-weight: 750;
-  font-stretch: 108%;
+.about__tile--w2 {
+  grid-column: span 2;
+}
+.about__tile--w3 {
+  grid-column: span 3;
+}
+
+.about__tile--hero {
+  grid-column: span 6;
+  min-height: 210px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(124, 77, 255, 0.32), transparent 60%),
+    radial-gradient(80% 100% at 0% 100%, rgba(34, 211, 238, 0.12), transparent 60%), #0d0c14;
+}
+
+.about__tile-glyph {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-5);
+  font-family: var(--f-mono);
+  font-size: clamp(4rem, 9vw, 7.5rem);
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.08em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(196, 181, 253, 0.22);
+  pointer-events: none;
+  user-select: none;
+}
+
+.about__tile-ghost {
+  position: absolute;
+  top: var(--s-2);
+  right: var(--s-4);
+  font-family: var(--f-display);
+  font-size: clamp(3.5rem, 6vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(196, 181, 253, 0.2);
+  pointer-events: none;
+  user-select: none;
+}
+
+.about__tile-value {
+  font-family: var(--f-display);
+  font-size: clamp(2.75rem, 5vw, 4.5rem);
+  font-weight: 780;
+  font-stretch: 108%;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
   background: var(--g-accent);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 0 22px rgba(124, 77, 255, 0.45));
 }
 
-.about__stat-label {
+.about__tile--hero .about__tile-value {
+  font-size: clamp(4.25rem, 9.5vw, 8rem);
+  background: linear-gradient(120deg, #fff 0%, var(--c-lilac) 40%, var(--c-violet-bright) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.about__tile-label {
   font-size: 0.66rem;
   line-height: 1.4;
 }
 
+.about__tile--now {
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), transparent 70%), #0d0c14;
+  border-color: rgba(74, 222, 128, 0.22);
+  min-height: 132px;
+}
+
+.about__now-label {
+  color: var(--c-live);
+}
+
+.about__now-value {
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--c-text);
+}
+
+.about__live {
+  position: absolute;
+  top: var(--s-5);
+  right: var(--s-5);
+  width: 12px;
+  height: 12px;
+}
+
+.about__live i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--c-live);
+  box-shadow: 0 0 14px var(--c-live);
+}
+
+.about__live::before,
+.about__live::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--c-live);
+  animation: about-ping 2.2s var(--e-out) infinite;
+}
+
+.about__live::after {
+  animation-delay: 1.1s;
+}
+
+@keyframes about-ping {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(4.2);
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about__tile:hover {
+    border-color: var(--c-card-border-hover);
+    box-shadow: var(--sh-card-hover);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .about__portrait::before {
+  .about__float,
+  .about__live::before,
+  .about__live::after {
     animation: none;
-    background: linear-gradient(160deg, rgba(124, 77, 255, 0.55), transparent 60%);
   }
 }
 
@@ -178,15 +288,20 @@
   .about__visual {
     max-width: 420px;
   }
-
-  .about__stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-6) var(--s-5);
-  }
 }
 
 @media (max-width: 479px) {
-  .about__stats {
-    grid-template-columns: 1fr 1fr;
+  .about__tile {
+    padding: var(--s-4);
+    min-height: 112px;
+  }
+  .about__tile--w2 {
+    grid-column: span 3;
+  }
+  .about__tile--w3 {
+    grid-column: span 3;
+  }
+  .about__tile--now {
+    grid-column: span 6;
   }
 }

@@ -4,14 +4,16 @@ import { timeline } from '@/data/experience';
 
 const work = timeline.filter((entry) => entry.kind === 'work');
 const education = timeline.filter((entry) => entry.kind === 'education');
+import { Spotlight } from '@/components/fx/Spotlight';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { useReducedMotion } from '@/hooks/useMediaQuery';
+import { useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
 import { useReveal } from '@/hooks/useReveal';
 import './Career.css';
 
 export function Career() {
   const root = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+  const smooth = !useIsTouch() && !reduced; // same rule as Smoother.tsx
 
   useReveal(root);
 
@@ -19,20 +21,62 @@ export function Career() {
     () => {
       if (reduced) return;
 
-      gsap.fromTo(
-        '.career__rail-fill',
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
+      // Rail fill + travelling light dot share one scrubbed timeline.
+      gsap
+        .timeline({
+          defaults: { ease: 'none' },
           scrollTrigger: {
             trigger: '.career__list',
             start: 'top 62%',
             end: 'bottom 78%',
-            scrub: 0.6,
+            scrub: smooth ? true : 0.5,
           },
-        },
-      );
+        })
+        .fromTo('.career__rail-fill', { scaleY: 0 }, { scaleY: 1 }, 0)
+        .fromTo('.career__rail-dot', { top: '0%' }, { top: '100%' }, 0);
+
+      // Ghost year drifts as each card passes.
+      gsap.utils.toArray<HTMLElement>('.career__ghost').forEach((ghost) => {
+        gsap.fromTo(
+          ghost,
+          { yPercent: -18, xPercent: 6 },
+          {
+            yPercent: 18,
+            xPercent: -4,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: ghost.closest('.career__card'),
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: smooth ? true : 0.5,
+            },
+          },
+        );
+      });
+
+      // Education: line draws, card unmasks, points follow.
+      const edu = gsap.timeline({
+        defaults: { ease: 'expo.out' },
+        scrollTrigger: { trigger: '.career__edu', start: 'top 80%', once: true },
+      });
+      edu
+        .fromTo('.career__edu', { '--edu-line': 0 }, { '--edu-line': 1, duration: 1.4 }, 0)
+        .fromTo(
+          '.career__edu-card',
+          { clipPath: 'inset(0 100% 0 0 round 20px)', opacity: 0 },
+          {
+            clipPath: 'inset(0 0% 0 0 round 20px)',
+            opacity: 1,
+            duration: 1.3,
+            clearProps: 'clipPath,opacity',
+          },
+          0.15,
+        )
+        .from(
+          '.career__edu-card .career__points li',
+          { opacity: 0, x: -24, duration: 0.8, stagger: 0.1, clearProps: 'transform,opacity' },
+          0.7,
+        );
 
       gsap.utils.toArray<HTMLElement>('.career__item').forEach((item) => {
         ScrollTrigger.create({
@@ -43,7 +87,7 @@ export function Career() {
         });
       });
     },
-    { dependencies: [reduced], scope: root },
+    { dependencies: [reduced, smooth], scope: root },
   );
 
   return (
@@ -58,6 +102,7 @@ export function Career() {
         <ol className="career__list">
           <div className="career__rail" aria-hidden="true">
             <span className="career__rail-fill" />
+            <span className="career__rail-dot" />
           </div>
 
           {work.map((entry) => (
@@ -75,7 +120,10 @@ export function Career() {
                 {entry.current && <span className="career__badge">Now</span>}
               </div>
 
-              <div className="career__card">
+              <Spotlight className="career__card">
+                <span className="career__ghost" aria-hidden="true">
+                  {entry.period.match(/\d{4}/)?.[0]}
+                </span>
                 <div className="career__card-head">
                   <h3 className="career__org">{entry.org}</h3>
                   <p className="career__role">{entry.title}</p>
@@ -90,7 +138,7 @@ export function Career() {
                     <li key={i}>{point}</li>
                   ))}
                 </ul>
-              </div>
+              </Spotlight>
             </li>
           ))}
         </ol>
@@ -101,7 +149,10 @@ export function Career() {
               Education
             </h3>
             {education.map((entry) => (
-              <div className="career__card career__edu-card" data-reveal="up" key={entry.id}>
+              <Spotlight className="career__card career__edu-card" key={entry.id}>
+                <span className="career__ghost" aria-hidden="true">
+                  {entry.period.match(/\d{4}/g)?.[1] ?? entry.period.match(/\d{4}/)?.[0]}
+                </span>
                 <div className="career__card-head">
                   <h4 className="career__org">{entry.org}</h4>
                   <p className="career__role">{entry.title}</p>
@@ -115,7 +166,7 @@ export function Career() {
                     <li key={i}>{point}</li>
                   ))}
                 </ul>
-              </div>
+              </Spotlight>
             ))}
           </div>
         )}

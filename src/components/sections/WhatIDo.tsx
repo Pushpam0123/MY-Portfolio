@@ -1,4 +1,8 @@
 import { useRef } from 'react';
+import { gsap, useGSAP } from '@/lib/gsap';
+import { BorderBeam } from '@/components/fx/BorderBeam';
+import { Spotlight } from '@/components/fx/Spotlight';
+import { useReducedMotion } from '@/hooks/useMediaQuery';
 import { services } from '@/data/skills';
 import { ServiceGlyph } from '@/components/ui/ServiceGlyph';
 import { SectionHeading } from '@/components/ui/SectionHeading';
@@ -7,7 +11,31 @@ import './WhatIDo.css';
 
 export function WhatIDo() {
   const root = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
   useReveal(root);
+
+  useGSAP(
+    () => {
+      if (reduced) return;
+      gsap.utils.toArray<HTMLElement>('.wid__card').forEach((card) => {
+        gsap.from(card.querySelectorAll('.wid__list li'), {
+          opacity: 0,
+          x: -34,
+          duration: 0.9,
+          ease: 'expo.out',
+          stagger: 0.11,
+          delay: 0.25,
+          clearProps: 'transform,opacity',
+          scrollTrigger: {
+            trigger: card.querySelector('.wid__list'),
+            start: 'top 92%',
+            once: true,
+          },
+        });
+      });
+    },
+    { dependencies: [reduced], scope: root },
+  );
 
   return (
     <section className="section wid" id="services" ref={root}>
@@ -21,8 +49,13 @@ export function WhatIDo() {
 
         <div className="wid__grid">
           {services.map((service) => (
-            <article className="wid__card" data-reveal="up" key={service.id}>
+            <Spotlight as="article" className="wid__card" data-reveal="up" key={service.id}>
+              <BorderBeam duration={9} />
               <div className="wid__card-glow" aria-hidden="true" />
+              <div className="wid__grid-bg" aria-hidden="true" />
+              <span className="wid__numeral" aria-hidden="true">
+                {service.index}
+              </span>
 
               <div className="wid__glyph">
                 <ServiceGlyph id={service.id} />
@@ -37,7 +70,7 @@ export function WhatIDo() {
                   <li key={bullet}>{bullet}</li>
                 ))}
               </ul>
-            </article>
+            </Spotlight>
           ))}
         </div>
       </div>

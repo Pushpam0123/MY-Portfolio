@@ -13,6 +13,21 @@ export function Contact() {
   useGSAP(
     () => {
       if (reduced) return;
+
+      const fills = gsap.utils.toArray<HTMLElement>('.contact__line', root.current);
+      const fillTl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: '.contact__headline',
+          start: 'top 85%',
+          end: 'bottom 45%',
+          scrub: 0.7,
+        },
+      });
+      fills.forEach((line, i) => {
+        fillTl.fromTo(line, { '--fill': '0%' }, { '--fill': '100%', duration: 1 }, i * 0.9);
+      });
+
       const mail = root.current?.querySelector<HTMLElement>('.contact__mail-text');
       if (!mail) return;
 
@@ -49,17 +64,21 @@ export function Contact() {
     <section className="section contact" id="contact" ref={root}>
       <div className="bloom contact__bloom" aria-hidden="true" />
 
+      <h2 className="contact__headline display" aria-label="Let's build something">
+        <span className="contact__line" data-text="Let's build" aria-hidden="true">
+          Let&apos;s build
+        </span>
+        <span className="contact__line" data-text="something" aria-hidden="true">
+          something
+        </span>
+      </h2>
+
       <div className="shell contact__inner">
         <div className="contact__lead">
           <span className="eyebrow">Contact</span>
-          {}
-          <h2 className="contact__headline display" aria-label="Let's build something">
-            <span aria-hidden="true">Let&apos;s build</span>
-            <span aria-hidden="true">something</span>
-          </h2>
           <p className="lede contact__blurb">
-            I&apos;m {profile.availabilityLabel.toLowerCase()} — AI/ML, data, forward deployed, or
-            software engineering roles. The fastest way to reach me is email.
+            I&apos;m {profile.availabilityLabel.toLowerCase()} — AI/ML, data, cloud, forward
+            deployed, or software engineering roles. The fastest way to reach me is email.
           </p>
 
           <a
@@ -81,7 +100,7 @@ export function Contact() {
               {profile.phone}
             </a>
             <a className="contact__copy" href={profile.resumePath} download data-cursor="link">
-              Résumé (PDF)
+              Resume (PDF)
             </a>
           </div>
 
@@ -109,10 +128,18 @@ export function Contact() {
               Tell me what you&apos;re working on and where I&apos;d fit. I read everything and
               usually reply within a day.
             </p>
-            <MagneticButton as="a" href={`mailto:${profile.email}`} data-cursor="link">
-              Email me
-              <span aria-hidden="true">&rarr;</span>
-            </MagneticButton>
+            <div className="contact__cta">
+              <MagneticButton
+                as="a"
+                className="contact__cta-btn"
+                strength={0.45}
+                href={`mailto:${profile.email}`}
+                data-cursor="link"
+              >
+                Email me
+                <span aria-hidden="true">&rarr;</span>
+              </MagneticButton>
+            </div>
             <p className="contact__invite-note mono-label">
               Or reach me on{' '}
               <a href={socials[1].href} target="_blank" rel="noreferrer noopener">

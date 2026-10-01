@@ -135,7 +135,7 @@ export function Landing() {
               download
               data-cursor="link"
             >
-              Download résumé
+              Download resume
             </MagneticButton>
           </div>
 

@@ -57,6 +57,8 @@ export interface Achievement {
   id: string;
   title: string;
   detail: string;
+  /** Part of the title to render with a glow. */
+  highlight?: string;
 }
 
 export const achievements: Achievement[] = [
@@ -66,11 +68,6 @@ export const achievements: Achievement[] = [
     detail: 'Sustained public work across personal and community repositories.',
   },
   {
-    id: 'basketball',
-    title: 'Captain, University Basketball Team',
-    detail: 'Led the team to multiple event wins through strategy and teamwork.',
-  },
-  {
     id: 'vtapp-2024',
     title: 'Winner, VTAPP 2024 Fest',
     detail: '1st place in the Inter-College Debate and 3rd in the NULL Coding Hackathon.',
@@ -78,6 +75,7 @@ export const achievements: Achievement[] = [
   {
     id: 'paradox',
     title: 'Finalist, IIT Madras Paradox',
+    highlight: 'IIT Madras',
     detail: 'Reached the finals of Logic Loom, a national logical reasoning competition.',
   },
   {

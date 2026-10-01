@@ -15,7 +15,9 @@
   left: 172px;
   top: 8px;
   bottom: 8px;
-  width: 1px;
+  width: 2px;
+  margin-left: -0.5px;
+  border-radius: 2px;
   background: var(--c-line);
 }
 
@@ -24,8 +26,28 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(180deg, var(--c-violet-bright), var(--c-violet));
+  border-radius: inherit;
   transform-origin: top;
   transform: scaleY(0);
+  box-shadow:
+    0 0 8px 1px rgba(168, 85, 247, 0.85),
+    0 0 26px 4px rgba(124, 77, 255, 0.5);
+}
+
+.career__rail-dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 3px rgba(168, 85, 247, 0.35),
+    0 0 18px 6px rgba(196, 181, 253, 0.9),
+    0 0 50px 16px rgba(124, 77, 255, 0.55);
+  z-index: 2;
 }
 
 .career__item {
@@ -86,6 +108,8 @@
 }
 
 .career__badge {
+  position: relative;
+  margin-top: var(--s-2);
   padding: 0.15rem 0.55rem;
   border-radius: var(--r-pill);
   background: rgba(74, 222, 128, 0.12);
@@ -97,7 +121,56 @@
   color: var(--c-live);
 }
 
+/* Radar ping: two staggered rings expanding off the badge */
+.career__badge::before,
+.career__badge::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1.5px solid var(--c-live);
+  pointer-events: none;
+  animation: career-radar 2.4s var(--e-out) infinite;
+}
+
+.career__badge::after {
+  animation-delay: 1.2s;
+}
+
+@keyframes career-radar {
+  from {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.5, 1.9);
+    opacity: 0;
+  }
+}
+
+.career__ghost {
+  position: absolute;
+  right: -0.02em;
+  top: 50%;
+  margin-top: -0.5em;
+  z-index: -1;
+  font-family: var(--f-display);
+  font-size: clamp(7rem, 15vw, 14rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(196, 181, 253, 0.16);
+  background: linear-gradient(180deg, rgba(124, 77, 255, 0.14), transparent 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+  user-select: none;
+}
+
 .career__card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--s-4);
@@ -111,13 +184,19 @@
     box-shadow var(--d-mid) var(--e-out);
 }
 
+.career__card > :not(.career__ghost) {
+  position: relative;
+}
+
 .career__card:hover {
   border-color: rgba(168, 130, 255, 0.32);
 }
 
 .career__item.is-active .career__card {
   border-color: rgba(168, 130, 255, 0.4);
-  box-shadow: var(--sh-card), 0 0 60px -24px rgba(124, 77, 255, 0.5);
+  box-shadow:
+    var(--sh-card),
+    0 0 60px -24px rgba(124, 77, 255, 0.5);
 }
 
 .career__card-head {
@@ -189,13 +268,28 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--c-line), transparent 85%);
+  height: 2px;
+  background: linear-gradient(90deg, var(--c-violet-bright), var(--fx-cyan) 40%, transparent 90%);
+  box-shadow: 0 0 16px rgba(124, 77, 255, 0.6);
+  transform-origin: left;
+  transform: scaleX(var(--edu-line, 1));
 }
 
-.career__edu-heading {
-  padding-top: 4px;
-  color: var(--c-violet-bright);
+/* Doubled class beats the global .mono-label, which loads later. */
+.career__edu .career__edu-heading {
+  padding-top: 2px;
+  font-family: var(--f-display);
+  font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+  white-space: nowrap;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  line-height: 1.05;
+  background: linear-gradient(120deg, #fff, var(--c-lilac) 45%, var(--c-violet-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.45));
 }
 
 .career__edu-card {
@@ -249,7 +343,29 @@
     transform: scaleY(1);
   }
 
-  .career__node-pulse {
+  .career__node-pulse,
+  .career__badge::before,
+  .career__badge::after {
     animation: none;
+  }
+
+  .career__rail-dot {
+    top: 100%;
+  }
+}
+
+@media (max-width: 479px) {
+  .career__ghost {
+    font-size: 5.5rem;
+    top: auto;
+    bottom: -0.1em;
+    margin-top: 0;
+    -webkit-text-stroke-color: rgba(196, 181, 253, 0.1);
+  }
+}
+
+@media (max-width: 1023px) {
+  .career__edu .career__edu-heading {
+    font-size: 1.75rem;
   }
 }

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { ScrollSmoother } from '@/lib/gsap';
+import { useEffect, useRef, useState } from 'react';
+import { gsap, ScrollSmoother, useGSAP } from '@/lib/gsap';
+import { useReducedMotion } from '@/hooks/useMediaQuery';
 import { profile, socials } from '@/data/profile';
 import './Footer.css';
 
@@ -25,6 +26,29 @@ function useLocalTime(timeZone: string) {
 
 export function Footer() {
   const time = useLocalTime(profile.timezone);
+  const root = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
+
+  useGSAP(
+    () => {
+      if (reduced) return;
+      gsap.fromTo(
+        '.footer__mark-text',
+        { yPercent: 105 },
+        {
+          yPercent: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.footer__mark',
+            start: 'top bottom',
+            end: 'clamp(bottom bottom)',
+            scrub: 0.8,
+          },
+        },
+      );
+    },
+    { dependencies: [reduced], scope: root },
+  );
 
   const toTop = () => {
     const smoother = ScrollSmoother.get();
@@ -33,7 +57,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="footer">
+    <footer className="footer" ref={root}>
       <div className="shell footer__inner">
         <div className="footer__col">
           <span className="mono-label">Local time</span>
@@ -74,6 +98,10 @@ export function Footer() {
           © {new Date().getFullYear()} {profile.name}
         </p>
         <p className="footer__built">Built with React, GSAP &amp; Three.js</p>
+      </div>
+
+      <div className="footer__mark" aria-hidden="true">
+        <span className="footer__mark-text">PUSHPAM RAJ</span>
       </div>
     </footer>
   );

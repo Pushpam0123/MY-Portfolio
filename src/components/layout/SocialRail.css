@@ -10,6 +10,15 @@
   width: var(--gutter);
   padding-bottom: var(--s-5);
   pointer-events: none;
+  transition: opacity var(--d-fast) var(--e-out);
+}
+
+.rail--hidden {
+  opacity: 0;
+}
+
+.rail--hidden .rail__list {
+  pointer-events: none;
 }
 
 .rail__list {

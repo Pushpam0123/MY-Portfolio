@@ -1,5 +1,6 @@
 .sec-head {
   position: relative;
+  isolation: isolate;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -31,10 +32,48 @@
   max-width: 24ch;
 }
 
-.sec-head__line {
-  display: block;
-  padding-bottom: 0.14em;
-  will-change: transform;
+.sec-head__title--words {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--c-text);
+}
+
+.sec-head__word {
+  display: inline-block;
+  white-space: pre;
+  color: var(--c-text);
+}
+
+.sec-head__ghost {
+  position: absolute;
+  top: -0.42em;
+  left: -0.06em;
+  z-index: -1;
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-stretch: 118%;
+  font-size: clamp(8rem, 22vw, 20rem);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(168, 85, 247, 0.28);
+  background: linear-gradient(180deg, rgba(124, 77, 255, 0.18), transparent 75%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sec-head--center .sec-head__ghost {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 767px) {
+  .sec-head__ghost {
+    font-size: clamp(6rem, 34vw, 10rem);
+  }
 }
 
 .sec-head__body {

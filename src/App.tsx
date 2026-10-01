@@ -8,6 +8,7 @@ import { Noise } from '@/components/layout/Noise';
 import { Footer } from '@/components/layout/Footer';
 
 import { Landing } from '@/components/sections/Landing';
+import { RoleMarquee } from '@/components/sections/RoleMarquee';
 import { About } from '@/components/sections/About';
 import { WhatIDo } from '@/components/sections/WhatIDo';
 import { Career } from '@/components/sections/Career';
@@ -32,6 +33,7 @@ export default function App() {
       <Smoother>
         <main id="main">
           <Landing />
+          <RoleMarquee />
           <About />
           <WhatIDo />
           <Career />

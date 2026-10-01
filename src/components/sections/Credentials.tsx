@@ -2,6 +2,10 @@ import { useRef } from 'react';
 import { achievements, certifications, simulations, type Certification } from '@/data/credentials';
 import { issuerLogoUrl } from '@/assets/images';
 import { SectionHeading } from '@/components/ui/SectionHeading';
+import { Counter } from '@/components/ui/Counter';
+import { Spotlight } from '@/components/fx/Spotlight';
+import { useReducedMotion } from '@/hooks/useMediaQuery';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { useReveal } from '@/hooks/useReveal';
 import './Credentials.css';
 
@@ -11,7 +15,10 @@ function CertList({ items }: { items: Certification[] }) {
   return (
     <ul className="cred__certs">
       {items.map((cert) => (
-        <li
+        <Spotlight
+          as="li"
+          tilt={9}
+          shine
           className={`cred__cert ${cert.url ? 'cred__cert--has-link' : ''}`}
           data-reveal="up"
           key={cert.id}
@@ -48,15 +55,49 @@ function CertList({ items }: { items: Certification[] }) {
             </div>
           </div>
           <p className="cred__cert-title">{cert.title}</p>
-        </li>
+        </Spotlight>
       ))}
     </ul>
   );
 }
 
+/** Leading figure of a title, e.g. "250+ open-source…" -> ["250", "+", rest]. */
+const leadingFigure = (title: string) => {
+  const m = title.match(/^(\d+)(\+?)\s+(.*)$/);
+  return m ? { value: Number(m[1]), suffix: m[2], rest: m[3] } : null;
+};
+/** An ordinal result mentioned in the detail line, e.g. "1st place …". */
+const ordinal = (detail: string) => detail.match(/^(\d+(?:st|nd|rd|th))\b/)?.[1];
+
 export function Credentials() {
   const root = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
   useReveal(root);
+
+  useGSAP(
+    () => {
+      if (reduced) return;
+      gsap.from('.cred__medal', {
+        scale: 0,
+        rotate: -24,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'back.out(2.4)',
+        stagger: 0.12,
+        clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: '.cred__achievements', start: 'top 80%', once: true },
+      });
+      gsap.from('.cred__big', {
+        scale: 0.4,
+        opacity: 0,
+        duration: 1,
+        ease: 'back.out(2)',
+        clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: '.cred__big', start: 'top 88%', once: true },
+      });
+    },
+    { dependencies: [reduced], scope: root },
+  );
 
   return (
     <section className="section cred" id="credentials" ref={root}>
@@ -79,15 +120,42 @@ export function Credentials() {
           <div className="cred__col">
             <h3 className="cred__col-title mono-label">Achievements &amp; Leadership</h3>
             <ul className="cred__achievements">
-              {achievements.map((item) => (
-                <li className="cred__achievement" data-reveal="left" key={item.id}>
-                  <span className="cred__marker" aria-hidden="true" />
-                  <div>
-                    <p className="cred__achievement-title">{item.title}</p>
-                    <p className="cred__achievement-detail">{item.detail}</p>
-                  </div>
-                </li>
-              ))}
+              {achievements.map((item) => {
+                const fig = leadingFigure(item.title);
+                const place = ordinal(item.detail);
+                return (
+                  <li className="cred__achievement" data-reveal="left" key={item.id}>
+                    {place ? (
+                      <span className="cred__medal" aria-hidden="true">
+                        {place}
+                      </span>
+                    ) : (
+                      <span className="cred__marker" aria-hidden="true" />
+                    )}
+                    <div>
+                      <p className="cred__achievement-title">
+                        {fig ? (
+                          <>
+                            <span className="cred__big">
+                              <Counter value={fig.value} suffix={fig.suffix} duration={2} />
+                            </span>{' '}
+                            {fig.rest}
+                          </>
+                        ) : item.highlight && item.title.includes(item.highlight) ? (
+                          <>
+                            {item.title.split(item.highlight)[0]}
+                            <span className="cred__glow">{item.highlight}</span>
+                            {item.title.split(item.highlight)[1]}
+                          </>
+                        ) : (
+                          item.title
+                        )}
+                      </p>
+                      <p className="cred__achievement-detail">{item.detail}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

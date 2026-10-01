@@ -1,0 +1,108 @@
+.rmq {
+  position: relative;
+  z-index: 2;
+  overflow-x: clip;
+  padding-block: clamp(3rem, 7vw, 6.5rem);
+  background: var(--c-base);
+}
+
+.rmq__band {
+  position: relative;
+  width: 112vw;
+  margin-left: -6vw;
+  padding-block: clamp(0.6rem, 1.4vw, 1.4rem);
+  transform: rotate(-2deg);
+  transform-origin: 50% 50%;
+  border-block: 1px solid rgba(168, 85, 247, 0.55);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(124, 77, 255, 0.22),
+      rgba(168, 85, 247, 0.08) 50%,
+      rgba(124, 77, 255, 0.22)
+    ),
+    var(--c-base-deep);
+  box-shadow:
+    0 0 90px -20px rgba(124, 77, 255, 0.6),
+    0 0 0 1px rgba(124, 77, 255, 0.12) inset;
+  overflow: hidden;
+}
+
+.rmq__row {
+  overflow: hidden;
+}
+
+.rmq__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.rmq__group {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.rmq__item,
+.rmq__sep {
+  font-family: var(--f-display);
+  font-weight: 850;
+  font-stretch: 118%;
+  font-size: clamp(3.4rem, 9vw, 9rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  padding-block: 0.04em;
+}
+
+.rmq__item--solid {
+  color: var(--c-text);
+}
+
+.rmq__item--outline {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(196, 181, 253, 0.85);
+}
+
+.rmq__row--tech .rmq__item,
+.rmq__row--tech .rmq__sep {
+  font-size: clamp(2.6rem, 6.4vw, 6.4rem);
+}
+
+.rmq__sep {
+  margin-inline: 0.32em;
+  color: var(--c-violet-bright);
+  text-shadow: 0 0 28px rgba(168, 85, 247, 0.9);
+  font-size: 0.8em;
+}
+
+.rmq__row--tech .rmq__sep {
+  font-size: clamp(1.8rem, 4.4vw, 4.4rem);
+}
+
+@media (max-width: 767px) {
+  .rmq__item--outline {
+    -webkit-text-stroke-width: 1.5px;
+  }
+}
+
+/* Reduced motion: no scrolling, no duplicate copy, wrap to what fits. */
+.rmq--static .rmq__track {
+  width: 100%;
+}
+
+.rmq--static .rmq__group {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.rmq--static .rmq__group + .rmq__group {
+  display: none;
+}
+
+.rmq--static .rmq__band {
+  transform: none;
+  width: 100%;
+  margin-left: 0;
+}
