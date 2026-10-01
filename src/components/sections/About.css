@@ -90,7 +90,6 @@
 
 .about__float {
   animation: about-float 7s ease-in-out infinite;
-  will-change: transform;
 }
 
 @keyframes about-float {
@@ -303,5 +302,25 @@
   }
   .about__tile--now {
     grid-column: span 6;
+  }
+}
+
+/* Wide screens: the stats run full width under the portrait and bio, with the
+   headline figure as a tall tile on the left. */
+@media (min-width: 1024px) {
+  .about__bento {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: var(--s-7);
+  }
+  .about__tile--hero {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .about__tile--w2,
+  .about__tile--w3 {
+    grid-column: span 1;
+  }
+  .about__tile--now {
+    grid-column: span 2;
   }
 }

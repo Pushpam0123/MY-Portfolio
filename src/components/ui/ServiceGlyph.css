@@ -1,5 +1,5 @@
 .service-glyph {
-  width: clamp(120px, 15vw, 190px);
+  width: clamp(64px, 6vw, 88px);
   height: auto;
   overflow: visible;
   fill: none;

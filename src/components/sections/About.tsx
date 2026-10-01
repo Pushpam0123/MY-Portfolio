@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { profile, stats } from '@/data/profile';
 import { DeskVideo } from '@/components/ui/DeskVideo';
 import { Counter } from '@/components/ui/Counter';
@@ -7,7 +7,7 @@ import { BorderBeam } from '@/components/fx/BorderBeam';
 import { Spotlight } from '@/components/fx/Spotlight';
 import { achievements } from '@/data/credentials';
 import { useSplitReveal } from '@/hooks/useSplitReveal';
-import { useIsSingleColumn, useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
+import { useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
 import './About.css';
 
 const contributions = parseInt(achievements.find((a) => a.id === 'open-source')?.title ?? '0', 10);
@@ -19,7 +19,6 @@ const certs = stats.find((s) => s.label === 'Certifications');
 export function About() {
   const root = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const singleColumn = useIsSingleColumn();
   const isTouch = useIsTouch();
   const smooth = !isTouch && !reduced; // same rule as Smoother.tsx
 
@@ -35,18 +34,8 @@ export function About() {
     () => {
       if (reduced) return;
 
-      // Only pin beside the text in the two-column layout; stacked, it would sit on top of the copy.
-      let pin: ScrollTrigger | undefined;
-      if (!singleColumn) {
-        pin = ScrollTrigger.create({
-          trigger: '.about__grid',
-          start: 'top 18%',
-          end: 'bottom 88%',
-          pin: '.about__visual',
-          pinSpacing: false,
-        });
-      }
-
+      // No pin on the portrait: a pinned, constantly re-transformed layer under the glow effects
+      // could intermittently drop out of compositing and vanish mid-scroll.
       gsap.fromTo(
         '.about__portrait-inner',
         { yPercent: -7, scale: 1.14 },
@@ -84,11 +73,8 @@ export function About() {
         scrollTrigger: { trigger: '.about__bento', start: 'top 86%', once: true },
       });
 
-      return () => {
-        pin?.kill();
-      };
     },
-    { dependencies: [reduced, singleColumn, smooth], scope: root },
+    { dependencies: [reduced, smooth], scope: root },
   );
 
   return (
@@ -128,71 +114,72 @@ export function About() {
               </p>
             ))}
 
-            <div className="about__bento">
-              <Spotlight className="about__tile about__tile--hero">
-                <BorderBeam duration={8} />
-                <span className="about__tile-glyph" aria-hidden="true">
-                  {'</>'}
-                </span>
-                <p className="about__tile-value">
-                  <Counter value={contributions} suffix="+" duration={2.2} />
-                </p>
-                <p className="about__tile-label mono-label">Open-source contributions this year</p>
-              </Spotlight>
-
-              <Spotlight className="about__tile about__tile--w2">
-                <p className="about__tile-value">
-                  <Counter value={shipped?.value ?? 0} suffix={shipped?.suffix} />
-                </p>
-                <span className="about__tile-ghost" aria-hidden="true">
-                  //
-                </span>
-                <p className="about__tile-label mono-label">Projects shipped</p>
-              </Spotlight>
-
-              <Spotlight className="about__tile about__tile--w2">
-                <p className="about__tile-value">
-                  <Counter value={certs?.value ?? 0} />
-                </p>
-                <span className="about__tile-ghost" aria-hidden="true">
-                  ✓
-                </span>
-                <p className="about__tile-label mono-label">Certifications</p>
-              </Spotlight>
-
-              {cgpa && (
-                <Spotlight className="about__tile about__tile--w2">
-                  <p className="about__tile-value">
-                    <Counter value={cgpa.value} decimals={cgpa.decimals} />
-                  </p>
-                  <span className="about__tile-ghost" aria-hidden="true">
-                    GPA
-                  </span>
-                  <p className="about__tile-label mono-label">{cgpa.label}</p>
-                </Spotlight>
-              )}
-
-              {accuracy && (
-                <Spotlight className="about__tile about__tile--w3">
-                  <p className="about__tile-value">
-                    <Counter value={accuracy.value} suffix={accuracy.suffix} />
-                  </p>
-                  <span className="about__tile-ghost" aria-hidden="true">
-                    %
-                  </span>
-                  <p className="about__tile-label mono-label">{accuracy.label}</p>
-                </Spotlight>
-              )}
-
-              <Spotlight className="about__tile about__tile--now about__tile--w3">
-                <span className="about__live" aria-hidden="true">
-                  <i />
-                </span>
-                <p className="about__now-label mono-label">Currently</p>
-                <p className="about__now-value">@ Silicofeller Quantum</p>
-              </Spotlight>
-            </div>
           </div>
+        </div>
+
+        <div className="about__bento">
+          <Spotlight className="about__tile about__tile--hero">
+            <BorderBeam duration={8} />
+            <span className="about__tile-glyph" aria-hidden="true">
+              {'</>'}
+            </span>
+            <p className="about__tile-value">
+              <Counter value={contributions} suffix="+" duration={2.2} />
+            </p>
+            <p className="about__tile-label mono-label">Open-source contributions this year</p>
+          </Spotlight>
+
+          <Spotlight className="about__tile about__tile--w2">
+            <p className="about__tile-value">
+              <Counter value={shipped?.value ?? 0} suffix={shipped?.suffix} />
+            </p>
+            <span className="about__tile-ghost" aria-hidden="true">
+              //
+            </span>
+            <p className="about__tile-label mono-label">Projects shipped</p>
+          </Spotlight>
+
+          <Spotlight className="about__tile about__tile--w2">
+            <p className="about__tile-value">
+              <Counter value={certs?.value ?? 0} />
+            </p>
+            <span className="about__tile-ghost" aria-hidden="true">
+              ✓
+            </span>
+            <p className="about__tile-label mono-label">Certifications</p>
+          </Spotlight>
+
+          {cgpa && (
+            <Spotlight className="about__tile about__tile--w2">
+              <p className="about__tile-value">
+                <Counter value={cgpa.value} decimals={cgpa.decimals} />
+              </p>
+              <span className="about__tile-ghost" aria-hidden="true">
+                GPA
+              </span>
+              <p className="about__tile-label mono-label">{cgpa.label}</p>
+            </Spotlight>
+          )}
+
+          {accuracy && (
+            <Spotlight className="about__tile about__tile--w3">
+              <p className="about__tile-value">
+                <Counter value={accuracy.value} suffix={accuracy.suffix} />
+              </p>
+              <span className="about__tile-ghost" aria-hidden="true">
+                %
+              </span>
+              <p className="about__tile-label mono-label">{accuracy.label}</p>
+            </Spotlight>
+          )}
+
+          <Spotlight className="about__tile about__tile--now about__tile--w3">
+            <span className="about__live" aria-hidden="true">
+              <i />
+            </span>
+            <p className="about__now-label mono-label">Currently</p>
+            <p className="about__now-value">@ Silicofeller Quantum</p>
+          </Spotlight>
         </div>
       </div>
     </section>

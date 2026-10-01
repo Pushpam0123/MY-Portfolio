@@ -16,6 +16,4 @@ export function useMediaQuery(query: string): boolean {
 
 export const useReducedMotion = () => useMediaQuery('(prefers-reduced-motion: reduce)');
 export const useIsMobile = () => useMediaQuery('(max-width: 767px)');
-/** Below this width the two-column section layouts collapse to one column. */
-export const useIsSingleColumn = () => useMediaQuery('(max-width: 1023px)');
 export const useIsTouch = () => useMediaQuery('(hover: none), (pointer: coarse)');

@@ -18,7 +18,7 @@ export const timeline: TimelineEntry[] = [
     id: 'silicofeller',
     kind: 'work',
     org: 'Silicofeller Quantum',
-    title: 'AI Lead Engineer Intern',
+    title: 'AI Engineer',
     location: 'New Delhi, India',
     period: 'Jun 2026 to Present',
     current: true,

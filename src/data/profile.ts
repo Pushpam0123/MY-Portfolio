@@ -8,7 +8,7 @@ export const profile = {
   name: 'Pushpam Raj',
   firstName: 'Pushpam',
   lastName: 'Raj',
-  role: 'AI / ML Engineer',
+  role: 'AI and Data Engineer',
 
   roles: ['AI / ML Engineer', 'Software Engineer', 'Data Engineer', 'Forward Deployed Engineer'],
   tagline: 'I build AI systems and the software around them, and I like working close to the people who use them.',
@@ -25,7 +25,7 @@ export const profile = {
     'Computer Science graduate focused on AI, machine learning and software engineering. I have built internal AI tooling and backend services, and I like taking data-driven work from prototype to production. I am looking at AI / ML, data, cloud, forward deployed and software engineering roles.',
 
   about: [
-    'I am a Computer Science graduate. My focus is AI and machine learning, and I write a lot of ordinary software around it: APIs, data pipelines and React interfaces.',
+    'I am a Computer Science graduate who builds across AI, data and software: ML and LLM pipelines, and the APIs, data pipelines and React interfaces that put them to work.',
     'At Silicofeller Quantum I build internal AI tooling, benchmarking systems and workflow automation. Before that I wrote backend services and APIs at Advitia Labs and helped maintain live systems.',
     'I onboard fast onto existing projects and enjoy working directly with the people who use what I build. That is why I am interested in AI / ML, data, cloud, forward deployed and software engineering roles.',
   ],
@@ -44,7 +44,7 @@ export const socials: SocialLink[] = [
 export const stats = [
   { value: 8.22, suffix: '', label: 'CGPA at VIT', decimals: 2 },
   { value: 10, suffix: '+', label: 'Projects shipped', decimals: 0 },
-  { value: 6, suffix: '', label: 'Certifications', decimals: 0 },
+  { value: 4, suffix: '', label: 'Certifications', decimals: 0 },
   { value: 2, suffix: '', label: 'Engineering roles', decimals: 0 },
   { value: 94, suffix: '%', label: 'Best model accuracy', decimals: 0 },
 ];

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import { gsap, ScrollSmoother, SplitText, useGSAP } from '@/lib/gsap';
 import { profile } from '@/data/profile';
 import { useLoading } from '@/context/LoadingContext';
@@ -23,7 +23,6 @@ export function Landing() {
   const inner = useRef<HTMLDivElement>(null);
   const { ready } = useLoading();
   const reduced = useReducedMotion();
-  const [roleIndex, setRoleIndex] = useState(0);
 
   useGSAP(
     () => {
@@ -77,35 +76,6 @@ export function Landing() {
     { dependencies: [ready, reduced], scope: inner },
   );
 
-  useGSAP(
-    () => {
-      if (!ready || reduced) return;
-      const el = inner.current?.querySelector<HTMLElement>('.hero__role-value');
-      if (!el) return;
-
-      const tl = gsap.timeline({ repeat: -1 });
-
-      tl.set(el, { yPercent: 0, opacity: 1 })
-        .to({}, { duration: 3.2 })
-        .to(el, { yPercent: -110, opacity: 0, duration: 0.34, ease: 'power3.in' })
-        .call(() => setRoleIndex((i) => (i + 1) % profile.roles.length))
-        .fromTo(
-          el,
-          { yPercent: 110, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.45,
-            ease: 'expo.out',
-            immediateRender: false,
-          },
-        );
-
-      return () => tl.kill();
-    },
-    { dependencies: [ready, reduced], scope: inner },
-  );
-
   const visual = useRef<HTMLDivElement>(null);
   const onVisualMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const el = visual.current;
@@ -154,10 +124,7 @@ export function Landing() {
           </h1>
 
           <div className="hero__role" data-hero-fade data-parallax="0.3">
-            <span className="mono-label hero__role-key">Currently</span>
-            <span className="hero__role-window">
-              <span className="hero__role-value">{profile.roles[roleIndex]}</span>
-            </span>
+            <span className="hero__role-value">{profile.role}</span>
           </div>
 
           <p className="lede hero__tagline" data-hero-fade data-parallax="0.36">

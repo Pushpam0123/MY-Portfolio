@@ -123,7 +123,6 @@ export function Navbar() {
               data-cursor="link"
               aria-current={active === item.id ? 'true' : undefined}
             >
-              <span className="nav__link-index">{item.index}</span>
               <span className="nav__link-label">{item.label}</span>
             </button>
           ))}
@@ -160,7 +159,6 @@ export function Navbar() {
               {navItems.map((item) => (
                 <li key={item.id} className="nav-overlay__row">
                   <button type="button" className="nav-overlay__item" onClick={() => go(item.id)}>
-                    <span className="nav-overlay__index">{item.index}</span>
                     {item.label}
                   </button>
                 </li>
