@@ -102,6 +102,46 @@ interface SceneProps {
   onFocus?: (name: string | null) => void;
 }
 
+const GLOW_VIOLET = new THREE.Color('#9a6bff');
+const GLOW_CYAN = new THREE.Color('#38d8ff');
+
+const HALO_REACH = 4.5;
+
+function makeHaloTexture() {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+  g.addColorStop(0.7, 'rgba(255,255,255,0.1)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, size, size);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+/** Additive fresnel rim: bolts a glow term onto the stock physical material, no new material. */
+function addRimGlow(material: THREE.MeshPhysicalMaterial, color: THREE.Color) {
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uRimColor = { value: color };
+    shader.uniforms.uRim = { value: 0.6 };
+    material.userData.rim = shader.uniforms.uRim;
+    shader.fragmentShader = shader.fragmentShader
+      .replace('void main() {', 'uniform vec3 uRimColor;\nuniform float uRim;\nvoid main() {')
+      .replace(
+        '#include <opaque_fragment>',
+        `float rimF = pow(1.0 - saturate(dot(normalize(normal), normalize(vViewPosition))), 2.2);
+        outgoingLight += uRimColor * rimF * uRim;
+        #include <opaque_fragment>`,
+      );
+  };
+}
+
 const FULL_TINT = new THREE.Color('#ffffff');
 const DIM_TINT = new THREE.Color('#8f8fa3');
 
@@ -110,6 +150,13 @@ function Cluster({ start, highlight, onFocus }: SceneProps) {
   const textures = useBallTextures();
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
   const cursor = useRef<THREE.Mesh>(null);
+  const halos = useRef<(THREE.Mesh | null)[]>([]);
+  const glow = useRef<number[]>([]);
+  const haloTexture = useMemo(makeHaloTexture, []);
+  const rimColors = useMemo(
+    () => techBalls.map((_, i) => (i % 2 ? GLOW_CYAN : GLOW_VIOLET)),
+    [],
+  );
 
   const pointerWorld = useMemo(() => new THREE.Vector3(), []);
   const pointerPrev = useMemo(() => new THREE.Vector3(), []);
@@ -188,6 +235,28 @@ function Cluster({ start, highlight, onFocus }: SceneProps) {
       const material = mesh.material as THREE.MeshPhysicalMaterial;
       material.color.lerp(lit ? FULL_TINT : DIM_TINT, 1 - Math.exp(-frame * 9));
 
+      // Additive glow: brightens near the cursor and while a ball is moving.
+      let near = 0;
+      if (pointerActive.current) {
+        const reach = body.position.distanceTo(pointerWorld) - body.radius;
+        near = Math.max(0, 1 - reach / HALO_REACH);
+      }
+      const speed = Math.min(1, body.velocity.length() / 6);
+      const target = (lit ? 0.7 : 0.15) + (lit ? near * 1.5 + speed * 1.1 : 0);
+      const previous = glow.current[i] ?? 0.7;
+      const level = previous + (target - previous) * (1 - Math.exp(-frame * 7));
+      glow.current[i] = level;
+
+      const rim = material.userData.rim as { value: number } | undefined;
+      if (rim) rim.value = 0.55 + level * 1.25;
+
+      const halo = halos.current[i];
+      if (halo) {
+        halo.position.set(body.position.x, body.position.y, body.position.z - body.radius * 0.6);
+        halo.scale.setScalar(body.radius * eased * (2.9 + level * 0.9));
+        (halo.material as THREE.MeshBasicMaterial).opacity = Math.min(0.85, 0.14 + level * 0.3);
+      }
+
       if (pointerActive.current) {
         const gap = body.position.distanceTo(pointerWorld) - body.radius;
         if (gap < FOCUS_MARGIN && gap < nearestGap) {
@@ -212,6 +281,27 @@ function Cluster({ start, highlight, onFocus }: SceneProps) {
     <>
       {techBalls.map((ball, i) => (
         <mesh
+          key={`${ball.id}-halo`}
+          ref={(node) => {
+            halos.current[i] = node;
+          }}
+          renderOrder={-1}
+        >
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial
+            map={haloTexture}
+            color={rimColors[i]}
+            transparent
+            opacity={0.2}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+            toneMapped={false}
+          />
+        </mesh>
+      ))}
+
+      {techBalls.map((ball, i) => (
+        <mesh
           key={ball.id}
           ref={(node) => {
             meshes.current[i] = node;
@@ -224,6 +314,12 @@ function Cluster({ start, highlight, onFocus }: SceneProps) {
           <sphereGeometry args={[1, 48, 48]} />
           {}
           <meshPhysicalMaterial
+            ref={(m) => {
+              if (m && !m.userData.rimAdded) {
+                m.userData.rimAdded = true;
+                addRimGlow(m, rimColors[i]);
+              }
+            }}
             map={textures[i]}
             roughness={0.26}
             metalness={0}

@@ -7,7 +7,7 @@ import { BorderBeam } from '@/components/fx/BorderBeam';
 import { Spotlight } from '@/components/fx/Spotlight';
 import { achievements } from '@/data/credentials';
 import { useSplitReveal } from '@/hooks/useSplitReveal';
-import { useIsMobile, useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
+import { useIsSingleColumn, useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
 import './About.css';
 
 const contributions = parseInt(achievements.find((a) => a.id === 'open-source')?.title ?? '0', 10);
@@ -19,7 +19,7 @@ const certs = stats.find((s) => s.label === 'Certifications');
 export function About() {
   const root = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
+  const singleColumn = useIsSingleColumn();
   const isTouch = useIsTouch();
   const smooth = !isTouch && !reduced; // same rule as Smoother.tsx
 
@@ -35,8 +35,9 @@ export function About() {
     () => {
       if (reduced) return;
 
+      // Only pin beside the text in the two-column layout; stacked, it would sit on top of the copy.
       let pin: ScrollTrigger | undefined;
-      if (!isMobile) {
+      if (!singleColumn) {
         pin = ScrollTrigger.create({
           trigger: '.about__grid',
           start: 'top 18%',
@@ -87,7 +88,7 @@ export function About() {
         pin?.kill();
       };
     },
-    { dependencies: [reduced, isMobile, smooth], scope: root },
+    { dependencies: [reduced, singleColumn, smooth], scope: root },
   );
 
   return (

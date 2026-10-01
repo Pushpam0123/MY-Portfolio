@@ -1,0 +1,266 @@
+/* Hero glow layer: aurora, avatar aura, title shine, CTA beam. */
+@property --hfx-a {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --hfx-shine {
+  syntax: '<length>';
+  initial-value: -600px;
+  inherits: true;
+}
+
+[data-paused='true'] .hfx-aurora__blob,
+[data-paused='true'] .hfx-aura *,
+[data-paused='true'] .hfx-aura,
+[data-paused='true'] .hero__title {
+  animation-play-state: paused !important;
+}
+
+/* ---------- Aurora ---------- */
+.hfx-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hfx-aurora__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+.hfx-aurora__blob--a {
+  width: 52vw;
+  height: 52vw;
+  left: -14%;
+  top: -22%;
+  background: radial-gradient(circle, rgba(124, 77, 255, 0.5), transparent 68%);
+  animation: hfx-drift-a 22s ease-in-out infinite alternate;
+}
+.hfx-aurora__blob--b {
+  width: 46vw;
+  height: 46vw;
+  right: -10%;
+  top: 4%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.3), transparent 68%);
+  animation: hfx-drift-b 26s ease-in-out infinite alternate;
+}
+.hfx-aurora__blob--c {
+  width: 44vw;
+  height: 44vw;
+  left: 22%;
+  bottom: -30%;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.26), transparent 68%);
+  animation: hfx-drift-c 30s ease-in-out infinite alternate;
+}
+@keyframes hfx-drift-a {
+  to {
+    transform: translate3d(18vw, 12vh, 0) scale(1.18);
+  }
+}
+@keyframes hfx-drift-b {
+  to {
+    transform: translate3d(-16vw, 18vh, 0) scale(0.88);
+  }
+}
+@keyframes hfx-drift-c {
+  to {
+    transform: translate3d(20vw, -14vh, 0) scale(1.15);
+  }
+}
+
+/* ---------- Avatar aura ---------- */
+.hfx-aura {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hfx-aura__lean {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--hx, 0) * 26px), calc(var(--hy, 0) * 20px), 0);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hfx-aura__halo,
+.hfx-aura__ring {
+  position: absolute;
+  border-radius: 50%;
+  background: conic-gradient(
+    from var(--hfx-a),
+    #7c4dff,
+    #22d3ee 25%,
+    #a855f7 50%,
+    #ec4899 72%,
+    #7c4dff
+  );
+  animation: hfx-spin 14s linear infinite;
+}
+.hfx-aura__halo {
+  inset: 3%;
+  filter: blur(46px);
+  opacity: 0.55;
+  animation:
+    hfx-spin 14s linear infinite,
+    hfx-breathe 5.5s ease-in-out infinite;
+  transition: opacity 0.6s;
+}
+.hfx-aura__ring {
+  inset: 6%;
+  padding: 2px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.9;
+  animation-duration: 9s;
+}
+.hfx-aura__ring--glow {
+  padding: 5px;
+  filter: blur(10px);
+  opacity: 0.75;
+}
+[data-hover='true'] .hfx-aura__halo {
+  opacity: 0.95;
+}
+.hfx-aura__orbit {
+  position: absolute;
+  inset: -2%;
+  border-radius: 50%;
+  border: 1px dashed rgba(196, 181, 253, 0.28);
+  animation: hfx-rot 38s linear infinite;
+}
+.hfx-aura__orbit--rev {
+  inset: 12%;
+  border-color: rgba(34, 211, 238, 0.22);
+  animation-duration: 26s;
+  animation-direction: reverse;
+}
+.hfx-spark {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 10px 3px rgba(168, 85, 247, 0.9),
+    0 0 26px 8px rgba(124, 77, 255, 0.55);
+}
+.hfx-spark--1 { left: 50%; top: 0; }
+.hfx-spark--2 { left: 93%; top: 70%; width: 5px; height: 5px; }
+.hfx-spark--3 { left: 8%; top: 74%; width: 6px; height: 6px; }
+.hfx-spark--4 {
+  left: 50%;
+  top: 100%;
+  background: #cffafe;
+  box-shadow: 0 0 10px 3px rgba(34, 211, 238, 0.9), 0 0 26px 8px rgba(34, 211, 238, 0.45);
+}
+.hfx-spark--5 {
+  left: 6%;
+  top: 30%;
+  width: 5px;
+  height: 5px;
+  background: #cffafe;
+  box-shadow: 0 0 10px 3px rgba(34, 211, 238, 0.9);
+}
+@keyframes hfx-spin {
+  to {
+    --hfx-a: 360deg;
+  }
+}
+@keyframes hfx-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes hfx-breathe {
+  0%,
+  100% {
+    scale: 0.94;
+  }
+  50% {
+    scale: 1.1;
+  }
+}
+
+/* Rim light on the avatar silhouette */
+.hero__visual .hero__canvas {
+  filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.55)) drop-shadow(0 0 40px rgba(34, 211, 238, 0.22));
+  transition: filter 0.6s;
+}
+.hero__visual[data-hover='true'] .hero__canvas {
+  filter: drop-shadow(0 0 20px rgba(196, 140, 255, 0.85)) drop-shadow(0 0 60px rgba(34, 211, 238, 0.4));
+}
+
+/* ---------- Name shine + underglow ---------- */
+.hero__title {
+  filter: drop-shadow(0 0 28px rgba(124, 77, 255, 0.45)) drop-shadow(0 6px 50px rgba(124, 77, 255, 0.3));
+}
+.hero__char {
+  --hfx-s: calc(var(--hfx-shine) - var(--ox, 0px));
+  color: transparent;
+  background:
+    linear-gradient(
+      100deg,
+      transparent calc(var(--hfx-s) - 150px),
+      rgba(34, 211, 238, 0.95) calc(var(--hfx-s) - 60px),
+      #fff var(--hfx-s),
+      rgba(196, 130, 255, 1) calc(var(--hfx-s) + 60px),
+      transparent calc(var(--hfx-s) + 150px)
+    ),
+    linear-gradient(180deg, #fff 20%, #cdbfff 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.hero__title.is-shining {
+  animation: hfx-shine 6.5s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+}
+@keyframes hfx-shine {
+  0% {
+    --hfx-shine: -300px;
+  }
+  26%,
+  100% {
+    --hfx-shine: var(--hfx-end, 1100px);
+  }
+}
+
+/* ---------- CTA beam ---------- */
+.hero__cta {
+  position: relative;
+  display: inline-flex;
+  border-radius: var(--r-pill);
+}
+.hero__cta .fx-beam {
+  inset: -3px;
+  z-index: 3;
+}
+.hero__cta .mbtn--solid {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 8px 44px rgba(124, 77, 255, 0.7),
+    0 0 0 1px rgba(196, 181, 253, 0.2);
+}
+
+@media (max-width: 767px) {
+  .hfx-aurora__blob {
+    filter: blur(60px);
+  }
+  .hfx-aura__orbit {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hfx-aurora__blob,
+  .hfx-aura *,
+  .hero__title {
+    animation: none !important;
+  }
+}

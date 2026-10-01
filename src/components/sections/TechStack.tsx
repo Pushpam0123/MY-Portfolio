@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useState } from 'react';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { skillGroups, techBalls } from '@/data/skills';
 import { useInView } from '@/hooks/useInView';
 import { useIsTouch, useReducedMotion } from '@/hooks/useMediaQuery';
@@ -62,15 +63,50 @@ export function TechStack() {
     once: true,
   });
 
+  const { ref: liveRef, inView: live } = useInView<HTMLDivElement>({ rootMargin: '0px' });
+
   const interactive = supported && !reduced;
+
+  useGSAP(
+    () => {
+      if (reduced) return;
+      const lines = gsap.utils.toArray<HTMLElement>('.stack__line', ref.current);
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: '.stack__heading',
+          start: 'top 92%',
+          end: 'bottom 40%',
+          scrub: 0.7,
+        },
+      });
+      lines.forEach((line, i) => {
+        tl.fromTo(line, { '--fill': '0%' }, { '--fill': '100%', duration: 1 }, i * 0.8);
+      });
+    },
+    { dependencies: [reduced], scope: ref },
+  );
 
   const handleFocus = useCallback((name: string | null) => setFocused(name), []);
 
   return (
-    <section className="section stack" id="stack" ref={ref}>
+    <section className={`section stack${live ? ' is-live' : ''}`} id="stack" ref={ref}>
+      <div className="stack__aurora" aria-hidden="true" ref={liveRef}>
+        <span className="stack__aurora-a" />
+        <span className="stack__aurora-b" />
+        <span className="stack__aurora-c" />
+        <span className="stack__pool" />
+      </div>
       <div className="stack__heading">
         <span className="mono-label stack__index">05</span>
-        <h2 className="stack__title">My Tech Stack</h2>
+        <h2 className="stack__title" aria-label="My Tech Stack">
+          <span className="stack__line stack__line--solid" data-text="My Tech" aria-hidden="true">
+            My Tech
+          </span>
+          <span className="stack__line stack__line--outline" data-text="Stack" aria-hidden="true">
+            Stack
+          </span>
+        </h2>
       </div>
 
       {interactive ? (

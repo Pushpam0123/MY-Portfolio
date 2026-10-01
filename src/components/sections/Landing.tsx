@@ -6,12 +6,20 @@ import { useParallaxLayers } from '@/hooks/useParallaxLayers';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { StaticAvatar } from '@/components/ui/StaticAvatar';
+import { BorderBeam } from '@/components/fx/BorderBeam';
+import { HeroAura, HeroAurora } from '@/components/hero/HeroFx';
+import { usePauseOffscreen } from '@/hooks/usePauseOffscreen';
 import './Landing.css';
 
 const AvatarScene = lazy(() => import('@/three/AvatarScene'));
 
 export function Landing() {
   const scope = useParallaxLayers<HTMLElement>();
+  const pauseRef = usePauseOffscreen<HTMLElement>();
+  const setRefs = (node: HTMLElement | null) => {
+    (scope as { current: HTMLElement | null }).current = node;
+    (pauseRef as { current: HTMLElement | null }).current = node;
+  };
   const inner = useRef<HTMLDivElement>(null);
   const { ready } = useLoading();
   const reduced = useReducedMotion();
@@ -34,6 +42,19 @@ export function Landing() {
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
+      if (split && title) {
+        // Per-character offset so one shared --hfx-shine sweep reads as a single light pass.
+        const origin = title.getBoundingClientRect().left;
+        split.chars.forEach((c) => {
+          const el = c as HTMLElement;
+          const line = el.closest<HTMLElement>('.hero__title-line');
+          const left = line ? line.getBoundingClientRect().left : origin;
+          el.style.setProperty('--ox', `${el.offsetLeft + (left - origin)}px`);
+        });
+        title.style.setProperty('--hfx-end', `${title.offsetWidth + 320}px`);
+        tl.call(() => title.classList.add('is-shining'), [], 1.6);
+      }
+
       if (split) {
         tl.from(split.chars, {
           yPercent: 118,
@@ -48,7 +69,10 @@ export function Landing() {
         split ? '-=0.75' : 0,
       ).from('.hero__visual', { opacity: 0, scale: 0.94, duration: 1.4 }, '-=1.1');
 
-      return () => split?.revert();
+      return () => {
+        title?.classList.remove('is-shining');
+        split?.revert();
+      };
     },
     { dependencies: [ready, reduced], scope: inner },
   );
@@ -82,6 +106,23 @@ export function Landing() {
     { dependencies: [ready, reduced], scope: inner },
   );
 
+  const visual = useRef<HTMLDivElement>(null);
+  const onVisualMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = visual.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--hx', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+    el.style.setProperty('--hy', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+    el.dataset.hover = 'true';
+  };
+  const onVisualLeave = () => {
+    const el = visual.current;
+    if (!el) return;
+    el.style.setProperty('--hx', '0');
+    el.style.setProperty('--hy', '0');
+    el.dataset.hover = 'false';
+  };
+
   const scrollToWork = () => {
     const target = document.getElementById('work');
     if (!target) return;
@@ -91,8 +132,8 @@ export function Landing() {
   };
 
   return (
-    <section className="hero" id="top" ref={scope}>
-      {}
+    <section className="hero" id="top" ref={setRefs}>
+      <HeroAurora />
       <div className="hero__bloom" data-parallax="0.08" aria-hidden="true" />
       <div className="hero__grid-lines" aria-hidden="true" />
 
@@ -124,10 +165,13 @@ export function Landing() {
           </p>
 
           <div className="hero__actions" data-hero-fade data-parallax="0.44">
-            <MagneticButton as="button" onClick={scrollToWork} data-cursor="link">
-              View my work
-              <span aria-hidden="true">↓</span>
-            </MagneticButton>
+            <span className="hero__cta">
+              <MagneticButton as="button" onClick={scrollToWork} data-cursor="link">
+                View my work
+                <span aria-hidden="true">↓</span>
+              </MagneticButton>
+              <BorderBeam duration={5} />
+            </span>
             <MagneticButton
               as="a"
               variant="ghost"
@@ -148,8 +192,16 @@ export function Landing() {
         </div>
 
         {}
-        <div className="hero__visual" data-parallax="0.24" data-cursor="drag">
+        <div
+          className="hero__visual"
+          data-parallax="0.24"
+          data-cursor="drag"
+          ref={visual}
+          onPointerMove={onVisualMove}
+          onPointerLeave={onVisualLeave}
+        >
           <div className="hero__visual-glow" aria-hidden="true" />
+          <HeroAura />
           {reduced ? (
             <StaticAvatar />
           ) : (
