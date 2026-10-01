@@ -28,6 +28,7 @@ export function Counter({
       const el = ref.current;
       if (!el || reduced) return;
 
+      el.textContent = `${prefix}${(0).toFixed(decimals)}${suffix}`;
       const proxy = { n: 0 };
       gsap.to(proxy, {
         n: value,
@@ -42,6 +43,10 @@ export function Counter({
         },
         scrollTrigger: { trigger: el, start: 'top 88%', once: true },
       });
+
+      return () => {
+        el.textContent = final;
+      };
     },
     { dependencies: [value, decimals, prefix, suffix, duration, reduced] },
   );

@@ -1,5 +1,7 @@
 import { useRef, type ReactNode } from 'react';
-import { gsap, useGSAP, SplitText } from '@/lib/gsap';
+import { gsap, useGSAP } from '@/lib/gsap';
+import { DUR, EASE, REVEAL_START, STAGGER } from '@/lib/motion';
+import { useSplitReveal } from '@/hooks/useSplitReveal';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './SectionHeading.css';
 
@@ -15,36 +17,19 @@ export function SectionHeading({ index, eyebrow, title, align = 'left', children
   const root = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
+  useSplitReveal(root, { selector: '.sec-head__title', linesClass: 'sec-head__line' });
+
   useGSAP(
     () => {
-      if (reduced) return;
-      const heading = root.current?.querySelector<HTMLElement>('.sec-head__title');
-      if (!heading) return;
-
-      const split = new SplitText(heading, {
-        type: 'lines',
-        linesClass: 'sec-head__line',
-        mask: 'lines',
-        aria: 'none',
-      });
-
-      gsap.from(split.lines, {
-        yPercent: 118,
-        duration: 1,
-        ease: 'expo.out',
-        stagger: 0.09,
-        scrollTrigger: { trigger: root.current, start: 'top 82%', once: true },
-      });
-
-      gsap.from(root.current!.querySelectorAll('.sec-head__meta > *'), {
+      gsap.from('.sec-head__meta > *', {
         opacity: 0,
-        y: 18,
-        duration: 0.7,
-        stagger: 0.08,
-        scrollTrigger: { trigger: root.current, start: 'top 82%', once: true },
+        y: reduced ? 0 : 18,
+        duration: reduced ? DUR.fade : 0.7,
+        ease: EASE.ui,
+        stagger: STAGGER.base,
+        clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: root.current, start: REVEAL_START, once: true },
       });
-
-      return () => split.revert();
     },
     { dependencies: [reduced], scope: root },
   );

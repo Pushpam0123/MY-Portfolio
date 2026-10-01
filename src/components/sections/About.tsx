@@ -1,8 +1,9 @@
 import { useRef } from 'react';
-import { gsap, ScrollTrigger, SplitText, useGSAP } from '@/lib/gsap';
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { profile, stats } from '@/data/profile';
 import { DeskVideo } from '@/components/ui/DeskVideo';
 import { Counter } from '@/components/ui/Counter';
+import { useSplitReveal } from '@/hooks/useSplitReveal';
 import { useIsMobile, useReducedMotion } from '@/hooks/useMediaQuery';
 import './About.css';
 
@@ -11,35 +12,17 @@ export function About() {
   const reduced = useReducedMotion();
   const isMobile = useIsMobile();
 
+  useSplitReveal(root, {
+    selector: '.about__title, .about__para',
+    linesClass: 'about__line',
+    start: 'top 85%',
+    stagger: 0.07,
+    yPercent: 110,
+  });
+
   useGSAP(
     () => {
       if (reduced) return;
-
-      const paragraphs = gsap.utils.toArray<HTMLElement>('.about__para');
-
-      const splits = paragraphs.map(
-        (p) =>
-          new SplitText(p, {
-            type: 'lines',
-            linesClass: 'about__line',
-            mask: 'lines',
-            aria: 'none',
-          }),
-      );
-
-      splits.forEach((split, i) => {
-        gsap.from(split.lines, {
-          yPercent: 110,
-          duration: 0.95,
-          ease: 'expo.out',
-          stagger: 0.07,
-          scrollTrigger: {
-            trigger: paragraphs[i],
-            start: 'top 85%',
-            once: true,
-          },
-        });
-      });
 
       let pin: ScrollTrigger | undefined;
       if (!isMobile) {
@@ -64,7 +47,6 @@ export function About() {
       });
 
       return () => {
-        splits.forEach((s) => s.revert());
         pin?.kill();
       };
     },

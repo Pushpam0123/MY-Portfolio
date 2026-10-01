@@ -5,3 +5,9 @@
     transform: none;
   }
 }
+
+/* GSAP promotes layers itself while tweening; permanent hints just waste memory. */
+.sec-head__line,
+.about__line {
+  will-change: auto;
+}
