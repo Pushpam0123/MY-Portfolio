@@ -77,9 +77,10 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--c-violet-bright);
+  outline: 2px solid var(--c-lilac);
   outline-offset: 3px;
   border-radius: var(--r-sm);
+  box-shadow: 0 0 0 6px rgba(168, 85, 247, 0.22);
 }
 
 @supports selector(:focus-visible) {

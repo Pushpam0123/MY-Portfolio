@@ -1,6 +1,9 @@
 import { useRef } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { timeline } from '@/data/experience';
+
+const work = timeline.filter((entry) => entry.kind === 'work');
+const education = timeline.filter((entry) => entry.kind === 'education');
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
 import './Career.css';
@@ -53,7 +56,7 @@ export function Career() {
       <div className="shell">
         <SectionHeading index="03" eyebrow="Career" title="Where I've built things.">
           <p className="lede">
-            Two engineering roles and the degree behind them — most recent first.
+            Two engineering roles so far, most recent first. Education is listed separately below.
           </p>
         </SectionHeading>
 
@@ -62,7 +65,7 @@ export function Career() {
             <span className="career__rail-fill" />
           </div>
 
-          {timeline.map((entry) => (
+          {work.map((entry) => (
             <li className={`career__item career__item--${entry.kind}`} key={entry.id}>
               <span className="career__node" aria-hidden="true">
                 {entry.current && <span className="career__node-pulse" />}
@@ -92,6 +95,29 @@ export function Career() {
             </li>
           ))}
         </ol>
+
+        {education.length > 0 && (
+          <div className="career__edu">
+            <h3 className="career__edu-heading mono-label">Education</h3>
+            {education.map((entry) => (
+              <div className="career__card career__edu-card" key={entry.id}>
+                <div className="career__card-head">
+                  <h4 className="career__org">{entry.org}</h4>
+                  <p className="career__role">{entry.title}</p>
+                  <p className="career__place mono-label">
+                    {entry.period} — {entry.location}
+                    {entry.meta ? ` — ${entry.meta}` : ''}
+                  </p>
+                </div>
+                <ul className="career__points">
+                  {entry.points.map((point, i) => (
+                    <li key={i}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

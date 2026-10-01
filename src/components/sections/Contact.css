@@ -82,19 +82,27 @@
 }
 
 .contact__copy {
-  padding: 0.5rem 1.05rem;
-  border: 1px solid var(--c-line);
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--c-card-border);
+  background: rgba(255, 255, 255, 0.025);
   border-radius: var(--r-pill);
   font-size: var(--t-small);
   color: var(--c-muted);
   transition:
     border-color var(--d-fast) var(--e-out),
-    color var(--d-fast) var(--e-out);
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out),
+    transform var(--d-fast) var(--e-out);
 }
 
 .contact__copy:hover {
-  border-color: var(--c-violet);
+  border-color: var(--c-card-border-hover);
+  background: rgba(124, 77, 255, 0.1);
   color: var(--c-text);
+}
+
+.contact__copy:active {
+  transform: scale(0.97);
 }
 
 .contact__socials {
@@ -123,9 +131,12 @@
 .contact__panel {
   padding: clamp(1.5rem, 3vw, 2.5rem);
   border-radius: var(--r-xl);
-  border: 1px solid var(--c-line-soft);
-  background: linear-gradient(165deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.5) 100%);
-  box-shadow: var(--sh-card);
+  border: 1px solid var(--c-card-border);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(124, 77, 255, 0.16), transparent 60%),
+    var(--c-card-bg);
+  box-shadow: var(--sh-card), 0 0 80px -30px rgba(124, 77, 255, 0.55);
+  backdrop-filter: blur(10px);
 }
 
 .contact__invite {

@@ -15,17 +15,20 @@
   gap: var(--s-4);
   padding: var(--s-6);
   border-radius: var(--r-lg);
-  border: 1px solid var(--c-line-soft);
-  background: linear-gradient(165deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.35) 100%);
+  border: 1px solid var(--c-card-border);
+  background: var(--c-card-bg);
+  box-shadow: var(--sh-card);
   overflow: hidden;
   isolation: isolate;
   transition:
     border-color var(--d-mid) var(--e-out),
+    box-shadow var(--d-mid) var(--e-out),
     transform var(--d-mid) var(--e-out);
 }
 
 .wid__card:hover {
-  border-color: rgba(124, 77, 255, 0.45);
+  border-color: var(--c-card-border-hover);
+  box-shadow: var(--sh-card-hover);
   transform: translateY(-6px);
 }
 
@@ -54,7 +57,8 @@
   padding: var(--s-4) var(--s-5);
   border-radius: var(--r-md);
   background: radial-gradient(circle at 50% 40%, rgba(124, 77, 255, 0.18), transparent 72%);
-  border: 1px solid var(--c-line);
+  border: 1px solid var(--c-card-border);
+  box-shadow: 0 1px 0 var(--c-edge) inset;
 }
 
 .wid__card:hover .service-glyph {

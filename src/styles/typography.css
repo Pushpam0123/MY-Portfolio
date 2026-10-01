@@ -11,7 +11,7 @@
   font-family: var(--f-mono);
   font-size: var(--t-label);
   font-weight: 500;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--c-muted);
   display: inline-flex;
@@ -35,8 +35,9 @@
   font-weight: 750;
   font-stretch: 108%;
   font-size: var(--t-h2);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
   background: var(--g-text);
   -webkit-background-clip: text;
   background-clip: text;
@@ -53,7 +54,7 @@
 
 .body-copy {
   font-size: var(--t-body);
-  line-height: 1.72;
+  line-height: 1.75;
   color: var(--c-muted);
   max-width: 68ch;
   text-wrap: pretty;

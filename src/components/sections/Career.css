@@ -103,16 +103,21 @@
   gap: var(--s-4);
   padding: var(--s-5) var(--s-6);
   border-radius: var(--r-lg);
-  border: 1px solid var(--c-line-soft);
-  background: linear-gradient(160deg, var(--c-surface) 0%, rgba(16, 16, 24, 0.3) 100%);
+  border: 1px solid var(--c-card-border);
+  background: var(--c-card-bg);
+  box-shadow: 0 1px 0 var(--c-edge) inset;
   transition:
     border-color var(--d-mid) var(--e-out),
     box-shadow var(--d-mid) var(--e-out);
 }
 
+.career__card:hover {
+  border-color: rgba(168, 130, 255, 0.32);
+}
+
 .career__item.is-active .career__card {
-  border-color: rgba(124, 77, 255, 0.34);
-  box-shadow: var(--sh-card);
+  border-color: rgba(168, 130, 255, 0.4);
+  box-shadow: var(--sh-card), 0 0 60px -24px rgba(124, 77, 255, 0.5);
 }
 
 .career__card-head {
@@ -168,12 +173,38 @@
   background: var(--c-violet);
 }
 
-.career__item--education .career__card {
-  background: transparent;
-  border-style: dashed;
+.career__edu {
+  position: relative;
+  display: grid;
+  grid-template-columns: 148px 1fr;
+  column-gap: var(--s-7);
+  align-items: start;
+  margin-top: var(--s-9);
+  padding-top: var(--s-7);
 }
 
-.career__item--education .career__org {
+.career__edu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--c-line), transparent 85%);
+}
+
+.career__edu-heading {
+  padding-top: 4px;
+  color: var(--c-violet-bright);
+}
+
+.career__edu-card {
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.career__edu-card .career__org {
   font-size: var(--t-h4);
 }
 
@@ -191,6 +222,13 @@
   .career__node {
     left: 4px;
     top: 6px;
+  }
+
+  .career__edu {
+    grid-template-columns: 1fr;
+    row-gap: var(--s-4);
+    margin-top: var(--s-8);
+    padding-top: var(--s-6);
   }
 
   .career__period {

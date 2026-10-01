@@ -2,7 +2,9 @@
   position: relative;
   padding-block: var(--s-8) var(--s-6);
   border-top: 1px solid var(--c-line-soft);
-  background: var(--c-base-deep);
+  background:
+    radial-gradient(60% 120% at 50% 0%, rgba(124, 77, 255, 0.07), transparent 70%),
+    var(--c-base-deep);
 }
 
 .footer__inner {

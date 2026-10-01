@@ -40,7 +40,9 @@
 .mbtn--solid {
   background: var(--g-accent);
   color: #fff;
-  box-shadow: 0 8px 30px rgba(124, 77, 255, 0.3);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 8px 30px rgba(124, 77, 255, 0.34);
 }
 
 .mbtn--solid::after {
@@ -53,9 +55,10 @@
 }
 
 .mbtn--ghost {
-  border: 1px solid var(--c-line);
+  border: 1px solid var(--c-card-border);
   color: var(--c-text-soft);
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 1px 0 var(--c-edge) inset;
 }
 
 .mbtn--ghost::after {
@@ -65,6 +68,10 @@
 .mbtn--ghost:hover {
   color: var(--c-base);
   border-color: transparent;
+}
+
+.mbtn:active {
+  scale: 0.98;
 }
 
 .mbtn:hover::after {
