@@ -77,8 +77,8 @@ export function Contact() {
         <div className="contact__lead">
           <span className="eyebrow">Contact</span>
           <p className="lede contact__blurb">
-            I&apos;m {profile.availabilityLabel.toLowerCase()} — AI/ML, data, cloud, forward
-            deployed, or software engineering roles. The fastest way to reach me is email.
+            I&apos;m {profile.availabilityLabel.toLowerCase()} in AI/ML, data, cloud, forward
+            deployed or software engineering. The fastest way to reach me is email.
           </p>
 
           <a

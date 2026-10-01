@@ -30,7 +30,7 @@ function CertList({ items }: { items: Certification[] }) {
               target="_blank"
               rel="noreferrer noopener"
               data-cursor="link"
-              aria-label={`${cert.title} — ${cert.issuer} (verify credential)`}
+              aria-label={`${cert.title}, ${cert.issuer} (verify credential)`}
             />
           )}
           <div className="cred__cert-top">

@@ -109,7 +109,7 @@ export function About() {
                 <BorderBeam duration={6} />
               </div>
             </div>
-            <p className="mono-label about__caption">Currently — Silicofeller Quantum</p>
+            <p className="mono-label about__caption">Currently at Silicofeller Quantum</p>
           </div>
 
           <div className="about__body">

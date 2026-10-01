@@ -36,10 +36,10 @@ export const projects: Project[] = [
     title: 'ScamShield',
     year: '2026',
     summary:
-      'An Android app that tells you whether a suspicious SMS is a scam — on-device, offline, and in plain language you could read aloud to a parent.',
+      'An Android app that tells you whether a suspicious SMS is a scam. It runs on the device, works offline, and explains itself in plain language you could read aloud to a parent.',
     points: [
       'Runs entirely on the phone: no READ_SMS permission, no accounts, and no network calls, because the messages people most want checked are the ones carrying their OTPs and account numbers.',
-      'Hybrid detection — deterministic rule checks for domain age, typosquats, homographs and sender IDs run alongside an on-device ONNX classifier, and a fusion layer combines them into one verdict with its evidence.',
+      'Hybrid detection. Rule checks for domain age, typosquats, homographs and sender IDs run alongside an on-device ONNX classifier, and a fusion layer combines them into one verdict with its evidence.',
       'An instrumented parity test confirms the on-device output matches the Python reference exactly, so the tokenizer and runtime agree across platforms.',
     ],
     stack: ['Kotlin', 'Android', 'ONNX Runtime', 'Python'],
@@ -58,7 +58,7 @@ export const projects: Project[] = [
   {
     id: 'sahayak',
     index: '02',
-    title: 'Sahayak — Government Scheme RAG',
+    title: 'Sahayak: Government Scheme RAG',
     year: '2026',
     summary:
       'A cited retrieval-augmented assistant and eligibility engine for Indian government schemes, answering in Hindi or English with every claim traced back to the official document it came from.',
@@ -89,10 +89,10 @@ export const projects: Project[] = [
     title: 'LLM-Powered Sentiment Analysis System',
     year: '2026',
     summary:
-      'Sentiment analysis that does not send every text to an LLM. A cheap classifier handles the easy majority and only the genuinely hard cases — sarcasm, mixed feeling, non-English — are escalated.',
+      'Sentiment analysis that does not send every text to an LLM. A cheap classifier handles the easy majority and only the genuinely hard cases (sarcasm, mixed feelings, non-English text) get escalated.',
     points: [
       'Two-tier cascade: a calibrated TF-IDF and linear SVM classifier answers first, and its confidence decides what gets escalated to the LLM.',
-      'The LLM never returns freeform text — tool use is forced against a JSON schema, and an aspect quote is dropped unless it appears verbatim in the input.',
+      'The LLM never returns freeform text. Tool use is forced against a JSON schema, and an aspect quote is dropped unless it appears verbatim in the input.',
       'If the provider is down or rate-limited, escalated requests fall back to the classifier rather than erroring, and those degraded answers are deliberately never cached.',
     ],
     stack: ['Python', 'FastAPI', 'scikit-learn', 'NLTK', 'Claude'],
@@ -116,9 +116,9 @@ export const projects: Project[] = [
     title: 'AI-Powered Task Automation System',
     year: '2026',
     summary:
-      'TaskFlow AI — a real-time task platform with role-based access and an automated priority engine that explains every score it produces.',
+      'TaskFlow AI is a real-time task platform with role-based access and an automated priority engine that explains every score it produces.',
     points: [
-      'A deterministic priority engine scores tasks 0–100 from overdue days, effort points, how many others a task is blocking, and stagnation — no LLM in the loop, so scoring is instant and auditable.',
+      'A deterministic priority engine scores tasks from 0 to 100 using overdue days, effort points, how many other tasks it blocks, and how long it has stalled. There is no LLM in the loop, so scoring is instant and auditable.',
       'Every score opens into a breakdown table showing exactly how it was computed.',
       'Real-time state sync across sessions over Socket.IO, with refresh-token rotation and reuse detection behind HTTP-only cookies.',
     ],

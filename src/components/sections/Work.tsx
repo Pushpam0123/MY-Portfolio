@@ -114,7 +114,7 @@ export function Work() {
             .to([count, name], { yPercent: -60, opacity: 0, duration: 0.14 })
             .add(() => {
               count.textContent = pad(i + 1);
-              name.textContent = projects[i].title.split(' — ')[0];
+              name.textContent = projects[i].title.split(': ')[0];
               hudEl.style.setProperty('--hud-accent', projects[i].accent);
             })
             .fromTo([count, name], { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1 });
@@ -344,7 +344,7 @@ export function Work() {
           <span className="work-hud__bar">
             <span className="work-hud__fill" />
           </span>
-          <span className="work-hud__name">{projects[0].title.split(' — ')[0]}</span>
+          <span className="work-hud__name">{projects[0].title.split(': ')[0]}</span>
         </div>,
         document.body,
       )}

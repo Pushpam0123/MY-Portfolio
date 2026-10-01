@@ -62,7 +62,7 @@ export function Footer() {
         <div className="footer__col">
           <span className="mono-label">Local time</span>
           <span className="footer__value">
-            {time ? `${time} IST` : '—'}
+            {time ? `${time} IST` : ''}
             <span className="footer__pulse" aria-hidden="true" />
           </span>
         </div>

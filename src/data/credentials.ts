@@ -24,7 +24,7 @@ export const certifications: Certification[] = [
   },
   {
     id: 'aws-saa',
-    title: 'Certified Solutions Architect — Associate',
+    title: 'Certified Solutions Architect (Associate)',
     issuer: 'Amazon Web Services',
     logo: 'aws',
   },

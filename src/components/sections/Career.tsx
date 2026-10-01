@@ -129,7 +129,7 @@ export function Career() {
                   <p className="career__role">{entry.title}</p>
                   <p className="career__place mono-label">
                     {entry.location}
-                    {entry.meta ? ` — ${entry.meta}` : ''}
+                    {entry.meta ? ` · ${entry.meta}` : ''}
                   </p>
                 </div>
 
@@ -157,8 +157,8 @@ export function Career() {
                   <h4 className="career__org">{entry.org}</h4>
                   <p className="career__role">{entry.title}</p>
                   <p className="career__place mono-label">
-                    {entry.period} — {entry.location}
-                    {entry.meta ? ` — ${entry.meta}` : ''}
+                    {entry.period} · {entry.location}
+                    {entry.meta ? ` · ${entry.meta}` : ''}
                   </p>
                 </div>
                 <ul className="career__points">

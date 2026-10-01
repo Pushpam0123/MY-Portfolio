@@ -20,7 +20,7 @@ export const timeline: TimelineEntry[] = [
     org: 'Silicofeller Quantum',
     title: 'AI Lead Engineer Intern',
     location: 'New Delhi, India',
-    period: 'Jun 2026 — Present',
+    period: 'Jun 2026 to Present',
     current: true,
     points: [
       'Identified, proposed, and implemented AI-native research workflows and automation opportunities to improve operational efficiency, productivity, and R&D process effectiveness, reporting directly to the Founder & CEO.',
@@ -34,7 +34,7 @@ export const timeline: TimelineEntry[] = [
     org: 'Advitia Labs',
     title: 'Software Development Engineer',
     location: 'Guntur, India',
-    period: 'Dec 2025 — May 2026',
+    period: 'Dec 2025 to May 2026',
     points: [
       'Developed and maintained scalable backend services and APIs, optimizing system workflows to improve operational efficiency and product stability.',
       'Investigated production issues and collaborated with cross-functional teams on ongoing maintenance, enhancement, and continuous improvement of live systems, documentation, and UI/UX.',
@@ -46,7 +46,7 @@ export const timeline: TimelineEntry[] = [
     org: 'Vellore Institute of Technology',
     title: 'B.Tech, Computer Science and Engineering',
     location: 'Amaravati, India',
-    period: '2022 — 2026',
+    period: '2022 to 2026',
     meta: 'CGPA 8.22',
     points: [
       'Specialized coursework across artificial intelligence, machine learning, and data engineering.',

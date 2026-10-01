@@ -140,7 +140,7 @@ export function Landing() {
       <div className="shell hero__inner" ref={inner}>
         <div className="hero__copy">
           <p className="eyebrow hero__eyebrow" data-hero-fade data-parallax="0.14">
-            {profile.location} — Available worldwide
+            {profile.location} · Available worldwide
           </p>
 
           {}
