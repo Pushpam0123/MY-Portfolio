@@ -72,6 +72,7 @@ export const achievements: Achievement[] = [
   {
     id: 'null-hackathon',
     title: 'Winner, NULL Hackathon 2025',
+    detail: 'Took first place at the NULL coding hackathon, building a working solution against the clock.',
     place: '1st',
   },
   {
