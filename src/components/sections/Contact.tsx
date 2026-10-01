@@ -58,8 +58,8 @@ export function Contact() {
             <span aria-hidden="true">something</span>
           </h2>
           <p className="lede contact__blurb">
-            I&apos;m {profile.availabilityLabel.toLowerCase()} — AI/ML engineering, automation, or
-            full-stack work. The fastest way to reach me is email.
+            I&apos;m {profile.availabilityLabel.toLowerCase()} — AI/ML, data, forward deployed, or
+            software engineering roles. The fastest way to reach me is email.
           </p>
 
           <a

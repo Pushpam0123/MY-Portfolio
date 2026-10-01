@@ -10,8 +10,8 @@ export const profile = {
   lastName: 'Raj',
   role: 'AI / ML Engineer',
 
-  roles: ['AI / ML Engineer', 'Automation Systems', 'LLM Tooling', 'Full-Stack Delivery'],
-  tagline: 'I build AI-native tooling and automation systems that make teams measurably faster.',
+  roles: ['AI / ML Engineer', 'Software Engineer', 'Data Engineer', 'Forward Deployed Engineer'],
+  tagline: 'I build AI systems and the software around them, and I like working close to the people who use them.',
   location: 'New Delhi, India',
   timezone: 'Asia/Kolkata',
   email: 'pushpamraj0123@gmail.com',
@@ -22,12 +22,12 @@ export const profile = {
   availabilityLabel: 'Open to opportunities',
 
   summary:
-    'Computer Science graduate specializing in Artificial Intelligence, Machine Learning, and workflow automation, with hands-on experience building AI-native tooling and automation systems that improve operational efficiency and productivity. Skilled at rapidly onboarding to existing AI and automation projects and delivering data-driven solutions from prototype to production, with a focus on process improvement and continuous enhancement.',
+    'Computer Science graduate focused on AI, machine learning and software engineering. I have built internal AI tooling and backend services, and I like taking data-driven work from prototype to production. I am looking at AI / ML, data, forward deployed and software engineering roles.',
 
   about: [
-    'I am a Computer Science graduate specializing in Artificial Intelligence, Machine Learning, and workflow automation.',
-    'My work is building AI-native tooling and automation systems that improve operational efficiency and productivity — the internal tools, benchmarking harnesses, and pipelines that let a team move faster than it otherwise could.',
-    'I onboard quickly onto existing AI and automation projects and take data-driven solutions from prototype to production, with a bias toward process improvement and continuous enhancement.',
+    'I am a Computer Science graduate. My focus is AI and machine learning, and I write a lot of ordinary software around it: APIs, data pipelines and React interfaces.',
+    'At Silicofeller Quantum I build internal AI tooling, benchmarking systems and workflow automation. Before that I wrote backend services and APIs at Advitia Labs and helped maintain live systems.',
+    'I onboard fast onto existing projects and enjoy working directly with the people who use what I build. That is why I am interested in AI / ML, data, forward deployed and software engineering roles.',
   ],
 } as const;
 

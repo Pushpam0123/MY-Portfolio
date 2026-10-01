@@ -12,17 +12,7 @@ const glyphs: Record<string, React.ReactNode> = {
       <circle cx="65" cy="30" r="3" />
     </>
   ),
-  automation: (
-    <>
-      <rect x="6" y="10" width="20" height="14" rx="4" />
-      <rect x="44" y="36" width="20" height="14" rx="4" />
-      <path d="M26 17 H56 A6 6 0 0 1 62 23 V33" />
-      <path d="M44 43 H14 A6 6 0 0 1 8 37 V27" />
-      <path d="M58 30 L62 36 L66 30" />
-      <path d="M4 30 L8 24 L12 30" />
-    </>
-  ),
-  fullstack: (
+  software: (
     <>
       <rect x="8" y="6" width="54" height="12" rx="4" />
       <rect x="8" y="24" width="54" height="12" rx="4" />

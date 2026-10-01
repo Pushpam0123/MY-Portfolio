@@ -137,25 +137,27 @@ export const services: Service[] = [
   {
     id: 'ai-ml',
     index: '01',
-    title: 'AI & ML Engineering',
+    title: 'AI / ML Engineering',
     description:
-      'End-to-end machine learning work — from framing the problem and prototyping models to shipping evaluated, production-grade pipelines.',
-    bullets: ['NLP & LLM pipelines', 'Model prototyping', 'Benchmarking & evaluation'],
+      'I take ML and LLM work from framing the problem to a tested pipeline. That includes internal AI tooling and automation, data pipelines to feed it, and sitting with the people who use it so it fits how they actually work.',
+    bullets: [
+      'NLP & LLM pipelines',
+      'Internal AI tooling & automation',
+      'Data engineering for ML',
+      'Forward deployed work with users',
+    ],
   },
   {
-    id: 'automation',
+    id: 'software',
     index: '02',
-    title: 'Workflow Automation',
+    title: 'Software Engineering',
     description:
-      'AI-native internal tooling that removes the manual steps between an idea and a result, so research and delivery cycles get measurably shorter.',
-    bullets: ['Internal AI tooling', 'Process automation', 'Operational efficiency'],
-  },
-  {
-    id: 'fullstack',
-    index: '03',
-    title: 'Full-Stack Delivery',
-    description:
-      'Scalable backend services and the interfaces on top of them — REST APIs, real-time sync, authentication, and the maintenance that keeps them stable.',
-    bullets: ['REST & WebSocket APIs', 'React interfaces', 'Production support'],
+      'Backend services, APIs and React interfaces, plus the data and cloud work around them. I build it, deploy it and keep it running.',
+    bullets: [
+      'REST & WebSocket APIs',
+      'React frontends',
+      'SQL & data pipelines',
+      'Cloud deployment (AWS, GCP)',
+    ],
   },
 ];
