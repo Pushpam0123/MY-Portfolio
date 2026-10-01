@@ -4,11 +4,14 @@ import { projects } from '@/data/projects';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { Counter } from '@/components/ui/Counter';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
+import { useReveal } from '@/hooks/useReveal';
 import './Work.css';
 
 export function Work() {
   const root = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+
+  useReveal(root);
 
   useGSAP(
     () => {
@@ -16,15 +19,6 @@ export function Work() {
 
       gsap.utils.toArray<HTMLElement>('.work__panel').forEach((panel) => {
         const media = panel.querySelector('.work__media-inner');
-
-        gsap.from(panel.querySelectorAll('[data-work-reveal]'), {
-          y: 42,
-          opacity: 0,
-          duration: 0.95,
-          ease: 'expo.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: panel, start: 'top 74%', once: true },
-        });
 
         if (media) {
           gsap.fromTo(
@@ -91,27 +85,27 @@ export function Work() {
               </div>
 
               <div className="work__body">
-                <div className="work__meta" data-work-reveal>
+                <div className="work__meta" data-reveal="up">
                   <span className="mono-label work__index">{project.index}</span>
                   <span className="mono-label">{project.year}</span>
                 </div>
 
-                <h3 className="work__title" data-work-reveal>
+                <h3 className="work__title" data-reveal="up">
                   {project.title}
                 </h3>
 
                 {project.status && (
-                  <p className="work__status" data-work-reveal>
+                  <p className="work__status" data-reveal="up">
                     <span className="work__status-dot" aria-hidden="true" />
                     {project.status}
                   </p>
                 )}
 
-                <p className="lede work__summary" data-work-reveal>
+                <p className="lede work__summary" data-reveal="up">
                   {project.summary}
                 </p>
 
-                <ul className="work__points" data-work-reveal>
+                <ul className="work__points" data-reveal="up">
                   {project.points.map((point, i) => (
                     <li key={i}>{point}</li>
                   ))}
@@ -119,7 +113,7 @@ export function Work() {
 
                 {}
                 {project.metrics && (
-                  <dl className="work__metrics" data-work-reveal>
+                  <dl className="work__metrics" data-reveal="up">
                     {project.metrics.map((metric) => (
                       <div className="work__metric" key={metric.label}>
                         <dt className="work__metric-value">
@@ -135,7 +129,7 @@ export function Work() {
                   </dl>
                 )}
 
-                <ul className="work__chips" data-work-reveal>
+                <ul className="work__chips" data-reveal="up">
                   {project.stack.map((tech) => (
                     <li className="work__chip" key={tech}>
                       {tech}
@@ -150,7 +144,7 @@ export function Work() {
                     target="_blank"
                     rel="noreferrer noopener"
                     data-cursor="link"
-                    data-work-reveal
+                    data-reveal="up"
                   >
                     <span>View on GitHub</span>
                     <span aria-hidden="true">↗</span>

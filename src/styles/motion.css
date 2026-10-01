@@ -1,0 +1,7 @@
+/* motion.css — additive motion rules. Do not restyle; only motion. */
+@media (hover: none), (pointer: coarse) {
+  .wid__card:hover,
+  .cred__cert:hover {
+    transform: none;
+  }
+}

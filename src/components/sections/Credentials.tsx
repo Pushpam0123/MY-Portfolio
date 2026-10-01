@@ -1,14 +1,8 @@
 import { useRef } from 'react';
-import { gsap, useGSAP } from '@/lib/gsap';
-import {
-  achievements,
-  certifications,
-  simulations,
-  type Certification,
-} from '@/data/credentials';
+import { achievements, certifications, simulations, type Certification } from '@/data/credentials';
 import { issuerLogoUrl } from '@/assets/images';
 import { SectionHeading } from '@/components/ui/SectionHeading';
-import { useReducedMotion } from '@/hooks/useMediaQuery';
+import { useReveal } from '@/hooks/useReveal';
 import './Credentials.css';
 
 const logo = (cert: Certification) => (cert.logo ? issuerLogoUrl(cert.logo) : undefined);
@@ -19,6 +13,7 @@ function CertList({ items }: { items: Certification[] }) {
       {items.map((cert) => (
         <li
           className={`cred__cert ${cert.url ? 'cred__cert--has-link' : ''}`}
+          data-reveal="up"
           key={cert.id}
         >
           {cert.url && (
@@ -61,32 +56,7 @@ function CertList({ items }: { items: Certification[] }) {
 
 export function Credentials() {
   const root = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
-
-  useGSAP(
-    () => {
-      if (reduced) return;
-
-      gsap.from('.cred__cert', {
-        y: 40,
-        opacity: 0,
-        duration: 0.85,
-        ease: 'expo.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: '.cred__certs', start: 'top 82%', once: true },
-      });
-
-      gsap.from('.cred__achievement', {
-        x: -28,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'expo.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: '.cred__achievements', start: 'top 82%', once: true },
-      });
-    },
-    { dependencies: [reduced], scope: root },
-  );
+  useReveal(root);
 
   return (
     <section className="section cred" id="credentials" ref={root}>
@@ -110,7 +80,7 @@ export function Credentials() {
             <h3 className="cred__col-title mono-label">Achievements &amp; Leadership</h3>
             <ul className="cred__achievements">
               {achievements.map((item) => (
-                <li className="cred__achievement" key={item.id}>
+                <li className="cred__achievement" data-reveal="left" key={item.id}>
                   <span className="cred__marker" aria-hidden="true" />
                   <div>
                     <p className="cred__achievement-title">{item.title}</p>

@@ -6,11 +6,14 @@ const work = timeline.filter((entry) => entry.kind === 'work');
 const education = timeline.filter((entry) => entry.kind === 'education');
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useReducedMotion } from '@/hooks/useMediaQuery';
+import { useReveal } from '@/hooks/useReveal';
 import './Career.css';
 
 export function Career() {
   const root = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+
+  useReveal(root);
 
   useGSAP(
     () => {
@@ -32,14 +35,6 @@ export function Career() {
       );
 
       gsap.utils.toArray<HTMLElement>('.career__item').forEach((item) => {
-        gsap.from(item, {
-          y: 48,
-          opacity: 0,
-          duration: 0.9,
-          ease: 'expo.out',
-          scrollTrigger: { trigger: item, start: 'top 84%', once: true },
-        });
-
         ScrollTrigger.create({
           trigger: item,
           start: 'top 62%',
@@ -66,7 +61,11 @@ export function Career() {
           </div>
 
           {work.map((entry) => (
-            <li className={`career__item career__item--${entry.kind}`} key={entry.id}>
+            <li
+              className={`career__item career__item--${entry.kind}`}
+              data-reveal="up"
+              key={entry.id}
+            >
               <span className="career__node" aria-hidden="true">
                 {entry.current && <span className="career__node-pulse" />}
               </span>
@@ -98,9 +97,11 @@ export function Career() {
 
         {education.length > 0 && (
           <div className="career__edu">
-            <h3 className="career__edu-heading mono-label">Education</h3>
+            <h3 className="career__edu-heading mono-label" data-reveal="up">
+              Education
+            </h3>
             {education.map((entry) => (
-              <div className="career__card career__edu-card" key={entry.id}>
+              <div className="career__card career__edu-card" data-reveal="up" key={entry.id}>
                 <div className="career__card-head">
                   <h4 className="career__org">{entry.org}</h4>
                   <p className="career__role">{entry.title}</p>
