@@ -66,8 +66,6 @@ const leadingFigure = (title: string) => {
   const m = title.match(/^(\d+)(\+?)\s+(.*)$/);
   return m ? { value: Number(m[1]), suffix: m[2], rest: m[3] } : null;
 };
-/** An ordinal result mentioned in the detail line, e.g. "1st place …". */
-const ordinal = (detail: string) => detail.match(/^(\d+(?:st|nd|rd|th))\b/)?.[1];
 
 export function Credentials() {
   const root = useRef<HTMLElement>(null);
@@ -118,11 +116,11 @@ export function Credentials() {
           </div>
 
           <div className="cred__col">
-            <h3 className="cred__col-title mono-label">Achievements &amp; Leadership</h3>
+            <h3 className="cred__col-title mono-label">Achievements</h3>
             <ul className="cred__achievements">
               {achievements.map((item) => {
                 const fig = leadingFigure(item.title);
-                const place = ordinal(item.detail);
+                const place = item.place;
                 return (
                   <li className="cred__achievement" data-reveal="left" key={item.id}>
                     {place ? (
@@ -151,7 +149,7 @@ export function Credentials() {
                           item.title
                         )}
                       </p>
-                      <p className="cred__achievement-detail">{item.detail}</p>
+                      {item.detail && <p className="cred__achievement-detail">{item.detail}</p>}
                     </div>
                   </li>
                 );

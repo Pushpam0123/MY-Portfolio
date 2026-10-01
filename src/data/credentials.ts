@@ -56,7 +56,9 @@ export const simulations: Certification[] = [
 export interface Achievement {
   id: string;
   title: string;
-  detail: string;
+  detail?: string;
+  /** Placing shown as a medal, e.g. '1st'. */
+  place?: string;
   /** Part of the title to render with a glow. */
   highlight?: string;
 }
@@ -68,19 +70,14 @@ export const achievements: Achievement[] = [
     detail: 'Sustained public work across personal and community repositories.',
   },
   {
-    id: 'vtapp-2024',
-    title: 'Winner, VTAPP 2024 Fest',
-    detail: '1st place in the Inter-College Debate and 3rd in the NULL Coding Hackathon.',
+    id: 'null-hackathon',
+    title: 'Winner, NULL Hackathon 2025',
+    place: '1st',
   },
   {
     id: 'paradox',
     title: 'Finalist, IIT Madras Paradox',
     highlight: 'IIT Madras',
     detail: 'Reached the finals of Logic Loom, a national logical reasoning competition.',
-  },
-  {
-    id: 'vtapp-2025',
-    title: 'Student Coordinator, VTAPP 2025',
-    detail: 'Managed logistics for a technical fest with over 1,000 participants.',
   },
 ];
